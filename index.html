@@ -892,6 +892,11 @@ function showScreen(n){
 }
 
 // ════════ SELECTIONS ════════
+function checkReady(){
+  const btn=document.getElementById('start-btn');
+  btn.disabled=!(S.trade&&S.road&&S.speed);
+  btn.style.background=!(S.trade&&S.road&&S.speed)?'':'var(--orange)';
+}
 document.querySelectorAll('.trade-card').forEach(c=>c.addEventListener('click',()=>{
   document.querySelectorAll('.trade-card').forEach(x=>x.classList.remove('selected'));
   c.classList.add('selected');S.trade=c.dataset.trade;checkReady();
