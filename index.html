@@ -1,3 +1,18 @@
+
+
+Skip to content
+Using Gmail with screen readers
+1 of 272
+Conesout 3
+Inbox
+
+Liam McAtarsney <lmcatarsney@gmail.com>
+Attachments
+20:22 (4 minutes ago)
+to me
+
+ One attachment
+  •  Scanned by Gmail
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -190,6 +205,50 @@
   .speed-num{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--orange);}
   .speed-unit{font-size:.65rem;color:var(--muted);}
 
+  /* ROAD WIDTH */
+  .width-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 16px 12px;}
+  .width-card{background:var(--dark3);border:2px solid var(--mid);border-radius:10px;padding:12px 10px;cursor:pointer;transition:border-color .2s,transform .15s;position:relative;}
+  .width-card:active{transform:scale(.97);}
+  .width-card.selected{border-color:var(--orange);background:#2a1500;}
+  .width-card::after{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--orange);opacity:0;transition:opacity .2s;}
+  .width-card.selected::after{opacity:1;}
+  .width-val{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:900;color:var(--orange);}
+  .width-label{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;margin-top:2px;}
+  .width-desc{font-size:.68rem;color:var(--muted);margin-top:3px;line-height:1.3;}
+  .width-outcome{font-size:.7rem;color:var(--green);font-weight:600;margin-top:4px;}
+
+  /* TM REQUIREMENT BOX */
+  .tm-box{margin:0 16px 12px;border-radius:8px;padding:12px 14px;font-size:.78rem;line-height:1.5;}
+  .tm-box.closure{background:#1a0000;border:2px solid var(--red);color:#ff8a80;}
+  .tm-box.oneway{background:#1a1000;border:2px solid var(--orange);color:#ffcc80;}
+  .tm-box.laneclosure{background:#00101a;border:2px solid var(--blue);color:#82b1ff;}
+  .tm-box.footway{background:#001a00;border:2px solid var(--green);color:#a5d6a7;}
+  .tm-box-title{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;margin-bottom:4px;}
+
+  /* SIGNS SCREEN */
+  #screen-signs{overflow-y:auto;background:var(--dark);}
+  .signs-header{background:var(--dark2);border-bottom:3px solid var(--yellow);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .signs-wrap{padding:14px 16px;}
+
+  /* SIGN DIAGRAM */
+  .sign-diagram{background:var(--dark2);border-radius:10px;padding:14px;margin-bottom:14px;position:relative;}
+  .road-visual{position:relative;margin:16px 0;background:#1a1a1a;border-radius:8px;padding:16px 8px;min-height:420px;overflow:hidden;}
+  .road-line{position:absolute;left:50%;transform:translateX(-50%);width:60%;background:#2a2a2a;top:0;bottom:0;}
+  .road-marking{position:absolute;left:50%;transform:translateX(-50%);width:4px;background:var(--yellow);opacity:.4;}
+  .sign-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #1c1c1c;position:relative;}
+  .sign-row:last-child{border-bottom:none;}
+  .sign-icon-box{width:48px;height:48px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+  .sign-icon-box.warning{background:#1a1000;border:2px solid var(--orange);}
+  .sign-icon-box.info{background:#00101a;border:2px solid var(--blue);}
+  .sign-icon-box.mandatory{background:#1a0000;border:2px solid var(--red);}
+  .sign-icon-box.end{background:#001a00;border:2px solid var(--green);}
+  .sign-details{flex:1;}
+  .sign-name{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;}
+  .sign-dist{color:var(--orange);font-weight:700;font-size:.85rem;}
+  .sign-reg{font-size:.65rem;color:var(--muted);margin-top:2px;}
+  .sign-side{font-size:.68rem;color:var(--yellow);margin-top:2px;font-weight:600;}
+  .dist-line{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--dark3);border:1px solid var(--mid);border-radius:12px;padding:2px 7px;font-size:.65rem;color:var(--orange);font-weight:700;white-space:nowrap;}
+
   /* TOAST + FOOTER + OFFLINE */
   .toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.92rem;padding:9px 18px;border-radius:20px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
   .toast.show{opacity:1;}
@@ -223,7 +282,8 @@
   </div>
   <div class="section-label">Your Trade / Discipline</div>
   <div class="trade-grid">
-    <div class="trade-card" data-trade="telecom"><div class="trade-icon">📡</div><div class="trade-name">Telecom / Openreach</div><div class="trade-desc">Fibre, copper, duct & chamber works</div></div>
+    <div class="trade-card" data-trade="telecom"><div class="trade-icon">📡</div><div class="trade-name">Telecommunications</div><div class="trade-desc">Fibre, copper, duct & chamber works</div></div>
+    <div class="trade-card" data-trade="sdw"><div class="trade-icon">⏱️</div><div class="trade-name">Short Duration Works</div><div class="trade-desc">Works ≤ 1 hour, mobile & static SDW</div></div>
     <div class="trade-card" data-trade="water"><div class="trade-icon">💧</div><div class="trade-name">Water Services</div><div class="trade-desc">Mains, hydrants, meter replacement</div></div>
     <div class="trade-card" data-trade="gas"><div class="trade-icon">🔥</div><div class="trade-name">Gas Engineer</div><div class="trade-desc">Distribution mains & service pipes</div></div>
     <div class="trade-card" data-trade="electric"><div class="trade-icon">⚡</div><div class="trade-name">Electrical / DNO</div><div class="trade-desc">HV/LV cable laying & jointing</div></div>
@@ -239,6 +299,14 @@
     <div class="road-card" data-road="footway"><div class="road-icon">🚶</div>Footway</div>
     <div class="road-card" data-road="cycle"><div class="road-icon">🚲</div>Cycle Lane</div>
   </div>
+  <div class="section-label">Road Width</div>
+  <div class="width-grid" id="width-grid">
+    <div class="width-card" data-width="narrow" data-w="4.8"><div class="width-val">&lt;5.5m</div><div class="width-label">Narrow Road</div><div class="width-desc">Single track, country lanes</div><div class="width-outcome">⛔ Full closure likely</div></div>
+    <div class="width-card" data-width="single" data-w="6.5"><div class="width-val">5.5–7.3m</div><div class="width-label">Single Lane</div><div class="width-desc">Typical residential / B-road</div><div class="width-outcome">🚦 Stop/Go or lights</div></div>
+    <div class="width-card" data-width="dual" data-w="8.5"><div class="width-val">7.3–10m</div><div class="width-label">Two Lane</div><div class="width-desc">A-roads, wider urban roads</div><div class="width-outcome">↗️ Lane closure + taper</div></div>
+    <div class="width-card" data-width="dualcarr" data-w="12"><div class="width-val">&gt;10m</div><div class="width-label">Dual Carriageway</div><div class="width-desc">Dual carriageway / bypass</div><div class="width-outcome">🚧 Complex TM required</div></div>
+  </div>
+  <div id="tm-recommendation" style="display:none"></div>
   <div class="section-label">Speed Limit</div>
   <button class="speed-trigger" id="speed-trigger" onclick="openSpeedModal()">Tap to set speed limit →</button>
   <button class="start-btn" id="start-btn" onclick="startGuide()" disabled>🔶 Generate Setup Plan</button>
@@ -321,12 +389,27 @@
   </div>
 </div>
 
+<!-- SIGNS SCREEN -->
+<div id="screen-signs" class="screen">
+  <div class="signs-header">
+    <button class="back-btn" onclick="showScreen('guide')">← Guide</button>
+    <div class="guide-title" style="color:var(--yellow)">🪧 Signs Layout</div>
+  </div>
+  <div class="signs-wrap">
+    <div id="signs-summary" style="background:var(--dark2);border-radius:8px;padding:12px;margin-bottom:14px;font-size:.78rem;color:#ccc;line-height:1.6;"></div>
+    <div id="signs-list"></div>
+    <div style="background:#1a1000;border:1px solid var(--orange);border-radius:8px;padding:10px 12px;margin-top:4px;font-size:.72rem;color:#ffcc80;line-height:1.5;">
+      📖 <strong>Reference:</strong> Chapter 8 CoP Tables 8-3 & 8-4 · TSRGD 2016 · Signs must be clean, upright and retroreflective at all times
+    </div>
+  </div>
+</div>
+
 <!-- NAVBAR -->
 <nav class="navbar">
   <button class="nav-btn active" onclick="showScreen('home')" id="nav-home"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></button>
   <button class="nav-btn" onclick="showScreen('guide')" id="nav-guide"><div class="nav-icon">📋</div><div class="nav-label">Guide</div></button>
   <button class="nav-btn" onclick="showScreen('camera')" id="nav-camera"><div class="nav-icon">📷</div><div class="nav-label">AR Cam</div></button>
-  <button class="nav-btn" onclick="showScreen('map')" id="nav-map"><div class="nav-icon">🗺️</div><div class="nav-label">Map</div></button>
+  <button class="nav-btn" onclick="showScreen('signs')" id="nav-signs"><div class="nav-icon">🪧</div><div class="nav-label">Signs</div></button>
   <button class="nav-btn" onclick="showScreen('checklist')" id="nav-checklist"><div class="nav-icon">✅</div><div class="nav-label">Checks</div></button>
 </nav>
 
@@ -356,19 +439,26 @@
 
 <script>
 // ── STATE ──
-const S={trade:null,road:null,speed:null,stream:null,placedItems:[],selectedItem:{emoji:'⚠️',label:'Adv Sign'},completedSteps:new Set(),checkedItems:new Set(),lat:null,lng:null,deferredInstall:null};
+const S={trade:null,road:null,speed:null,width:null,stream:null,placedItems:[],selectedItem:{emoji:'⚠️',label:'Adv Sign'},completedSteps:new Set(),checkedItems:new Set(),lat:null,lng:null,deferredInstall:null};
 
 // ── DISTANCES (Chapter 8) ──
 const DIST={20:{advance:25,taper:25,coneGap:1,workZone:'As req'},30:{advance:50,taper:35,coneGap:1,workZone:'As req'},40:{advance:80,taper:50,coneGap:1.5,workZone:'As req'},50:{advance:100,taper:65,coneGap:2,workZone:'As req'},60:{advance:160,taper:85,coneGap:2,workZone:'As req'},70:{advance:200,taper:100,coneGap:2,workZone:'As req'}};
 
 // ── TRADES ──
 const TRADES={
-  telecom:{name:'Telecom / Openreach',icon:'📡',regs:'NRSWA 1991, Chapter 8 CoP, BT Network Code',steps:[
+  telecom:{name:'Telecommunications',icon:'📡',regs:'NRSWA 1991, Chapter 8 CoP, Communications Act 2003',steps:[
     {title:'Notify & Permit',icon:'📝',body:'Submit Street Works Notice (Section 55 NRSWA). Works ≥2 days require a Permit. Check existing permits on One.Network/LAMS. Notify emergency services and relevant highway authority.',warn:'Works without valid permit: HS2A violation — £2,500 fixed penalty notice.',reg:'NRSWA 1991 S.54/55, Traffic Management Act 2004',equip:[],cam:false},
     {title:'Advance Warning Signs',icon:'⚠️',body:'Place "Road Works Ahead" (Chapter 8) at the advance distance from works. On fast roads add a follow-on sign at half the advance distance. Signs must face oncoming traffic. Min size: 450mm (<40mph), 750mm (≥40mph).',warn:'Signs must be retroreflective. Dirty or obscured signs must be cleaned or replaced immediately.',reg:'Chapter 8 CoP Table 8-3, TSRGD 2016',equip:['⚠️ Road Works Ahead signs','🔶 750mm cones','🔦 Amber beacons (night)'],cam:true,distKey:'advance'},
     {title:'Lane Taper / Lead-In',icon:'↗️',body:'Create a taper to guide traffic around the work area. Cones at 45° at the taper distance. Taper length = speed ÷ 2 (metres) for lane closures. 750mm cones on roads ≥40mph, 500mm cones below.',warn:'Never reduce taper length — it is a legal minimum, not a guideline.',reg:'Chapter 8 Table 8-4 Diagram 1, BS EN 13422',equip:['🔶 750mm cones (≥40mph)','🔶 500mm cones (<40mph)','🪧 Direction arrows'],cam:true,distKey:'taper'},
     {title:'Work Zone Guarding',icon:'🚧',body:'Fence off the excavation with Chapter 8 barriers. Min 0.5m clearance from open excavation to nearest cone. Amber rotating beacon at each end of guarding.',warn:'Open excavations adjacent to carriageway MUST have solid safety barrier — not just cones.',reg:'Chapter 8 CoP s.7, CDM 2015',equip:['🚧 Chapter 8 barriers','🔦 Amber beacons','🔋 Battery units (night)'],cam:true,distKey:'workZone'},
     {title:'End of Works & Clearance',icon:'🏁',body:'Place "End of Road Works" sign if required by permit condition. Remove ALL cones, signs and barriers immediately on completion. Submit completion notice within 5 days.',warn:'Leaving equipment on highway without valid permit is an offence under TMA 2004.',reg:'Chapter 8 s.9, TMA 2004, NRSWA S.70',equip:['🪧 End of works sign'],cam:false}
+  ]},
+  sdw:{name:'Short Duration Works',icon:'⏱️',regs:'Chapter 8 CoP Section 8 (SDW), NRSWA 1991, TSM 2006',steps:[
+    {title:'Qualify as SDW',icon:'📋',body:'Short Duration Works (SDW) apply when works are completed within 1 hour at any one location. Two types: STATIC SDW — works stay in one place for up to 1 hour. MOBILE SDW — works move continuously along the highway (e.g. inspection, survey, vegetation clearance). Works must not cause undue delay to traffic.',warn:'If works exceed 1 hour at a location they are NO LONGER classed as SDW — full Chapter 8 TM must be immediately deployed.',reg:'Chapter 8 CoP s.8.1, TSM 2006',equip:[],cam:false},
+    {title:'Static SDW — Signs',icon:'⚠️',body:'Place "Road Works" sign at advance distance each approach. Minimum 2 cones each side of works. For carriageway works: add "Men at Work" sign. On roads ≥40mph: amber flashing beacon on vehicle mandatory. Operatives must remain aware of traffic at all times.',warn:'Static SDW on roads ≥60mph is NOT permitted — full Chapter 8 TM required regardless of duration.',reg:'Chapter 8 CoP Table 8-8, s.8.2',equip:['⚠️ Road Works signs (both approaches)','🔶 Minimum 2 cones each side','🔦 Amber beacon on vehicle (≥40mph)','🦺 Chapter 8 hi-vis mandatory'],cam:true,distKey:'advance'},
+    {title:'Mobile SDW — Vehicle Signing',icon:'🚗',body:'Vehicle must display: "Road Works" sign at rear, amber rotating or LED beacon, Chapter 8 hi-vis on all operatives. Works vehicle travels slowly in nearside lane. Maximum working speed 10mph below posted limit. Safety zone of minimum 2 cones behind vehicle.',warn:'Mobile SDW vehicle must NEVER reverse on a live carriageway.',reg:'Chapter 8 CoP s.8.3, Road Vehicles (Construction & Use) Regs',equip:['🔦 Amber rotating beacon on vehicle','🪧 Road Works sign (rear of vehicle)','🔶 2 cones behind vehicle','🦺 Hi-vis all operatives'],cam:true,distKey:'workZone'},
+    {title:'SDW — Prohibited Situations',icon:'🚫',body:'SDW must NOT be used for: excavations of any depth, works on roads ≥60mph, works requiring lane closure on dual carriageways, works at signalised junctions, works causing queues >200m, or works on bends with restricted visibility.',warn:'Using SDW procedures in a prohibited situation is a serious legal breach — revert to full Chapter 8 immediately.',reg:'Chapter 8 CoP s.8.1.3',equip:[],cam:false},
+    {title:'SDW — Completion',icon:'✅',body:'Remove all signs and cones immediately on completion. Do not leave any equipment on highway. If works are not completed within 1 hour — stop, deploy full Chapter 8 TM, then resume. Log time of start and completion in site diary.',warn:'Leaving SDW cones/signs beyond 1 hour without upgrading to full Chapter 8 TM is a highway offence.',reg:'Chapter 8 CoP s.8.4, TMA 2004',equip:[],cam:false}
   ]},
   water:{name:'Water Services',icon:'💧',regs:'NRSWA 1991 S.50, Chapter 8 CoP, SROH Code',steps:[
     {title:'S50 Licence & Permit',icon:'📝',body:'Obtain Section 50 licence (NRSWA). Submit notice on LAMS. For planned works ≥3 days — Major Works permit required.',warn:'Unlicensed excavation on public highway is an offence under NRSWA S.50.',reg:'NRSWA 1991 S.50, TMA 2004',equip:[],cam:false},
@@ -466,6 +556,25 @@ document.querySelectorAll('.trade-card').forEach(c=>c.addEventListener('click',(
 document.querySelectorAll('.road-card').forEach(c=>c.addEventListener('click',()=>{
   document.querySelectorAll('.road-card').forEach(x=>x.classList.remove('selected'));
   c.classList.add('selected');S.road=c.dataset.road;checkReady();
+}));
+
+// ── ROAD WIDTH ──
+const TM_RULES={
+  narrow:{title:'⛔ Full Road Closure Required',msg:'Road width under 5.5m — insufficient space for works and passing traffic. Full closure with Stop/Go boards or temp lights required. Pedestrian diversion route mandatory. HA approval needed.',cls:'closure',tmType:'Full Closure'},
+  single:{title:'🚦 One-Way Working — Stop/Go or Temp Lights',msg:'Road width 5.5–7.3m — one lane can pass while works occupy the other. Use Stop/Go boards (trained operatives both ends) or automatic temp traffic lights. Cone off works side fully.',cls:'oneway',tmType:'One-Way Working'},
+  dual:{title:'↗️ Lane Closure with Taper',msg:'Road width 7.3–10m — sufficient for lane closure. Taper cones to merge traffic into remaining lane. Arrow board mandatory at ≥50mph. Buffer zone behind last cone before work area.',cls:'laneclosure',tmType:'Lane Closure'},
+  dualcarr:{title:'🚧 Complex TM — HA Approval Required',msg:'Dual carriageway — complex traffic management required. Lane closure on each carriageway separately. Arrow boards mandatory. Portable VMS for advance warning. Must have approved TM plan from Highway Authority.',cls:'closure',tmType:'Dual Carriageway TM'}
+};
+
+document.querySelectorAll('.width-card').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('.width-card').forEach(x=>x.classList.remove('selected'));
+  c.classList.add('selected');
+  S.width=c.dataset.width;
+  const rule=TM_RULES[S.width];
+  const box=document.getElementById('tm-recommendation');
+  box.style.display='block';
+  box.innerHTML=`<div class="tm-box ${rule.cls}"><div class="tm-box-title">${rule.title}</div>${rule.msg}</div>`;
+  checkReady();
 }));
 function checkReady(){document.getElementById('start-btn').disabled=!(S.trade&&S.road&&S.speed);}
 function openSpeedModal(){document.getElementById('speed-modal').classList.add('open');}
@@ -612,3 +721,5 @@ renderChecklist();
 </script>
 </body>
 </html>
+conesout.html
+Displaying conesout.html.
