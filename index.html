@@ -453,7 +453,7 @@
 
   <div class="section-label">Speed Limit</div>
   <button class="speed-trigger" id="speed-trigger" onclick="openSpeedModal()">Tap to set speed limit →</button>
-  <button class="start-btn" id="start-btn" onclick="startGuide()" disabled>🔶 Generate Setup Plan</button>
+  <button class="start-btn" id="start-btn" onclick="startGuide()">🔶 Generate Setup Plan</button>
 </div>
 
 <!-- GUIDE -->
@@ -893,9 +893,10 @@ function showScreen(n){
 
 // ════════ SELECTIONS ════════
 function checkReady(){
+  const ready=!!(S.trade&&S.road&&S.speed);
   const btn=document.getElementById('start-btn');
-  btn.disabled=!(S.trade&&S.road&&S.speed);
-  btn.style.background=!(S.trade&&S.road&&S.speed)?'':'var(--orange)';
+  btn.style.background=ready?'var(--orange)':'#555';
+  btn.style.color=ready?'#000':'#999';
 }
 document.querySelectorAll('.trade-card').forEach(c=>c.addEventListener('click',()=>{
   document.querySelectorAll('.trade-card').forEach(x=>x.classList.remove('selected'));
@@ -985,7 +986,9 @@ document.querySelectorAll('.speed-opt').forEach(o=>o.addEventListener('click',()
 
 // ════════ GUIDE ════════
 function startGuide(){
-  if(!S.trade||!S.road||!S.speed)return;
+  if(!S.trade){showToast('Please select your trade first');showScreen('home');return;}
+  if(!S.road){showToast('Please select a road type');showScreen('home');return;}
+  if(!S.speed){showToast('Please set the speed limit');openSpeedModal();return;}
   const tr=TRADES[S.trade],d=DIST[S.speed]||DIST[30];
   document.getElementById('guide-title').textContent=`${tr.icon} ${tr.name}`;
   const c=document.getElementById('steps-container');c.innerHTML='';
