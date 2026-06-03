@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -235,6 +234,89 @@
   .sign-side{font-size:.68rem;color:var(--yellow);margin-top:2px;font-weight:600;}
   .dist-line{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--dark3);border:1px solid var(--mid);border-radius:12px;padding:2px 7px;font-size:.65rem;color:var(--orange);font-weight:700;white-space:nowrap;}
 
+  /* DISCLAIMER */
+  .disclaimer-overlay{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;overflow-y:auto;}
+  .disclaimer-overlay.hidden{display:none;}
+  .disclaimer-header{background:var(--orange);padding:20px 20px 16px;flex-shrink:0;}
+  .disclaimer-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.8rem;color:#000;display:flex;align-items:center;gap:8px;}
+  .disclaimer-logo span{color:#fff;}
+  .disclaimer-tagline{font-size:.78rem;color:rgba(0,0,0,.7);margin-top:2px;font-weight:600;}
+  .disclaimer-body{padding:20px;flex:1;}
+  .disclaimer-title{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:900;text-transform:uppercase;color:var(--orange);margin-bottom:4px;}
+  .disclaimer-subtitle{font-size:.78rem;color:var(--muted);margin-bottom:16px;}
+  .disclaimer-box{background:var(--dark2);border:1px solid var(--mid);border-radius:8px;padding:14px;margin-bottom:12px;}
+  .disclaimer-box-title{font-family:'Barlow Condensed',sans-serif;font-size:.88rem;font-weight:800;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .disclaimer-box p{font-size:.78rem;color:#ccc;line-height:1.6;margin-bottom:6px;}
+  .disclaimer-box p:last-child{margin-bottom:0;}
+  .disclaimer-box.warn{border-color:var(--red);background:#0d0000;}
+  .disclaimer-box.warn .disclaimer-box-title{color:var(--red);}
+  .disclaimer-box.warn p{color:#ffccbc;}
+  .disclaimer-scroll-note{font-size:.7rem;color:var(--muted);text-align:center;margin-bottom:12px;font-style:italic;}
+  .disclaimer-checkbox-row{display:flex;align-items:flex-start;gap:12px;background:var(--dark2);border:2px solid var(--mid);border-radius:8px;padding:14px;margin-bottom:12px;cursor:pointer;transition:border-color .2s;}
+  .disclaimer-checkbox-row.checked{border-color:var(--green);}
+  .disclaimer-cb{width:24px;height:24px;border:2px solid var(--mid);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:background .15s,border-color .15s;margin-top:1px;}
+  .disclaimer-checkbox-row.checked .disclaimer-cb{background:var(--green);border-color:var(--green);}
+  .disclaimer-cb-text{font-size:.78rem;color:#ccc;line-height:1.5;}
+  .disclaimer-cb-text strong{color:var(--text);}
+  .disclaimer-accept-btn{width:100%;background:var(--mid);color:var(--muted);border:none;border-radius:10px;padding:18px;font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;cursor:not-allowed;transition:background .2s,color .2s;margin-bottom:8px;}
+  .disclaimer-accept-btn.ready{background:var(--orange);color:#000;cursor:pointer;}
+  .disclaimer-accept-btn.ready:active{background:var(--orange-bright);}
+  .disclaimer-version{text-align:center;font-size:.62rem;color:#444;padding-bottom:20px;}
+
+  /* VEHICLE POSITIONING SCREEN */
+  #screen-vehicle{overflow-y:auto;background:var(--dark);}
+  .vehicle-header{background:var(--dark2);border-bottom:3px solid var(--blue);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .vehicle-wrap{padding:14px 16px;}
+  .veh-section{background:var(--dark2);border-radius:10px;margin-bottom:12px;overflow:hidden;}
+  .veh-section-title{background:var(--dark3);padding:12px 14px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--mid);}
+  .veh-section-title .veh-icon{font-size:1.3rem;}
+  .veh-rule{padding:10px 14px;border-bottom:1px solid #1c1c1c;display:flex;gap:10px;align-items:flex-start;}
+  .veh-rule:last-child{border-bottom:none;}
+  .veh-rule-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+  .veh-rule-text{flex:1;}
+  .veh-rule-title{font-size:.85rem;font-weight:700;line-height:1.3;}
+  .veh-rule-sub{font-size:.72rem;color:var(--muted);margin-top:2px;line-height:1.4;}
+  .veh-rule-dist{display:inline-block;background:var(--dark3);border:1px solid var(--orange);color:var(--orange);font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:10px;margin-top:4px;}
+  .veh-rule.danger .veh-rule-title{color:#ff8a80;}
+  .veh-rule.danger{background:#0d0000;}
+  .veh-rule.good .veh-rule-title{color:#a5d6a7;}
+  .veh-rule.good{background:#000d00;}
+
+  /* VEHICLE DIAGRAM */
+  .veh-diagram{padding:14px;background:var(--dark3);border-radius:8px;margin:10px 14px 14px;}
+  .veh-diagram-title{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;color:var(--yellow);margin-bottom:10px;text-align:center;}
+  .road-diagram{background:#1a1a1a;border-radius:8px;padding:12px 8px;position:relative;display:flex;flex-direction:column;gap:6px;align-items:center;}
+  .diag-row{display:flex;align-items:center;gap:8px;width:100%;justify-content:center;}
+  .diag-label{font-size:.65rem;color:var(--muted);text-align:center;min-width:60px;}
+  .diag-arrow{color:var(--yellow);font-size:.8rem;font-weight:700;}
+  .diag-vehicle{background:#1a2a3a;border:2px solid var(--blue);border-radius:6px;padding:6px 10px;font-size:.75rem;font-weight:700;color:var(--blue);text-align:center;min-width:80px;}
+  .diag-vehicle.shadow{border-color:var(--orange);color:var(--orange);background:#2a1500;}
+  .diag-vehicle.works{border-color:var(--yellow);color:var(--yellow);background:#1a1a00;}
+  .diag-cone-row{display:flex;gap:4px;justify-content:center;}
+  .diag-cone{font-size:.9rem;}
+  .diag-work{background:#1a0000;border:2px dashed var(--red);border-radius:6px;padding:8px 16px;font-size:.75rem;font-weight:700;color:var(--red);text-align:center;}
+  .diag-dist-badge{background:var(--dark2);border:1px solid var(--mid);border-radius:12px;padding:3px 8px;font-size:.65rem;color:var(--orange);font-weight:700;}
+  .speed-veh-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.72rem;}
+  .speed-veh-table th{background:var(--dark3);color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;padding:6px 8px;text-align:left;border-bottom:1px solid var(--mid);}
+  .speed-veh-table td{padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;vertical-align:top;}
+  .speed-veh-table tr:last-child td{border-bottom:none;}
+  .speed-veh-table .req{color:var(--green);font-weight:600;}
+  .speed-veh-table .warn{color:var(--red);font-weight:600;}
+
+  /* VISIBILITY */
+  .vis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 12px;}
+  .vis-card{background:var(--dark3);border:2px solid var(--mid);border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:border-color .2s;}
+  .vis-card.selected{border-color:var(--orange);background:#2a1500;}
+  .vis-card .vis-icon{font-size:1.4rem;margin-bottom:3px;}
+  .vis-card .vis-label{font-size:.72rem;font-weight:700;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;}
+  .vis-card .vis-sub{font-size:.62rem;color:var(--muted);margin-top:2px;}
+  .vis-warning{margin:0 16px 12px;background:#1a0500;border:2px solid var(--red);border-radius:8px;padding:12px 14px;display:none;}
+  .vis-warning.show{display:block;}
+  .vis-warning-title{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+  .vis-rule{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:.78rem;color:#ffccbc;line-height:1.4;}
+  .vis-rule:last-child{margin-bottom:0;}
+  .vis-extra-badge{display:inline-block;background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;padding:3px 8px;border-radius:10px;margin-left:6px;}
+
   /* TOAST + FOOTER + OFFLINE */
   .toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.92rem;padding:9px 18px;border-radius:20px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
   .toast.show{opacity:1;}
@@ -250,6 +332,71 @@
 <body>
 
 <div class="offline-banner" id="offline-banner">📵 No connection — Guide & Checklist work offline. Map unavailable.</div>
+
+<!-- ══════════════════════════════════════
+     DISCLAIMER — must accept to proceed
+══════════════════════════════════════ -->
+<div class="disclaimer-overlay" id="disclaimer-overlay">
+  <div class="disclaimer-header">
+    <div class="disclaimer-logo">🔶 Cones<span>Out</span></div>
+    <div class="disclaimer-tagline">Road Works Setup Guide · © 2026 Courseway Ltd</div>
+  </div>
+  <div class="disclaimer-body">
+
+    <div class="disclaimer-title">Important Disclaimer</div>
+    <div class="disclaimer-subtitle">Please read carefully before using this application</div>
+
+    <div class="disclaimer-box warn">
+      <div class="disclaimer-box-title">⚠️ Guidance Tool Only</div>
+      <p>ConesOut is a <strong>guidance and reference tool</strong> designed to assist trained utility workers and highway operatives in setting out signs, lights and guarding at road works.</p>
+      <p>This app does <strong>not</strong> replace, supersede or constitute a substitute for formal training, a site-specific Risk Assessment, Method Statement (RAMS), or a Traffic Management Plan approved by the relevant Highway Authority.</p>
+      <p>All distances, signing requirements and procedures shown are based on <strong>Chapter 8 of the Traffic Signs Manual, TSRGD 2016, NRSWA 1991 and TMA 2004</strong> as guidance only. Specific site conditions may require variations to these standard arrangements.</p>
+    </div>
+
+    <div class="disclaimer-box">
+      <div class="disclaimer-box-title">📋 User Responsibilities</div>
+      <p>By using this app you confirm that you are a <strong>trained and competent operative, supervisor or manager</strong> responsible for road works traffic management.</p>
+      <p>You remain solely responsible for assessing site-specific conditions, obtaining all required permits and licences, and ensuring all traffic management complies with current legislation and your employer's approved procedures.</p>
+      <p>Works on the public highway must only be carried out by persons with the appropriate <strong>LANTRA, NRSWA or equivalent qualification</strong> for the work being undertaken.</p>
+    </div>
+
+    <div class="disclaimer-box">
+      <div class="disclaimer-box-title">⚖️ Limitation of Liability</div>
+      <p><strong>Courseway Ltd</strong> accepts no liability for any loss, injury, damage or legal consequence arising from reliance on information provided by this application.</p>
+      <p>Regulations and codes of practice are subject to change. Users are responsible for ensuring they are working to the <strong>current edition</strong> of all applicable legislation and guidance at the time of works.</p>
+      <p>In the event of any conflict between this app and official published guidance, the <strong>official published guidance takes precedence</strong> at all times.</p>
+    </div>
+
+    <div class="disclaimer-box">
+      <div class="disclaimer-box-title">🚨 Emergency Situations</div>
+      <p>This app is not designed for use in emergency situations. If you discover a hazard requiring immediate action, <strong>contact emergency services (999) and your company control room immediately</strong>. Do not rely on this app in a live emergency.</p>
+    </div>
+
+    <div class="disclaimer-scroll-note">You must read and accept all terms before accessing ConesOut</div>
+
+    <div class="disclaimer-checkbox-row" id="cb-row-1" onclick="toggleCb(1)">
+      <div class="disclaimer-cb" id="cb-1"></div>
+      <div class="disclaimer-cb-text"><strong>I confirm I am a trained operative, supervisor or manager</strong> responsible for road works traffic management and I have the appropriate qualifications for the work I am undertaking.</div>
+    </div>
+
+    <div class="disclaimer-checkbox-row" id="cb-row-2" onclick="toggleCb(2)">
+      <div class="disclaimer-cb" id="cb-2"></div>
+      <div class="disclaimer-cb-text"><strong>I understand ConesOut is a guidance tool only</strong> and does not replace a site-specific RAMS, approved TM plan, or formal training. I remain solely responsible for all on-site decisions.</div>
+    </div>
+
+    <div class="disclaimer-checkbox-row" id="cb-row-3" onclick="toggleCb(3)">
+      <div class="disclaimer-cb" id="cb-3"></div>
+      <div class="disclaimer-cb-text"><strong>I accept the terms of use</strong> and acknowledge that Courseway Ltd accepts no liability for any consequence arising from use of this application.</div>
+    </div>
+
+    <button class="disclaimer-accept-btn" id="disclaimer-accept-btn" onclick="acceptDisclaimer()" disabled>
+      Accept & Enter ConesOut
+    </button>
+
+    <div class="disclaimer-version">ConesOut v1.0 · Courseway Ltd · conesout.app · info@conesout.app</div>
+
+  </div>
+</div>
 
 <div class="topbar">
   <div class="topbar-logo">🔶 Cones<span>Out</span></div>
@@ -293,6 +440,17 @@
     <div class="width-card" data-width="dualcarr" data-w="12"><div class="width-val">&gt;10m</div><div class="width-label">Dual Carriageway</div><div class="width-desc">Dual carriageway / bypass</div><div class="width-outcome">🚧 Complex TM required</div></div>
   </div>
   <div id="tm-recommendation" style="display:none"></div>
+  <div class="section-label">Approach Visibility</div>
+  <div class="vis-grid">
+    <div class="vis-card" data-vis="clear"><div class="vis-icon">✅</div><div class="vis-label">Clear</div><div class="vis-sub">Straight road, good visibility</div></div>
+    <div class="vis-card" data-vis="bend"><div class="vis-icon">↩️</div><div class="vis-label">Bend</div><div class="vis-sub">Sharp or blind bend on approach</div></div>
+    <div class="vis-card" data-vis="brow"><div class="vis-icon">⛰️</div><div class="vis-label">Brow / Dip</div><div class="vis-sub">Hill crest or dip obscures view</div></div>
+    <div class="vis-card" data-vis="junction"><div class="vis-icon">✖️</div><div class="vis-label">Junction</div><div class="vis-sub">Works near or at a junction</div></div>
+    <div class="vis-card" data-vis="parked"><div class="vis-icon">🚗</div><div class="vis-label">Parked Vehicles</div><div class="vis-sub">Sight line obscured by parking</div></div>
+    <div class="vis-card" data-vis="multi"><div class="vis-icon">⚠️</div><div class="vis-label">Multiple Hazards</div><div class="vis-sub">Two or more of the above</div></div>
+  </div>
+  <div class="vis-warning" id="vis-warning"></div>
+
   <div class="section-label">Speed Limit</div>
   <button class="speed-trigger" id="speed-trigger" onclick="openSpeedModal()">Tap to set speed limit →</button>
   <button class="start-btn" id="start-btn" onclick="startGuide()" disabled>🔶 Generate Setup Plan</button>
@@ -390,12 +548,185 @@
   </div>
 </div>
 
+<!-- VEHICLE POSITIONING SCREEN -->
+<div id="screen-vehicle" class="screen">
+  <div class="vehicle-header">
+    <button class="back-btn" onclick="showScreen('guide')">← Guide</button>
+    <div class="guide-title" style="color:var(--blue)">🚗 Vehicle Positioning</div>
+  </div>
+  <div class="vehicle-wrap">
+
+    <!-- Speed table -->
+    <div class="veh-section">
+      <div class="veh-section-title"><span class="veh-icon">📏</span>Buffer Distances by Speed</div>
+      <div style="padding:12px 14px;">
+        <table class="speed-veh-table">
+          <tr><th>Speed</th><th>Buffer Zone</th><th>Shadow Vehicle</th><th>Cone Size</th></tr>
+          <tr><td>20mph</td><td class="req">5m min</td><td>Not required</td><td>500mm</td></tr>
+          <tr><td>30mph</td><td class="req">5m min</td><td>Not required</td><td>500mm</td></tr>
+          <tr><td>40mph</td><td class="req">10m min</td><td>Recommended</td><td>750mm</td></tr>
+          <tr><td>50mph</td><td class="req">15m min</td><td class="warn">Required</td><td>750mm</td></tr>
+          <tr><td>60mph</td><td class="req">25m min</td><td class="warn">Required</td><td>750mm</td></tr>
+          <tr><td>70mph</td><td class="req">25m min</td><td class="warn">Required</td><td>750mm</td></tr>
+        </table>
+        <div style="font-size:.65rem;color:var(--muted);margin-top:6px;">📖 Chapter 8 CoP Table 8-5 · HSE HSG185</div>
+      </div>
+    </div>
+
+    <!-- Works vehicle rules -->
+    <div class="veh-section">
+      <div class="veh-section-title"><span class="veh-icon">🚚</span>Works Vehicle Rules</div>
+      <div class="veh-rule good">
+        <div class="veh-rule-icon">✅</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Park as close to kerb as possible</div>
+          <div class="veh-rule-sub">Minimum 0.5m from kerb edge. Wheels turned away from work area so vehicle rolls away from operatives if struck.</div>
+        </div>
+      </div>
+      <div class="veh-rule good">
+        <div class="veh-rule-icon">✅</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Keys in ignition at all times</div>
+          <div class="veh-rule-sub">Vehicle must be able to be moved instantly if struck or in emergency. Handbrake on, in gear.</div>
+        </div>
+      </div>
+      <div class="veh-rule good">
+        <div class="veh-rule-icon">✅</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Hazard lights AND amber beacon on</div>
+          <div class="veh-rule-sub">Both must be active whenever vehicle is stationary on or adjacent to live carriageway. Amber beacon flash rate 60–120 per minute.</div>
+        </div>
+      </div>
+      <div class="veh-rule good">
+        <div class="veh-rule-icon">✅</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Vehicle positioned between traffic and operatives</div>
+          <div class="veh-rule-sub">The works vehicle acts as a physical buffer. Operatives must NEVER work on the traffic side of the vehicle.</div>
+        </div>
+      </div>
+      <div class="veh-rule good">
+        <div class="veh-rule-icon">✅</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">"Road Works" sign displayed on vehicle</div>
+          <div class="veh-rule-sub">Rear-facing sign mandatory. On mobile works: also display at front. Sign must be clean and legible.</div>
+          <div class="veh-rule-dist">TSRGD 2016 · Chapter 8 s.5.4</div>
+        </div>
+      </div>
+      <div class="veh-rule danger">
+        <div class="veh-rule-icon">🚫</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">NO reversing on live carriageway</div>
+          <div class="veh-rule-sub">Absolute prohibition. If reversing is unavoidable, a trained banksman must be in position with full visibility before any movement.</div>
+          <div class="veh-rule-dist">Chapter 8 s.5.6 · CDM 2015</div>
+        </div>
+      </div>
+      <div class="veh-rule danger">
+        <div class="veh-rule-icon">🚫</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">NO operative between vehicle and live traffic</div>
+          <div class="veh-rule-sub">Operatives must always be on the protected (kerb) side of the vehicle. Working on the offside of a parked vehicle on live road is a serious safety violation.</div>
+        </div>
+      </div>
+      <div class="veh-rule danger">
+        <div class="veh-rule-icon">🚫</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">NO vehicle parked on approach side of works</div>
+          <div class="veh-rule-sub">Vehicle must be parked on the departure side (downstream) of the work area — never between the advance signs and the works.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shadow vehicle -->
+    <div class="veh-section">
+      <div class="veh-section-title"><span class="veh-icon">🛡️</span>Shadow / Crash Protection Vehicle</div>
+      <div class="veh-rule">
+        <div class="veh-rule-icon">ℹ️</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Required on all roads ≥50mph</div>
+          <div class="veh-rule-sub">A dedicated vehicle parked behind the works vehicle, acting purely as a crash buffer. It must have a truck-mounted attenuator (TMA) on motorways and high-speed A-roads.</div>
+          <div class="veh-rule-dist">≥50mph: Required · Motorway: TMA mandatory</div>
+        </div>
+      </div>
+      <div class="veh-rule">
+        <div class="veh-rule-icon">🔦</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Shadow vehicle must display arrow board</div>
+          <div class="veh-rule-sub">Arrow board pointing away from works, directing traffic. Amber beacon active. No operatives to work from or around shadow vehicle.</div>
+        </div>
+      </div>
+      <div class="veh-rule">
+        <div class="veh-rule-icon">📏</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Shadow vehicle separation distance</div>
+          <div class="veh-rule-sub">Minimum 5m between shadow vehicle and works vehicle. Shadow vehicle driver must remain in cab, seatbelt on, at all times.</div>
+          <div class="veh-rule-dist">Chapter 8 CoP s.5.5 · HA BD 52</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diagram -->
+    <div class="veh-section">
+      <div class="veh-section-title"><span class="veh-icon">📐</span>Typical Layout Diagram</div>
+      <div class="veh-diagram">
+        <div class="veh-diagram-title">Traffic Direction → → →</div>
+        <div class="road-diagram">
+          <div class="diag-label" style="color:var(--muted);font-size:.65rem;">⬆ Traffic approaching</div>
+          <div class="diag-dist-badge">Advance sign distance</div>
+          <div class="diag-vehicle shadow">⚠️ ADVANCE<br>SIGN</div>
+          <div class="diag-dist-badge">Taper distance</div>
+          <div class="diag-cone-row">🔶🔶🔶🔶🔶</div>
+          <div style="font-size:.62rem;color:var(--muted);">↙ Taper guides traffic</div>
+          <div class="diag-vehicle shadow">↗️ ARROW<br>BOARD</div>
+          <div class="diag-dist-badge" style="border-color:var(--orange);">Shadow vehicle (≥50mph)</div>
+          <div class="diag-vehicle" style="border-color:var(--blue);color:var(--blue);">🚚 WORKS<br>VEHICLE</div>
+          <div class="diag-dist-badge">Buffer zone — see table above</div>
+          <div class="diag-work">⛏️ WORK AREA<br>Operatives here</div>
+          <div class="diag-cone-row">🔶🔶🔶</div>
+          <div class="diag-label" style="color:var(--muted);font-size:.65rem;">⬇ Traffic departing</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile works -->
+    <div class="veh-section">
+      <div class="veh-section-title"><span class="veh-icon">🚐</span>Mobile Works Vehicle Rules</div>
+      <div class="veh-rule">
+        <div class="veh-rule-icon">🐢</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Maximum speed: 10mph below posted limit</div>
+          <div class="veh-rule-sub">Mobile works vehicles must travel at least 10mph below the road speed limit while works are in progress. Minimum 2 cones deployed behind vehicle at all times.</div>
+        </div>
+      </div>
+      <div class="veh-rule">
+        <div class="veh-rule-icon">🔦</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Amber beacon + Road Works sign mandatory</div>
+          <div class="veh-rule-sub">Both required at all times during mobile works. Sign at rear minimum. Hazard lights also on.</div>
+          <div class="veh-rule-dist">Chapter 8 s.8.3 · TSRGD 2016</div>
+        </div>
+      </div>
+      <div class="veh-rule danger">
+        <div class="veh-rule-icon">🚫</div>
+        <div class="veh-rule-text">
+          <div class="veh-rule-title">Never stop mid-carriageway unnecessarily</div>
+          <div class="veh-rule-sub">If the mobile works vehicle must stop, operatives must immediately deploy static signing. Mobile SDW becomes static SDW — 1-hour limit applies from that point.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#00101a;border:1px solid var(--blue);border-radius:8px;padding:10px 12px;margin-bottom:20px;font-size:.72rem;color:#82b1ff;line-height:1.5;">
+      📖 <strong>Reference:</strong> Chapter 8 CoP s.5 · HSE HSG185 · CDM 2015 · Road Vehicles (Construction & Use) Regulations · BD 52 (Motorway TMA)
+    </div>
+
+  </div>
+</div>
+
 <!-- NAVBAR -->
 <nav class="navbar">
   <button class="nav-btn active" onclick="showScreen('home')" id="nav-home"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></button>
   <button class="nav-btn" onclick="showScreen('guide')" id="nav-guide"><div class="nav-icon">📋</div><div class="nav-label">Guide</div></button>
-  <button class="nav-btn" onclick="showScreen('camera')" id="nav-camera"><div class="nav-icon">📷</div><div class="nav-label">AR Cam</div></button>
   <button class="nav-btn" onclick="showScreen('signs')" id="nav-signs"><div class="nav-icon">🪧</div><div class="nav-label">Signs</div></button>
+  <button class="nav-btn" onclick="showScreen('vehicle')" id="nav-vehicle"><div class="nav-icon">🚗</div><div class="nav-label">Vehicle</div></button>
   <button class="nav-btn" onclick="showScreen('checklist')" id="nav-checklist"><div class="nav-icon">✅</div><div class="nav-label">Checks</div></button>
 </nav>
 
@@ -425,7 +756,7 @@
 
 <script>
 // ── STATE ──
-const S={trade:null,road:null,speed:null,width:null,stream:null,placedItems:[],selectedItem:{emoji:'⚠️',label:'Adv Sign'},completedSteps:new Set(),checkedItems:new Set(),lat:null,lng:null,deferredInstall:null};
+const S={trade:null,road:null,speed:null,width:null,vis:'clear',stream:null,placedItems:[],selectedItem:{emoji:'⚠️',label:'Adv Sign'},completedSteps:new Set(),checkedItems:new Set(),lat:null,lng:null,deferredInstall:null};
 
 // ── DISTANCES (Chapter 8) ──
 const DIST={20:{advance:25,taper:25,coneGap:1,workZone:'As req'},30:{advance:50,taper:35,coneGap:1,workZone:'As req'},40:{advance:80,taper:50,coneGap:1.5,workZone:'As req'},50:{advance:100,taper:65,coneGap:2,workZone:'As req'},60:{advance:160,taper:85,coneGap:2,workZone:'As req'},70:{advance:200,taper:100,coneGap:2,workZone:'As req'}};
@@ -524,6 +855,32 @@ const CHECKS=[
   ]}
 ];
 
+// ════════ DISCLAIMER ════════
+const CB={1:false,2:false,3:false};
+function toggleCb(n){
+  CB[n]=!CB[n];
+  const row=document.getElementById(`cb-row-${n}`);
+  const cb=document.getElementById(`cb-${n}`);
+  row.classList.toggle('checked',CB[n]);
+  cb.textContent=CB[n]?'✓':'';
+  const allChecked=CB[1]&&CB[2]&&CB[3];
+  const btn=document.getElementById('disclaimer-accept-btn');
+  btn.disabled=!allChecked;
+  btn.classList.toggle('ready',allChecked);
+}
+function acceptDisclaimer(){
+  if(!CB[1]||!CB[2]||!CB[3])return;
+  document.getElementById('disclaimer-overlay').classList.add('hidden');
+  // Remember acceptance for this session
+  try{sessionStorage.setItem('conesout-accepted','1');}catch(e){}
+}
+// Check if already accepted this session
+try{
+  if(sessionStorage.getItem('conesout-accepted')==='1'){
+    document.getElementById('disclaimer-overlay').classList.add('hidden');
+  }
+}catch(e){}
+
 // ════════ SCREENS ════════
 function showScreen(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -562,7 +919,55 @@ document.querySelectorAll('.width-card').forEach(c=>c.addEventListener('click',(
   box.innerHTML=`<div class="tm-box ${rule.cls}"><div class="tm-box-title">${rule.title}</div>${rule.msg}</div>`;
   checkReady();
 }));
-function checkReady(){document.getElementById('start-btn').disabled=!(S.trade&&S.road&&S.speed);}
+// ── VISIBILITY ──
+const VIS_RULES={
+  clear:{show:false},
+  bend:{show:true,title:'⚠️ Blind Bend — Extra Signs Required',rules:[
+    {i:'↩️',t:'Extra advance sign BEFORE the bend',s:'Place an additional "Road Works Ahead" sign before the bend so drivers see it BEFORE their sight line is restricted. This is in addition to the standard advance distance sign.'},
+    {i:'📏',t:'Double the advance distance',s:'If the bend reduces visibility below the standard advance distance for the speed limit, double the advance distance or place the sign at the furthest visible point from the bend.'},
+    {i:'🔦',t:'Amber beacon visible from both directions',s:'Ensure amber beacons at the work zone are visible on the bend approach. Add additional beacons if necessary.'},
+    {i:'🚦',t:'Consider temp traffic lights',s:'On narrow roads where the bend prevents oncoming drivers seeing each other, Stop/Go boards or temp lights are strongly recommended regardless of road width.'}
+  ]},
+  brow:{show:true,title:'⚠️ Brow of Hill / Dip — Extra Signs Required',rules:[
+    {i:'⛰️',t:'Sign placed at furthest visible point on approach',s:'The advance sign must be visible from a safe stopping distance. On a brow or dip, place the sign BEFORE the crest/dip so it is visible at the furthest point a driver can see it.'},
+    {i:'📏',t:'Increase advance distance significantly',s:'Standard advance distances assume clear sight lines. On a brow, increase the advance distance to the furthest point of clear visibility — which may be 2–3× the standard distance.'},
+    {i:'➕',t:'Additional intermediate signs',s:'Place a second "Road Works" sign on the approach side of the brow/dip in addition to the advance sign. Where the works are beyond the crest, a sign on each side of the brow is required.'},
+    {i:'🔦',t:'Illuminated or fluorescent signs at night',s:'Works beyond a brow are especially hazardous at night. Road Danger Lamps must be placed at the brow itself so drivers are warned before cresting the hill.'}
+  ]},
+  junction:{show:true,title:'⚠️ Junction — Additional Considerations',rules:[
+    {i:'✖️',t:'Signs on ALL approaches to the junction',s:'If works are at or near a junction, signs must be placed on every road that approaches the works — not just the main road. All side roads need "Road Works Ahead" signing.'},
+    {i:'🚦',t:'Temp lights may need to replace junction signals',s:'If the works affect a signalised junction, the existing traffic signals may need to be switched to flashing amber or bagged out. HA authorisation required.'},
+    {i:'📋',t:'Notify junction users separately',s:'Businesses and residents using the junction must be notified. Include junction closure/restriction in the permit application.'},
+    {i:'📏',t:'Set back works from junction if possible',s:'Wherever possible, position works to maintain clear junction visibility. If works must encroach on the junction, full closure with diversion is normally required.'}
+  ]},
+  parked:{show:true,title:'⚠️ Parked Vehicles Restricting Sight Lines',rules:[
+    {i:'🚗',t:'Advance sign positioned beyond parked vehicles',s:'Place the advance sign at the last point of clear visibility — not just at the standard advance distance. If parked cars obscure the sign, move it further back on the approach.'},
+    {i:'📞',t:'Request parking suspension if needed',s:'If parked vehicles persistently obstruct sight lines to the works, contact the local authority to suspend parking bays. This requires a Traffic Regulation Order — apply in advance.'},
+    {i:'🔦',t:'Additional beacons to compensate',s:'Use additional amber beacons at intervals from the last clear visibility point to the works to draw driver attention progressively.'}
+  ]},
+  multi:{show:true,title:'🚨 Multiple Visibility Hazards — Enhanced TM Required',rules:[
+    {i:'🚨',t:'Treat as highest risk scenario',s:'Multiple visibility restrictions compound risk significantly. Each hazard requires its own extra signing. Do not assume one sign covers all hazards.'},
+    {i:'📋',t:'Consult Highway Authority before proceeding',s:'Where two or more visibility restrictions exist, the TM plan should be reviewed by the HA before works commence. Works may require police presence or full closure.'},
+    {i:'📏',t:'Maximum advance distances on all approaches',s:'Apply the largest advance distance applicable and place signs at each visibility restriction point on every approach. Extra cones between signs to maintain driver awareness.'},
+    {i:'🚦',t:'Two-way temp lights strongly recommended',s:'For multiple hazard sites, automatic temp traffic lights are strongly preferable over Stop/Go boards as they provide consistent control regardless of operative positioning.'}
+  ]}
+};
+
+document.querySelectorAll('.vis-card').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('.vis-card').forEach(x=>x.classList.remove('selected'));
+  c.classList.add('selected');
+  S.vis=c.dataset.vis;
+  const rule=VIS_RULES[S.vis];
+  const box=document.getElementById('vis-warning');
+  if(rule.show){
+    box.classList.add('show');
+    box.innerHTML=`<div class="vis-warning-title">${rule.title}<span class="vis-extra-badge">EXTRA SIGNS</span></div>${rule.rules.map(r=>`<div class="vis-rule"><span>${r.i}</span><div><strong>${r.t}</strong><br>${r.s}</div></div>`).join('')}<div style="font-size:.65rem;color:#ff8a80;margin-top:8px;padding-top:8px;border-top:1px solid #3a1000;">📖 Chapter 8 CoP s.4.3 — Limited Visibility · Red Book p.18</div>`;
+  } else {
+    box.classList.remove('show');
+    box.innerHTML='';
+  }
+  checkReady();
+}));
 function openSpeedModal(){document.getElementById('speed-modal').classList.add('open');}
 function closeSpeedModal(){document.getElementById('speed-modal').classList.remove('open');}
 document.querySelectorAll('.speed-opt').forEach(o=>o.addEventListener('click',()=>{
@@ -579,6 +984,16 @@ function startGuide(){
   const tr=TRADES[S.trade],d=DIST[S.speed]||DIST[30];
   document.getElementById('guide-title').textContent=`${tr.icon} ${tr.name}`;
   const c=document.getElementById('steps-container');c.innerHTML='';
+
+  // Visibility warning at top of guide
+  if(S.vis && S.vis!=='clear' && VIS_RULES[S.vis].show){
+    const vr=VIS_RULES[S.vis];
+    c.insertAdjacentHTML('beforeend',`
+      <div style="background:#1a0500;border:2px solid var(--red);border-radius:8px;padding:12px 14px;margin-bottom:12px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;color:var(--red);margin-bottom:8px;">${vr.title}</div>
+        ${vr.rules.map(r=>`<div style="display:flex;gap:8px;margin-bottom:6px;font-size:.76rem;color:#ffccbc;line-height:1.4;"><span>${r.i}</span><div><strong>${r.t}</strong> — ${r.s}</div></div>`).join('')}
+        <div style="font-size:.65rem;color:#ff8a80;margin-top:8px;padding-top:6px;border-top:1px solid #3a1000;">📖 Chapter 8 CoP s.4.3 · Red Book p.18</div>
+      </div>`);}
   c.insertAdjacentHTML('beforeend',`<div style="background:#1a1000;border:1px solid var(--orange);border-radius:8px;padding:9px 11px;margin-bottom:10px;font-size:.72rem;color:#ffcc80;line-height:1.5;"><strong>📖 Regulations:</strong> ${tr.regs}</div>`);
   c.insertAdjacentHTML('beforeend',`<div class="dist-banner"><div class="dist-cell" style="border:1px solid var(--orange)"><div class="dist-val" style="color:var(--orange)">${d.advance}m</div><div class="dist-key">Advance Sign</div></div><div class="dist-cell" style="border:1px solid var(--yellow)"><div class="dist-val" style="color:var(--yellow)">${d.taper}m</div><div class="dist-key">Taper</div></div><div class="dist-cell" style="border:1px solid var(--green)"><div class="dist-val" style="color:var(--green)">${d.coneGap}m</div><div class="dist-key">Cone Gap</div></div></div>`);
   tr.steps.forEach((step,i)=>{
@@ -707,5 +1122,3 @@ renderChecklist();
 </script>
 </body>
 </html>
-conesout.html
-Displaying conesout.html.
