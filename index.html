@@ -395,6 +395,14 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
     <button class="setup-tab-btn inactive" id="tab-walkout-btn" onclick="setupTab('walkout')">Walk-Out Mode</button>
   </div>
   <div id="tab-diagram-content"></div>
+  <!-- Rotation controls — shown only when diagram is active -->
+  <div id="diagram-rotate-bar" style="display:none;position:fixed;bottom:60px;right:0;left:0;background:rgba(0,0,0,0.85);border-top:1px solid var(--mid);padding:8px 16px;z-index:150;display:none;justify-content:center;gap:12px;align-items:center;">
+    <span style="font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;color:var(--muted);">Rotate:</span>
+    <button onclick="rotateDiagram(0)" id="rot-btn-0" style="background:var(--orange);color:#000;border:none;border-radius:6px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;">0°</button>
+    <button onclick="rotateDiagram(90)" id="rot-btn-90" style="background:var(--dark3);color:var(--muted);border:1px solid var(--mid);border-radius:6px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;">90°</button>
+    <button onclick="rotateDiagram(180)" id="rot-btn-180" style="background:var(--dark3);color:var(--muted);border:1px solid var(--mid);border-radius:6px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;">180°</button>
+    <button onclick="rotateDiagram(270)" id="rot-btn-270" style="background:var(--dark3);color:var(--muted);border:1px solid var(--mid);border-radius:6px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;">270°</button>
+  </div>
   <div id="tab-walkout-content">
     <div id="wo-start-panel" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:16px;">
       <div style="font-size:3.5rem;">&#128205;</div>
@@ -958,6 +966,23 @@ function renderIcon(item){
   return item.icon;
 }
 
+var diagramRotation=0;
+
+function rotateDiagram(deg){
+  diagramRotation=deg;
+  // Update button styles
+  [0,90,180,270].forEach(function(d){
+    var btn=document.getElementById("rot-btn-"+d);
+    if(btn){
+      btn.style.background=d===deg?"var(--orange)":"var(--dark3)";
+      btn.style.color=d===deg?"#000":"var(--muted)";
+      btn.style.border=d===deg?"none":"1px solid var(--mid)";
+    }
+  });
+  // Re-render the diagram in the new orientation
+  renderDiagram();
+}
+
 function setupTab(tab){
   document.getElementById("tab-diagram-content").style.display=tab==="diagram"?"block":"none";
   document.getElementById("tab-walkout-content").style.display=tab==="walkout"?"flex":"none";
@@ -965,204 +990,242 @@ function setupTab(tab){
   document.getElementById("tab-diagram-btn").classList.toggle("inactive",tab!=="diagram");
   document.getElementById("tab-walkout-btn").classList.toggle("active",tab==="walkout");
   document.getElementById("tab-walkout-btn").classList.toggle("inactive",tab!=="walkout");
-  if(tab==="diagram")renderDiagram();
+  var rotBar=document.getElementById("diagram-rotate-bar");
+  if(rotBar)rotBar.style.display=tab==="diagram"?"flex":"none";
+  if(tab==="diagram"){renderDiagram();rotateDiagram(diagramRotation);}
   if(tab==="walkout")initWalkoutGPS();
 }
 
 function renderDiagram(){
   var cont=document.getElementById("tab-diagram-content");
   if(!S.speed||!S.trade){
-    cont.innerHTML="<div style='text-align:center;padding:40px 20px;color:var(--muted);'><div style='font-size:3rem;margin-bottom:12px;'>&#128208;</div><div style='font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;color:var(--orange);'>Select Trade and Speed First</div><div style='font-size:.78rem;margin-top:8px;'>Go to Home, fill in all fields and tap Generate Setup Plan to see the plan view.</div></div>";
+    cont.innerHTML="<div style='text-align:center;padding:40px 20px;color:var(--muted);'><div style='font-size:3rem;margin-bottom:12px;'>&#128208;</div><div style='font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:800;text-transform:uppercase;color:var(--orange);'>Select Trade and Speed First</div><div style='font-size:.82rem;margin-top:8px;'>Go to Home, fill in all fields and tap Generate Setup Plan.</div></div>";
     return;
   }
 
   var d=DIST[S.speed];
   var spd=S.speed;
   var tradeName=TRADES[S.trade]?TRADES[S.trade].name:"";
-
-  // ── Layout constants ──
-  // Total scene height in metres: advance + taper + workzone + downstream
-  var advM=d.advance;
-  var tapM=d.taper;
-  var wzM=20;   // work zone fixed 20m
-  var dnM=20;   // downstream fixed 20m
+  var advM=d.advance, tapM=d.taper, wzM=25, dnM=25;
   var totalM=advM+tapM+wzM+dnM;
+  var rot=diagramRotation||0;
+  var landscape=(rot===90||rot===270);
+  var flip=(rot===180||rot===270);  // traffic flows bottom to top
 
-  // SVG dimensions
-  var W=320;
-  var H=600;
-  var pad=20;
-  var roadX=W/2-30;  // road left edge
-  var roadW=60;      // road width in px
-  var laneW=roadW/2;
-
-  // Scale: pixels per metre
-  var scale=(H-pad*2)/totalM;
-
-  // Y positions (top=upstream/furthest, bottom=downstream)
-  function yPos(mFromTop){ return pad+mFromTop*scale; }
-
-  var yAdv=yPos(0);                    // advance sign
-  var yAdv2=spd>=40?yPos(advM/2):null; // second advance sign
-  var yTaperStart=yPos(advM);          // taper start
-  var yTaperEnd=yPos(advM+tapM);       // taper end = works entry
-  var yWZEnd=yPos(advM+tapM+wzM);      // work zone end
-  var yDnEnd=yPos(totalM);             // bottom
-
-  // ── Build SVG ──
-// Helper functions defined inline
-  function svgCone(cx,cy,r){
-    return '<polygon points="'+cx+','+(cy-r*1.5)+' '+(cx+r*.9)+','+(cy+r*.6)+' '+(cx-r*.9)+','+(cy+r*.6)+'" fill="#CC0000"/>'
-      +'<polygon points="'+(cx-r*.5)+','+(cy-r*.1)+' '+(cx+r*.5)+','+(cy-r*.1)+' '+(cx+r*.65)+','+(cy+r*.25)+' '+(cx-r*.65)+','+(cy+r*.25)+'" fill="white" opacity=".9"/>'
-      +'<rect x="'+(cx-r)+'" y="'+(cy+r*.6)+'" width="'+(r*2)+'" height="'+(r*.4)+'" rx="1" fill="#111"/>';
+  // ── HELPERS ──
+  function cone(cx,cy,r){
+    r=r||10;
+    return '<polygon points="'+cx+','+(cy-r*1.6)+' '+(cx+r)+','+(cy+r*.7)+' '+(cx-r)+','+(cy+r*.7)+'" fill="#CC0000"/>'
+      +'<polygon points="'+(cx-r*.55)+','+(cy-r*.05)+' '+(cx+r*.55)+','+(cy-r*.05)+' '+(cx+r*.72)+','+(cy+r*.35)+' '+(cx-r*.72)+','+(cy+r*.35)+'" fill="white" opacity=".95"/>'
+      +'<rect x="'+(cx-r*1.1)+'" y="'+(cy+r*.7)+'" width="'+(r*2.2)+'" height="'+(r*.45)+'" rx="2" fill="#111"/>';
   }
-  function svgBeacon(cx,cy){
-    return '<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#FF6B00" opacity=".9"/>'
-      +'<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="none" stroke="#FF6B00" stroke-width="1" opacity=".4"/>';
+  function beacon(cx,cy){
+    return '<circle cx="'+cx+'" cy="'+cy+'" r="7" fill="#FF6B00"/>'
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="11" fill="none" stroke="#FF6B00" stroke-width="2" opacity=".4"/>';
   }
-  function svgVehicle(cx,cy){
-    var vw=22,vh=12;
-    return '<rect x="'+(cx-vw/2)+'" y="'+(cy-vh/2)+'" width="'+vw+'" height="'+vh+'" rx="3" fill="#1a3a6a" stroke="#2979FF" stroke-width="1.5"/>'
-      +'<text x="'+cx+'" y="'+(cy+3)+'" text-anchor="middle" fill="#2979FF" font-size="7" font-weight="bold">VEH</text>';
+  function vehicle(cx,cy,lnd){
+    if(lnd){
+      return '<rect x="'+(cx-28)+'" y="'+(cy-14)+'" width="56" height="28" rx="5" fill="#0a1a3a" stroke="#2979FF" stroke-width="2.5"/>'
+        +'<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" fill="#2979FF" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS VEHICLE</text>';
+    }
+    return '<rect x="'+(cx-20)+'" y="'+(cy-14)+'" width="40" height="28" rx="5" fill="#0a1a3a" stroke="#2979FF" stroke-width="2.5"/>'
+      +'<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" fill="#2979FF" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS</text>'
+      +'<text x="'+cx+'" y="'+(cy+10)+'" text-anchor="middle" fill="#2979FF" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">VEHICLE</text>';
   }
-  function svgSign(x,y,label,col){
-    return '<rect x="'+(x-10)+'" y="'+(y-8)+'" width="20" height="14" rx="2" fill="#1a1a00" stroke="'+col+'" stroke-width="1.5"/>'
-      +'<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" fill="'+col+'" font-size="6" font-weight="bold">'+label+'</text>';
+  function sign(x,y,lines,col,lnd){
+    var bh=lines.length*14+8;
+    var bw=lnd?lines.reduce(function(a,l){return Math.max(a,l.length*7+10);},40):56;
+    var s='<rect x="'+(x-bw/2)+'" y="'+(y-bh/2)+'" width="'+bw+'" height="'+bh+'" rx="4" fill="#0d0d00" stroke="'+col+'" stroke-width="2"/>';
+    lines.forEach(function(l,i){
+      s+='<text x="'+x+'" y="'+(y-bh/2+16+i*14)+'" text-anchor="middle" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+l+'</text>';
+    });
+    return s;
   }
-  function svgArrowBoard(x,y){
-    return '<rect x="'+(x-10)+'" y="'+(y-7)+'" width="20" height="14" rx="2" fill="#1a1000" stroke="#FF6B00" stroke-width="1.5"/>'
-      +'<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" fill="#FF6B00" font-size="9">&#8599;</text>';
+  function arrowBoard(x,y,lnd){
+    var bw=lnd?80:48;
+    return '<rect x="'+(x-bw/2)+'" y="'+(y-14)+'" width="'+bw+'" height="28" rx="4" fill="#0d0800" stroke="#FF6B00" stroke-width="2"/>'
+      +'<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" fill="#FF6B00" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ARROW BOARD</text>';
   }
-  function svgArrow(cx,cy,dir,col){
+  function distLabel(ax,ay1,ay2,txt,col,lnd){
+    var mx=(ay1+ay2)/2;
+    col=col||"#666";
+    if(lnd){
+      // horizontal label
+      return '<line x1="'+(ay1+2)+'" y1="'+ax+'" x2="'+(ay2-2)+'" y2="'+ax+'" stroke="'+col+'" stroke-width="1" stroke-dasharray="3,3"/>'
+        +'<line x1="'+(ay1+2)+'" y1="'+(ax-4)+'" x2="'+(ay1+2)+'" y2="'+(ax+4)+'" stroke="'+col+'" stroke-width="1.5"/>'
+        +'<line x1="'+(ay2-2)+'" y1="'+(ax-4)+'" x2="'+(ay2-2)+'" y2="'+(ax+4)+'" stroke="'+col+'" stroke-width="1.5"/>'
+        +'<text x="'+mx+'" y="'+(ax-6)+'" text-anchor="middle" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+txt+'</text>';
+    }
+    return '<line x1="'+ax+'" y1="'+(ay1+2)+'" x2="'+ax+'" y2="'+(ay2-2)+'" stroke="'+col+'" stroke-width="1" stroke-dasharray="3,3"/>'
+      +'<line x1="'+(ax-4)+'" y1="'+(ay1+2)+'" x2="'+(ax+4)+'" y2="'+(ay1+2)+'" stroke="'+col+'" stroke-width="1.5"/>'
+      +'<line x1="'+(ax-4)+'" y1="'+(ay2-2)+'" x2="'+(ax+4)+'" y2="'+(ay2-2)+'" stroke="'+col+'" stroke-width="1.5"/>'
+      +'<text x="'+(ax-6)+'" y="'+(mx+4)+'" text-anchor="end" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+txt+'</text>';
+  }
+  function tArrow(cx,cy,dir,col){
     if(dir==="down")
-      return '<polygon points="'+cx+','+(cy+6)+' '+(cx-5)+','+(cy-4)+' '+(cx+5)+','+(cy-4)+'" fill="'+col+'"/>';
-    return '<polygon points="'+cx+','+(cy-6)+' '+(cx-5)+','+(cy+4)+' '+(cx+5)+','+(cy+4)+'" fill="'+col+'"/>';
+      return '<polygon points="'+cx+','+(cy+10)+' '+(cx-7)+','+(cy-6)+' '+(cx+7)+','+(cy-6)+'" fill="'+col+'" opacity=".6"/>';
+    if(dir==="up")
+      return '<polygon points="'+cx+','+(cy-10)+' '+(cx-7)+','+(cy+6)+' '+(cx+7)+','+(cy+6)+'" fill="'+col+'" opacity=".6"/>';
+    if(dir==="right")
+      return '<polygon points="'+(cx+10)+','+cy+' '+(cx-6)+','+(cy-7)+' '+(cx-6)+','+(cy+7)+'" fill="'+col+'" opacity=".6"/>';
+    return '<polygon points="'+(cx-10)+','+cy+' '+(cx+6)+','+(cy-7)+' '+(cx+6)+','+(cy+7)+'" fill="'+col+'" opacity=".6"/>';
   }
 
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111;display:block;font-family:sans-serif;">';
+  var svg;
 
-  // Traffic direction arrows at top
-  svg+='<text x="'+(roadX+laneW/2)+'" y="'+(pad-4)+'" text-anchor="middle" fill="#555" font-size="9" font-weight="bold">ONCOMING</text>';
-  svg+='<text x="'+(roadX+laneW*1.5)+'" y="'+(pad-4)+'" text-anchor="middle" fill="#555" font-size="9" font-weight="bold">TRAVEL</text>';
+  if(!landscape){
+    // ── PORTRAIT (0° or 180°) ──
+    var W=360, pad=30;
+    var roadX=100, roadW=140, laneW=70;
+    var H=Math.max(700, totalM*4+pad*2);
+    var scale=(H-pad*2)/totalM;
+    function yP(m){ return flip?(H-pad-m*scale):(pad+m*scale); }
+    var rightEdge=roadX+roadW, cx2=roadX+laneW;
 
-  // Road surface
-  svg+='<rect x="'+roadX+'" y="'+pad+'" width="'+roadW+'" height="'+(H-pad*2)+'" fill="#2a2a2a" rx="0"/>';
+    var yAdv=yP(0), yTaperStart=yP(advM), yTaperEnd=yP(advM+tapM);
+    var yWZEnd=yP(advM+tapM+wzM), yDnEnd=yP(totalM);
+    var yAdv2=spd>=40?yP(advM*0.55):null;
+    var ySpeed=spd>=40?yP(advM*0.75):null;
+    var yArrow=spd>=50?yP(advM):null;
 
-  // Lane dividing line (dashed white)
-  var dashLen=10*scale, gapLen=5*scale;
-  svg+='<line x1="'+(roadX+laneW)+'" y1="'+pad+'" x2="'+(roadX+laneW)+'" y2="'+(H-pad)+'" stroke="#555" stroke-width="1.5" stroke-dasharray="'+dashLen+','+gapLen+'"/>';
+    svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111;display:block;">';
+    svg+='<rect x="0" y="0" width="'+roadX+'" height="'+H+'" fill="#1a2a1a"/>';
+    svg+='<rect x="'+rightEdge+'" y="0" width="'+(W-rightEdge)+'" height="'+H+'" fill="#1a2a1a"/>';
+    svg+='<rect x="'+roadX+'" y="0" width="'+roadW+'" height="'+H+'" fill="#2d2d2d"/>';
+    svg+='<line x1="'+roadX+'" y1="0" x2="'+roadX+'" y2="'+H+'" stroke="#aaa" stroke-width="3"/>';
+    svg+='<line x1="'+rightEdge+'" y1="0" x2="'+rightEdge+'" y2="'+H+'" stroke="#aaa" stroke-width="3"/>';
+    var dashH=14*scale,gapH=7*scale;
+    svg+='<line x1="'+cx2+'" y1="0" x2="'+cx2+'" y2="'+H+'" stroke="#FFD600" stroke-width="2" stroke-dasharray="'+dashH+','+gapH+'"/>';
 
-  // Road edges
-  svg+='<line x1="'+roadX+'" y1="'+pad+'" x2="'+roadX+'" y2="'+(H-pad)+'" stroke="#666" stroke-width="2"/>';
-  svg+='<line x1="'+(roadX+roadW)+'" y1="'+pad+'" x2="'+(roadX+roadW)+'" y2="'+(H-pad)+'" stroke="#666" stroke-width="2"/>';
+    // Traffic arrows — oncoming opposes travel direction
+    var tDir=flip?"up":"down";        // travel lane direction
+    var tDirOpp=flip?"down":"up";     // oncoming = opposite
+    // Lane labels
+    svg+='<text x="'+(roadX+laneW/2)+'" y="18" text-anchor="middle" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ONCOMING</text>';
+    svg+='<text x="'+(roadX+laneW*1.5)+'" y="18" text-anchor="middle" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">TRAVEL</text>';
+    [0.15,0.35,0.55,0.75].forEach(function(f){svg+=tArrow(roadX+laneW/2,pad+f*(H-pad*2),tDirOpp,"#4a7a4a");});
+    [0.1,0.3].forEach(function(f){var fy=pad+f*(H-pad*2);if(fy<Math.min(yTaperStart,yAdv)-10)svg+=tArrow(roadX+laneW*1.5,fy,tDir,"#2a5a8a");});
+    svg+=tArrow(roadX+laneW*1.5, yWZEnd+(flip?-25:25), tDir,"#2a5a8a");
 
-  // Kerb / verge areas
-  svg+='<rect x="0" y="'+pad+'" width="'+roadX+'" height="'+(H-pad*2)+'" fill="#1a1f1a"/>';
-  svg+='<rect x="'+(roadX+roadW)+'" y="'+pad+'" width="'+(W-roadX-roadW)+'" height="'+(H-pad*2)+'" fill="#1a1f1a"/>';
-
-  // ── TAPER CONES ──
-  // Draw cones from taper start, angling across the nearside lane
-  var nCones=Math.max(3,Math.floor(tapM/d.coneGap));
-  for(var ci=0;ci<=nCones;ci++){
-    var t=ci/nCones;
-    var cy=yTaperStart+t*(yTaperEnd-yTaperStart);
-    // Cone moves from right edge of nearside lane to centre line
-    var cx=roadX+roadW-(t*laneW);
-    svg+=svgCone(cx,cy,6);
-  }
-
-  // ── WORK ZONE ──
-  var wzY=yTaperEnd;
-  var wzH=yWZEnd-yTaperEnd;
-  // Block the nearside lane (right lane from viewer perspective = travel lane being blocked)
-  svg+='<rect x="'+(roadX+laneW)+'" y="'+wzY+'" width="'+laneW+'" height="'+wzH+'" fill="rgba(200,0,0,0.18)" stroke="#CC0000" stroke-width="1.5" stroke-dasharray="4,3"/>';
-  // Work zone label
-  var wzMidY=wzY+wzH/2;
-  svg+='<text x="'+(roadX+laneW+laneW/2)+'" y="'+(wzMidY-8)+'" text-anchor="middle" fill="#CC0000" font-size="8" font-weight="bold">WORK</text>';
-  svg+='<text x="'+(roadX+laneW+laneW/2)+'" y="'+(wzMidY+4)+'" text-anchor="middle" fill="#CC0000" font-size="8" font-weight="bold">ZONE</text>';
-  // Amber beacon circles each end
-  svg+=svgBeacon(roadX+laneW+laneW/2, wzY+4);
-  svg+=svgBeacon(roadX+laneW+laneW/2, wzY+wzH-4);
-  // Barriers across entry and exit
-  svg+='<line x1="'+(roadX+laneW)+'" y1="'+wzY+'" x2="'+(roadX+roadW)+'" y2="'+wzY+'" stroke="#FFD600" stroke-width="3"/>';
-  svg+='<line x1="'+(roadX+laneW)+'" y1="'+(wzY+wzH)+'" x2="'+(roadX+roadW)+'" y2="'+(wzY+wzH)+'" stroke="#FFD600" stroke-width="3"/>';
-
-  // ── DOWNSTREAM CONES (3 cones guiding traffic back) ──
-  for(var di=0;di<3;di++){
-    var t2=(di+1)/4;
-    var dcy=yWZEnd+t2*(yDnEnd-yWZEnd);
-    var dcx=roadX+roadW-laneW*(1-t2*0.8);
-    svg+=svgCone(dcx,dcy,6);
-  }
-
-  // ── WORKS VEHICLE ──
-  var vehY=yWZEnd+5*scale;
-  svg+=svgVehicle(roadX+laneW+laneW/2, Math.min(vehY, yDnEnd-18));
-
-  // ── ADVANCE SIGNS ──
-  // Sign 1 — furthest, left verge (nearside)
-  svg+=svgSign(roadX-8, yAdv, "ADV", "#FFD600");
-  // Distance label
-  svg+='<text x="'+(roadX-10)+'" y="'+(yAdv+3)+'" text-anchor="end" fill="#FFD600" font-size="8">'+advM+'m</text>';
-
-  // Sign 2 — if applicable
-  if(yAdv2!==null){
-    svg+=svgSign(roadX-8, yAdv2, "ADV2", "#FFD600");
-    svg+='<text x="'+(roadX-10)+'" y="'+(yAdv2+3)+'" text-anchor="end" fill="#FFD600" font-size="8">'+(Math.round(advM/2))+'m</text>';
-  }
-
-  // Arrow board at taper start
-  if(spd>=50){
-    svg+=svgArrowBoard(roadX-8, yTaperStart);
-  }
-
-  // ── DISTANCE LABELS (right side) ──
-  var labelX=roadX+roadW+6;
-  // Advance distance brace
-  svg+='<line x1="'+labelX+'" y1="'+yAdv+'" x2="'+labelX+'" y2="'+yTaperStart+'" stroke="#555" stroke-width="1"/>';
-  svg+='<text x="'+(labelX+4)+'" y="'+((yAdv+yTaperStart)/2+3)+'" fill="#888" font-size="8">'+advM+'m</text>';
-  // Taper brace
-  svg+='<line x1="'+(labelX+20)+'" y1="'+yTaperStart+'" x2="'+(labelX+20)+'" y2="'+yTaperEnd+'" stroke="#555" stroke-width="1"/>';
-  svg+='<text x="'+(labelX+24)+'" y="'+((yTaperStart+yTaperEnd)/2+3)+'" fill="#888" font-size="8">'+tapM+'m taper</text>';
-
-  // ── TRAFFIC FLOW ARROWS ──
-  // Oncoming lane (left lane) — arrows going DOWN (toward works)
-  for(var ai=0;ai<3;ai++){
-    var ay=pad+60+ai*80;
-    if(ay<H-pad-20){
-      svg+=svgArrow(roadX+laneW/2, ay, "down", "#3a5a3a");
+    // Taper cones
+    var nCones=Math.max(4,Math.floor(tapM/d.coneGap));
+    for(var ci=0;ci<=nCones;ci++){
+      var t=ci/nCones;
+      var cy3=yTaperStart+t*(yTaperEnd-yTaperStart);
+      svg+=cone(rightEdge-t*laneW, cy3, 8);
     }
-  }
-  // Travel lane (right) — arrows going UP above taper, then blocked
-  for(var ai2=0;ai2<2;ai2++){
-    var ay2=yAdv+20+ai2*70;
-    if(ay2<yTaperStart-10){
-      svg+=svgArrow(roadX+laneW+laneW/2, ay2, "down", "#1a3a5a");
+    // Work zone
+    var wzH2=Math.abs(yWZEnd-yTaperEnd);
+    var wzTop=Math.min(yTaperEnd,yWZEnd);
+    svg+='<rect x="'+cx2+'" y="'+wzTop+'" width="'+laneW+'" height="'+wzH2+'" fill="rgba(180,0,0,0.22)" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,4"/>';
+    var wzMid=wzTop+wzH2/2;
+    svg+='<text x="'+(cx2+laneW/2)+'" y="'+(wzMid-6)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORK</text>';
+    svg+='<text x="'+(cx2+laneW/2)+'" y="'+(wzMid+8)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">ZONE</text>';
+    svg+='<line x1="'+cx2+'" y1="'+wzTop+'" x2="'+rightEdge+'" y2="'+wzTop+'" stroke="#FFD600" stroke-width="4"/>';
+    svg+='<line x1="'+cx2+'" y1="'+(wzTop+wzH2)+'" x2="'+rightEdge+'" y2="'+(wzTop+wzH2)+'" stroke="#FFD600" stroke-width="4"/>';
+    svg+=beacon(cx2+8,wzTop); svg+=beacon(cx2+8,wzTop+wzH2);
+    // Downstream cones
+    for(var di=0;di<3;di++){var t2=(di+1)/4;svg+=cone(rightEdge-laneW*(1-t2*0.7),yWZEnd+t2*(yDnEnd-yWZEnd),8);}
+    // Vehicle
+    svg+=vehicle(cx2+laneW/2,Math.min(yWZEnd+(flip?-35:35),yDnEnd-(flip?-20:20)),false);
+    // Signs
+    var signX=rightEdge+42;
+    svg+=sign(signX,yAdv,["ROAD","WORKS","AHEAD"],"#FFD600",false);
+    svg+='<line x1="'+(signX-28)+'" y1="'+yAdv+'" x2="'+rightEdge+'" y2="'+yAdv+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';
+    if(yAdv2){svg+=sign(signX,yAdv2,["ROAD","WORKS"],"#FFD600",false);svg+='<line x1="'+(signX-28)+'" y1="'+yAdv2+'" x2="'+rightEdge+'" y2="'+yAdv2+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
+    if(ySpeed){svg+=sign(signX,ySpeed,[(spd-20)+"mph","LIMIT"],"#FF4444",false);svg+='<line x1="'+(signX+28)+'" y1="'+ySpeed+'" x2="'+roadX+'" y2="'+ySpeed+'" stroke="#FF4444" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
+    if(yArrow){svg+=arrowBoard(signX,yArrow,false);svg+='<line x1="'+(signX+24)+'" y1="'+yArrow+'" x2="'+roadX+'" y2="'+yArrow+'" stroke="#FF6B00" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
+    // Distance labels
+    svg+=distLabel(rightEdge+14,yAdv,yTaperStart,advM+"m","#FFD600",false);
+    svg+=distLabel(rightEdge+42,yTaperStart,yTaperEnd,tapM+"m taper","#FF6B00",false);
+    svg+='</svg>';
+
+  } else {
+    // ── LANDSCAPE (90° or 270°) ──
+    // Road runs horizontally — traffic flows left-to-right (90°) or right-to-left (270°/flip)
+    var H2=320, padL=30;
+    var roadY=H2/2-70, roadH2=140, laneH=70;
+    var W2=Math.max(900, totalM*4+padL*2);
+    var scaleL=(W2-padL*2)/totalM;
+    function xP(m){ return flip?(W2-padL-m*scaleL):(padL+m*scaleL); }
+    var bottomEdge=roadY+roadH2, cy4=roadY+laneH;
+
+    var xAdv=xP(0), xTaperStart=xP(advM), xTaperEnd=xP(advM+tapM);
+    var xWZEnd=xP(advM+tapM+wzM), xDnEnd=xP(totalM);
+    var xAdv2=spd>=40?xP(advM*0.55):null;
+    var xSpeed=spd>=40?xP(advM*0.75):null;
+    var xArrow=spd>=50?xP(advM):null;
+    var tDirL=flip?"left":"right";
+
+    svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W2+'" height="'+H2+'" viewBox="0 0 '+W2+' '+H2+'" style="background:#111;display:block;">';
+    // Verges
+    svg+='<rect x="0" y="0" width="'+W2+'" height="'+roadY+'" fill="#1a2a1a"/>';
+    svg+='<rect x="0" y="'+bottomEdge+'" width="'+W2+'" height="'+(H2-bottomEdge)+'" fill="#1a2a1a"/>';
+    // Road
+    svg+='<rect x="0" y="'+roadY+'" width="'+W2+'" height="'+roadH2+'" fill="#2d2d2d"/>';
+    svg+='<line x1="0" y1="'+roadY+'" x2="'+W2+'" y2="'+roadY+'" stroke="#aaa" stroke-width="3"/>';
+    svg+='<line x1="0" y1="'+bottomEdge+'" x2="'+W2+'" y2="'+bottomEdge+'" stroke="#aaa" stroke-width="3"/>';
+    var dashL=14*scaleL,gapL=7*scaleL;
+    svg+='<line x1="0" y1="'+cy4+'" x2="'+W2+'" y2="'+cy4+'" stroke="#FFD600" stroke-width="2" stroke-dasharray="'+dashL+','+gapL+'"/>';
+    // Lane labels
+    svg+='<text x="20" y="'+(roadY+laneH/2+4)+'" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ONCOMING</text>';
+    svg+='<text x="20" y="'+(cy4+laneH/2+4)+'" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">TRAVEL</text>';
+    // Traffic arrows
+    var tDirLOpp=flip?"right":"left";
+    [0.15,0.35,0.55,0.75].forEach(function(f){svg+=tArrow(padL+f*(W2-padL*2),roadY+laneH/2,tDirLOpp,"#4a7a4a");});
+    [0.1,0.3].forEach(function(f){
+      var fx=padL+f*(W2-padL*2);
+      if((flip&&fx>Math.max(xTaperStart,xAdv)+10)||(!flip&&fx<Math.min(xTaperStart,xAdv)-10))
+        svg+=tArrow(fx,cy4+laneH/2,tDirL,"#2a5a8a");
+    });
+    svg+=tArrow(xWZEnd+(flip?-30:30),cy4+laneH/2,tDirL,"#2a5a8a");
+    // Taper cones
+    var nConesL=Math.max(4,Math.floor(tapM/d.coneGap));
+    for(var ci2=0;ci2<=nConesL;ci2++){
+      var t4=ci2/nConesL;
+      var cx4=xTaperStart+t4*(xTaperEnd-xTaperStart);
+      svg+=cone(cx4, bottomEdge-t4*laneH, 8);
     }
+    // Work zone
+    var wzW=Math.abs(xWZEnd-xTaperEnd);
+    var wzLeft=Math.min(xTaperEnd,xWZEnd);
+    svg+='<rect x="'+wzLeft+'" y="'+cy4+'" width="'+wzW+'" height="'+laneH+'" fill="rgba(180,0,0,0.22)" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,4"/>';
+    var wzMidX=wzLeft+wzW/2;
+    svg+='<text x="'+wzMidX+'" y="'+(cy4+laneH/2+5)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORK ZONE</text>';
+    svg+='<line x1="'+wzLeft+'" y1="'+cy4+'" x2="'+wzLeft+'" y2="'+bottomEdge+'" stroke="#FFD600" stroke-width="4"/>';
+    svg+='<line x1="'+(wzLeft+wzW)+'" y1="'+cy4+'" x2="'+(wzLeft+wzW)+'" y2="'+bottomEdge+'" stroke="#FFD600" stroke-width="4"/>';
+    svg+=beacon(wzLeft,cy4+8); svg+=beacon(wzLeft+wzW,cy4+8);
+    // Downstream cones
+    for(var di2=0;di2<3;di2++){var t5=(di2+1)/4;svg+=cone(xWZEnd+t5*(xDnEnd-xWZEnd),bottomEdge-laneH*(1-t5*0.7),8);}
+    // Vehicle
+    svg+=vehicle(xWZEnd+(flip?-40:40),cy4+laneH/2,true);
+    // Signs on bottom verge — same side as works
+    var signY=bottomEdge+22;
+    svg+=sign(xAdv,signY,["ROAD WORKS AHEAD"],"#FFD600",true);
+    svg+='<line x1="'+xAdv+'" y1="'+bottomEdge+'" x2="'+xAdv+'" y2="'+(signY-8)+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';
+    if(xAdv2){svg+=sign(xAdv2,signY,["ROAD WORKS"],"#FFD600",true);svg+='<line x1="'+xAdv2+'" y1="'+bottomEdge+'" x2="'+xAdv2+'" y2="'+(signY-8)+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
+    if(xSpeed){svg+=sign(xSpeed,signY,[(spd-20)+"mph LIMIT"],"#FF4444",true);svg+='<line x1="'+xSpeed+'" y1="'+bottomEdge+'" x2="'+xSpeed+'" y2="'+(signY-8)+'" stroke="#FF4444" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
+    if(xArrow){svg+=arrowBoard(xArrow,signY,true);svg+='<line x1="'+xArrow+'" y1="'+bottomEdge+'" x2="'+xArrow+'" y2="'+(signY-14)+'" stroke="#FF6B00" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
+    // Distance labels above road (away from signs)
+    svg+=distLabel(roadY-18,xAdv,xTaperStart,advM+"m","#FFD600",true);
+    svg+=distLabel(roadY-40,xTaperStart,xTaperEnd,tapM+"m","#FF6B00",true);
+    svg+='</svg>';
   }
-  // After works — travel lane restored
-  svg+=svgArrow(roadX+laneW+laneW/2, yDnEnd-15, "down", "#1a3a5a");
 
-  // ── LEGEND ──
-  var legY=H-pad+12;
-  // (legend removed to keep clean — labels on diagram are sufficient)
-
-  svg+='</svg>';
-
+  var scrollStyle=landscape?"overflow-x:auto;overflow-y:hidden;":"overflow:hidden;";
   cont.innerHTML=
-    '<div style="background:var(--dark2);border-bottom:1px solid var(--orange);padding:10px 16px;font-size:.72rem;color:#ffcc80;line-height:1.5;">'
-    +'<strong>Plan View — '+spd+'mph '+S.road+' — '+tradeName+'</strong><br>'
-    +'Advance: '+advM+'m &nbsp;|&nbsp; Taper: '+tapM+'m &nbsp;|&nbsp; Cone gap: '+d.coneGap+'m'
+    '<div style="background:var(--dark2);border-bottom:1px solid var(--orange);padding:10px 16px;font-size:.78rem;color:#ffcc80;line-height:1.5;">'
+    +'<strong>'+spd+'mph '+S.road+' — '+tradeName+'</strong>'
+    +' &nbsp;<span style="color:var(--muted);">'+rot+'° rotation</span><br>'
+    +'Advance: '+advM+'m &nbsp;|&nbsp; Taper: '+tapM+'m &nbsp;|&nbsp; Gap: '+d.coneGap+'m'
     +'</div>'
-    +'<div style="padding:12px 16px;">'
-    +svg
-    +'</div>'
-    +'<div style="background:var(--dark2);border-top:1px solid var(--mid);padding:10px 16px;font-size:.68rem;color:var(--muted);line-height:1.6;">'
-    +'<span style="color:#FFD600;">&#9632;</span> Advance sign &nbsp; '
-    +'<span style="color:#CC0000;">&#9650;</span> Cone &nbsp; '
-    +'<span style="color:#FF6B00;">&#9632;</span> Beacon/Arrow &nbsp; '
-    +'<span style="color:#2979FF;">&#9632;</span> Works vehicle &nbsp; '
-    +'<span style="color:#CC0000;">&#9632;</span> Work zone'
+    +'<div id="diagram-svg-wrap" style="'+scrollStyle+'">'+svg+'</div>'
+    +'<div style="background:var(--dark2);border-top:1px solid var(--mid);padding:10px 16px;font-size:.72rem;color:var(--muted);line-height:1.8;margin-bottom:120px;">'
+    +'<span style="color:#FFD600;">&#9646;</span> Advance signs &nbsp;'
+    +'<span style="color:#CC0000;">&#9650;</span> Cones &nbsp;'
+    +'<span style="color:#FF6B00;">&#9679;</span> Beacon &nbsp;'
+    +'<span style="color:#2979FF;">&#9646;</span> Vehicle &nbsp;'
+    +'<span style="color:#FF4444;">&#9646;</span> Work zone'
     +'</div>';
 }
 
@@ -1649,4 +1712,4 @@ renderChecklist();
 </body>
 </html>
 conesout.html
-Displaying conesout.html. 
+Displaying conesout.html.
