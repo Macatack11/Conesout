@@ -858,24 +858,93 @@ function markDone(i,e){if(e)e.stopPropagation();} // retained for compatibility
 function getPlacementSeq(){
   const d=DIST[S.speed]||DIST[30];
   const spd=S.speed||30;
-  const seq=[];
+  const width=S.width||"dual";
+  const isNarrow=(width==="narrow"||width==="single");
+  const useLights=isNarrow;  // narrow/single = Stop-Go or temp lights
 
-  // PHASE 1: Walk out from works to furthest sign
-  // dist = how far to walk from previous point to place this item
-  // dir = which direction you're walking
+  if(useLights){
+    return getPlacementSeqLights(d,spd);
+  }else{
+    return getPlacementSeqTaper(d,spd);
+  }
+}
 
-  // Step 1 — Walk upstream to furthest advance sign
+// ── STOP/GO or TEMP LIGHTS sequence (narrow/single lane roads) ──
+// Chapter 8 s.6.3 — one-way working
+function getPlacementSeqLights(d,spd){
+  var seq=[];
+  var useStopGo=spd<=30;  // Stop/Go for slower roads, lights for faster
+  var tmLabel=useStopGo?"Stop/Go Board":"Temp Traffic Light";
+  var tmIcon=useStopGo?"&#128721;":"&#128678;";
+
+  // PHASE 1: Walk upstream to furthest advance sign
+  seq.push({id:"adv1",icon:"&#9888;&#65039;",
+    name:"Advance Warning Sign",
+    detail:"Walk upstream "+d.advance+"m from works. Place Road Works Ahead sign on nearside facing oncoming traffic.",
+    dist:d.advance,dir:"upstream",phase:"Walk upstream",
+    reg:"Chapter 8 Table 8-3, TSRGD 2016",color:"var(--yellow)"});
+
+  if(spd>=40){
+    seq.push({id:"adv2",icon:"&#9888;&#65039;",
+      name:"Second Advance Sign",
+      detail:"Walk back "+Math.round(d.advance/2)+"m. Place follow-on Road Works sign facing oncoming traffic.",
+      dist:Math.round(d.advance/2),dir:"downstream",phase:"Walk back toward works",
+      reg:"Chapter 8 s.4.2",color:"var(--yellow)"});
+  }
+
+  // Step: place upstream Stop/Go or light at holding point
+  var holdDist=Math.max(10,Math.round(d.taper));
+  seq.push({id:"tm_upstream",icon:tmIcon,
+    name:"Upstream "+tmLabel,
+    detail:"Walk back to "+holdDist+"m from works. Position "+tmLabel+" on nearside. "+(useStopGo?"Operative faces oncoming traffic, Stop showing.":"Light head on nearside post, set to RED.")+" Amber beacon alongside.",
+    dist:spd>=40?Math.round(d.advance*0.3):holdDist,dir:"downstream",phase:"Walk back toward works",
+    reg:"Chapter 8 s.6.3 - "+( useStopGo?"LANTRA Stop/Go award required":"ATC compliant lights required"),color:"var(--orange)"});
+
+  // Step: work zone guarding
+  seq.push({id:"barriers",icon:"&#128679;",
+    name:"Work Zone Guarding",
+    detail:"At works. Set up Chapter 8 barriers across full carriageway width. Min 0.5m clearance from excavation. Amber beacon each end of guarding.",
+    dist:holdDist,dir:"downstream",phase:"At works",
+    reg:"Chapter 8 CoP s.7 - CDM 2015",color:"var(--red)"});
+
+  // Step: place downstream Stop/Go or light
+  seq.push({id:"tm_downstream",icon:tmIcon,
+    name:"Downstream "+tmLabel,
+    detail:"Walk "+holdDist+"m past works. Position "+tmLabel+" on nearside. "+(useStopGo?"Operative faces oncoming traffic from opposite end, Stop showing.":"Second light head on nearside post.")+
+      (useStopGo?" Communicate with upstream operative by radio before releasing traffic.":""),
+    dist:holdDist,dir:"downstream",phase:"Walk downstream",
+    reg:"Chapter 8 s.6.3",color:"var(--orange)"});
+
+  // Step: downstream advance sign
+  seq.push({id:"adv_dn",icon:"&#9888;&#65039;",
+    name:"Downstream Advance Sign",
+    detail:"Walk "+Math.round(d.advance*0.5)+"m past downstream "+tmLabel+". Place Road Works Ahead sign facing traffic from the other direction.",
+    dist:Math.round(d.advance*0.5),dir:"downstream",phase:"Walk downstream",
+    reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+  // Step: works vehicle
+  var bufDist=spd>=50?25:spd>=40?10:5;
+  seq.push({id:"vehicle",icon:"&#128666;",
+    name:"Works Vehicle",
+    detail:"Position works vehicle at the upstream "+tmLabel+" location or at the works entry. Hazard lights AND amber beacon on. Keys in ignition. Road Works sign displayed.",
+    dist:5,dir:"upstream",phase:"Position vehicle",
+    reg:"Chapter 8 s.5.4",color:"var(--blue)"});
+
+  return seq;
+}
+
+// ── LANE CLOSURE TAPER sequence (two-lane and dual carriageway) ──
+function getPlacementSeqTaper(d,spd){
+  var seq=[];
+
   seq.push({id:"adv1",icon:"&#9888;&#65039;",
     name:"Advance Warning Sign",
     detail:"Walk upstream "+d.advance+"m from works. Place Road Works Ahead sign facing oncoming traffic. Min "+(spd>=40?"750mm":"450mm")+" retroreflective sign.",
     dist:d.advance,dir:"upstream",phase:"Walk upstream",
     reg:"Chapter 8 Table 8-3, TSRGD 2016",color:"var(--yellow)"});
 
-  // PHASE 2: Walk back toward works placing signs as you go
-
-  // Step 2 — Second advance sign (walk back half the advance distance)
   if(spd>=40){
-    const gap=Math.round(d.advance/2);
+    var gap=Math.round(d.advance/2);
     seq.push({id:"adv2",icon:"&#9888;&#65039;",
       name:"Second Advance Sign",
       detail:"Walk back "+gap+"m toward works. Place follow-on Road Works sign facing oncoming traffic.",
@@ -883,10 +952,8 @@ function getPlacementSeq(){
       reg:"Chapter 8 s.4.2",color:"var(--yellow)"});
   }
 
-  // Step 3 — Speed restriction sign
   if(spd>=40){
-    const prevDist=spd>=40?Math.round(d.advance/2):0;
-    const speedDist=d.advance-Math.round(d.advance*0.7);
+    var speedDist=d.advance-Math.round(d.advance*0.7);
     seq.push({id:"speed",icon:"&#128308;",
       name:"Speed Restriction Sign",
       detail:"Walk back "+speedDist+"m toward works. Place temporary "+Math.max(spd-20,20)+"mph speed restriction sign facing oncoming traffic.",
@@ -894,9 +961,8 @@ function getPlacementSeq(){
       reg:"TSRGD 2016 - Chapter 8 s.4.4",color:"var(--red)"});
   }
 
-  // Step 4 — Arrow board at start of taper (walk back to taper point)
   if(spd>=50){
-    const advToTaper=spd>=40?Math.round(d.advance*0.3)-10:d.advance-d.taper-10;
+    var advToTaper=spd>=40?Math.round(d.advance*0.3)-10:d.advance-d.taper-10;
     seq.push({id:"arrow",icon:"&#8599;&#65039;",
       name:"Arrow Board",
       detail:"Walk back "+Math.max(5,advToTaper)+"m. Position arrow board at start of taper pointing away from works. Mandatory at 50mph+.",
@@ -904,330 +970,235 @@ function getPlacementSeq(){
       reg:"Chapter 8 Table 8-4",color:"var(--orange)"});
   }
 
-  // Step 5 — First taper cone
-  const toTaper=spd>=50?10:spd>=40?Math.round(d.advance*0.3):d.advance-d.taper;
+  var toTaper=spd>=50?10:spd>=40?Math.round(d.advance*0.3):d.advance-d.taper;
   seq.push({id:"taper1",icon:"CONE",
     name:"First Taper Cone",
-    detail:"Walk back to taper start point (~"+d.taper+"m from works). Place first "+(spd>=40?"750mm":"500mm")+" cone angled 45 degrees across the carriageway.",
+    detail:"Walk back to taper start (~"+d.taper+"m from works). Place first "+(spd>=40?"750mm":"500mm")+" cone angled 45 degrees across the carriageway.",
     dist:Math.max(5,toTaper),dir:"downstream",phase:"Walk back toward works",
     reg:"Chapter 8 Table 8-4 Diagram 1",color:"var(--orange)"});
 
-  // Step 6 — Taper cones at intervals (walk the taper back to works)
-  const nc=Math.max(2,Math.floor(d.taper/d.coneGap)-1);
+  var nc=Math.max(2,Math.floor(d.taper/d.coneGap)-1);
   seq.push({id:"taper_mid",icon:"CONE",
     name:"Taper Cones x "+nc,
-    detail:"Walk the "+d.taper+"m taper toward works. Place "+nc+" cones every "+d.coneGap+"m continuing the 45 degree angle. Each cone should be "+d.coneGap+"m apart.",
+    detail:"Walk the "+d.taper+"m taper toward works. Place "+nc+" cones every "+d.coneGap+"m at 45 degrees.",
     dist:d.coneGap,dir:"downstream",phase:"Walk taper back to works",
     reg:"Chapter 8 Table 8-4",color:"var(--orange)"});
 
-  // Step 7 — Work zone guarding (at works)
   seq.push({id:"barriers",icon:"&#128679;",
     name:"Work Zone Guarding",
-    detail:"Back at works. Set up Chapter 8 barriers around full work area. Min 0.5m clearance from any open excavation. Place amber beacon each end.",
+    detail:"At works. Chapter 8 barriers around full work area. Min 0.5m clearance from excavation. Amber beacon each end.",
     dist:d.taper-d.coneGap,dir:"downstream",phase:"At works",
     reg:"Chapter 8 CoP s.7 - CDM 2015",color:"var(--red)"});
 
-  // PHASE 3: Walk downstream to position vehicle and downstream cones
-
-  // Step 8 — Works vehicle
-  const bufDist=spd>=50?25:spd>=40?10:5;
+  var bufDist=spd>=50?25:spd>=40?10:5;
   seq.push({id:"vehicle",icon:"&#128666;",
     name:"Works Vehicle",
-    detail:"Walk "+bufDist+"m past works downstream. Park vehicle on nearside - hazard lights AND amber beacon on - keys in ignition - Road Works sign displayed.",
+    detail:"Walk "+bufDist+"m past works downstream. Park on nearside - hazard lights AND amber beacon on - keys in ignition - Road Works sign displayed.",
     dist:bufDist,dir:"downstream",phase:"Walk downstream",
     reg:"Chapter 8 s.5.4 - HSG185",color:"var(--blue)"});
 
-  // Step 9 — Shadow vehicle if required
   if(spd>=50){
-    const shadDist=spd>=60?30:20;
+    var shadDist=spd>=60?30:20;
     seq.push({id:"shadow",icon:"&#128737;&#65039;",
       name:"Shadow Vehicle",
-      detail:"Position shadow vehicle "+shadDist+"m upstream of works vehicle. Arrow board active. Driver stays in cab seatbelt on.",
+      detail:"Position shadow vehicle "+shadDist+"m upstream of works vehicle. Arrow board active. Driver in cab seatbelt on.",
       dist:shadDist,dir:"upstream",phase:"Position shadow vehicle",
       reg:"Chapter 8 s.5.5 - BD 52",color:"var(--blue)"});
   }
 
-  // Step 10 — Downstream clearance cones
   seq.push({id:"downstream",icon:"CONE",
     name:"Downstream Clearance Cones",
-    detail:"Walk 10m past works vehicle. Place 3 to 5 cones to guide traffic back to normal running on the departure side.",
+    detail:"Walk 10m past works vehicle. Place 3 to 5 cones to guide traffic back to normal running.",
     dist:spd>=50?40:10,dir:"downstream",phase:"Walk downstream",
     reg:"Chapter 8 Diagram 1",color:"var(--orange)"});
 
   return seq;
 }
 
-function coneIcon(size){
-  return "<span class='tc tc-"+(size||"sm")+"'><span class='tc-body'></span><span class='tc-base'></span></span>";
-}
-
-function renderIcon(item){
-  if(item.icon==="CONE")return coneIcon("md");
-  return item.icon;
-}
-
-var diagramRotation=0;
-
-function rotateDiagram(deg){
-  diagramRotation=deg;
-  // Update button styles
-  [0,90,180,270].forEach(function(d){
-    var btn=document.getElementById("rot-btn-"+d);
-    if(btn){
-      btn.style.background=d===deg?"var(--orange)":"var(--dark3)";
-      btn.style.color=d===deg?"#000":"var(--muted)";
-      btn.style.border=d===deg?"none":"1px solid var(--mid)";
-    }
-  });
-  // Re-render the diagram in the new orientation
-  renderDiagram();
-}
-
-function setupTab(tab){
-  document.getElementById("tab-diagram-content").style.display=tab==="diagram"?"block":"none";
-  document.getElementById("tab-walkout-content").style.display=tab==="walkout"?"flex":"none";
-  document.getElementById("tab-diagram-btn").classList.toggle("active",tab==="diagram");
-  document.getElementById("tab-diagram-btn").classList.toggle("inactive",tab!=="diagram");
-  document.getElementById("tab-walkout-btn").classList.toggle("active",tab==="walkout");
-  document.getElementById("tab-walkout-btn").classList.toggle("inactive",tab!=="walkout");
-  var rotBar=document.getElementById("diagram-rotate-bar");
-  if(rotBar)rotBar.style.display=tab==="diagram"?"flex":"none";
-  if(tab==="diagram"){renderDiagram();rotateDiagram(diagramRotation);}
-  if(tab==="walkout")initWalkoutGPS();
-}
-
-function renderDiagram(){
-  var cont=document.getElementById("tab-diagram-content");
-  if(!S.speed||!S.trade){
-    cont.innerHTML="<div style='text-align:center;padding:40px 20px;color:var(--muted);'><div style='font-size:3rem;margin-bottom:12px;'>&#128208;</div><div style='font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:800;text-transform:uppercase;color:var(--orange);'>Select Trade and Speed First</div><div style='font-size:.82rem;margin-top:8px;'>Go to Home, fill in all fields and tap Generate Setup Plan.</div></div>";
-    return;
-  }
-
-  var d=DIST[S.speed];
-  var spd=S.speed;
-  var tradeName=TRADES[S.trade]?TRADES[S.trade].name:"";
-  var advM=d.advance, tapM=d.taper, wzM=25, dnM=25;
-  var totalM=advM+tapM+wzM+dnM;
-  var rot=diagramRotation||0;
-  var landscape=(rot===90||rot===270);
-  var flip=(rot===180||rot===270);  // traffic flows bottom to top
+// ── LIGHTS / STOP-GO DIAGRAM ──
+function renderDiagramLights(cont,d,spd,tradeName,rot,landscape,flip){
+  var useStopGo=spd<=30;
+  var tmLabel=useStopGo?"Stop/Go":"Temp Lights";
+  var advM=d.advance, wzM=20, holdM=Math.max(10,d.taper);
+  var totalM=advM+holdM+wzM+holdM+advM;
 
   // ── HELPERS ──
-  function cone(cx,cy,r){
-    r=r||10;
-    return '<polygon points="'+cx+','+(cy-r*1.6)+' '+(cx+r)+','+(cy+r*.7)+' '+(cx-r)+','+(cy+r*.7)+'" fill="#CC0000"/>'
-      +'<polygon points="'+(cx-r*.55)+','+(cy-r*.05)+' '+(cx+r*.55)+','+(cy-r*.05)+' '+(cx+r*.72)+','+(cy+r*.35)+' '+(cx-r*.72)+','+(cy+r*.35)+'" fill="white" opacity=".95"/>'
-      +'<rect x="'+(cx-r*1.1)+'" y="'+(cy+r*.7)+'" width="'+(r*2.2)+'" height="'+(r*.45)+'" rx="2" fill="#111"/>';
+  function stopgo(cx,cy,r){
+    r=r||14;
+    return '<rect x="'+(cx-r)+'" y="'+(cy-r*1.5)+'" width="'+(r*2)+'" height="'+(r*3)+'" rx="'+(r*.3)+'" fill="#1a1a1a" stroke="#FF6B00" stroke-width="2"/>'
+      +'<text x="'+cx+'" y="'+(cy-r*.2)+'" text-anchor="middle" fill="#CC0000" font-size="'+(r*.9)+'" font-weight="bold" font-family="Barlow Condensed,sans-serif">STOP</text>'
+      +'<text x="'+cx+'" y="'+(cy+r*.9)+'" text-anchor="middle" fill="#00C853" font-size="'+(r*.9)+'" font-weight="bold" font-family="Barlow Condensed,sans-serif">GO</text>';
   }
-  function beacon(cx,cy){
-    return '<circle cx="'+cx+'" cy="'+cy+'" r="7" fill="#FF6B00"/>'
-      +'<circle cx="'+cx+'" cy="'+cy+'" r="11" fill="none" stroke="#FF6B00" stroke-width="2" opacity=".4"/>';
+  function lights(cx,cy,r){
+    r=r||12;
+    return '<rect x="'+(cx-r*.7)+'" y="'+(cy-r*2)+'" width="'+(r*1.4)+'" height="'+(r*3.5)+'" rx="'+(r*.25)+'" fill="#111" stroke="#FF6B00" stroke-width="2"/>'
+      +'<circle cx="'+cx+'" cy="'+(cy-r)+'" r="'+(r*.45)+'" fill="#CC0000"/>'
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*.45)+'" fill="#FF6B00" opacity=".4"/>'
+      +'<circle cx="'+cx+'" cy="'+(cy+r)+'" r="'+(r*.45)+'" fill="#00C853" opacity=".4"/>';
   }
-  function vehicle(cx,cy,lnd){
-    if(lnd){
-      return '<rect x="'+(cx-28)+'" y="'+(cy-14)+'" width="56" height="28" rx="5" fill="#0a1a3a" stroke="#2979FF" stroke-width="2.5"/>'
-        +'<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" fill="#2979FF" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS VEHICLE</text>';
-    }
-    return '<rect x="'+(cx-20)+'" y="'+(cy-14)+'" width="40" height="28" rx="5" fill="#0a1a3a" stroke="#2979FF" stroke-width="2.5"/>'
-      +'<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" fill="#2979FF" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS</text>'
-      +'<text x="'+cx+'" y="'+(cy+10)+'" text-anchor="middle" fill="#2979FF" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">VEHICLE</text>';
-  }
-  function sign(x,y,lines,col,lnd){
-    var bh=lines.length*14+8;
-    var bw=lnd?lines.reduce(function(a,l){return Math.max(a,l.length*7+10);},40):56;
+  function beacon2(cx,cy){ return '<circle cx="'+cx+'" cy="'+cy+'" r="7" fill="#FF6B00"/><circle cx="'+cx+'" cy="'+cy+'" r="11" fill="none" stroke="#FF6B00" stroke-width="2" opacity=".4"/>'; }
+  function sign2(x,y,lines,col,bw){
+    bw=bw||60; var bh=lines.length*14+8;
     var s='<rect x="'+(x-bw/2)+'" y="'+(y-bh/2)+'" width="'+bw+'" height="'+bh+'" rx="4" fill="#0d0d00" stroke="'+col+'" stroke-width="2"/>';
-    lines.forEach(function(l,i){
-      s+='<text x="'+x+'" y="'+(y-bh/2+16+i*14)+'" text-anchor="middle" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+l+'</text>';
-    });
+    lines.forEach(function(l,i){s+='<text x="'+x+'" y="'+(y-bh/2+16+i*14)+'" text-anchor="middle" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+l+'</text>';});
     return s;
   }
-  function arrowBoard(x,y,lnd){
-    var bw=lnd?80:48;
-    return '<rect x="'+(x-bw/2)+'" y="'+(y-14)+'" width="'+bw+'" height="28" rx="4" fill="#0d0800" stroke="#FF6B00" stroke-width="2"/>'
-      +'<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" fill="#FF6B00" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ARROW BOARD</text>';
+  function tArrow2(cx,cy,dir,col){
+    if(dir==="down") return '<polygon points="'+cx+','+(cy+10)+' '+(cx-7)+','+(cy-6)+' '+(cx+7)+','+(cy-6)+'" fill="'+col+'" opacity=".7"/>';
+    if(dir==="up")   return '<polygon points="'+cx+','+(cy-10)+' '+(cx-7)+','+(cy+6)+' '+(cx+7)+','+(cy+6)+'" fill="'+col+'" opacity=".7"/>';
+    if(dir==="right")return '<polygon points="'+(cx+10)+','+cy+' '+(cx-6)+','+(cy-7)+' '+(cx-6)+','+(cy+7)+'" fill="'+col+'" opacity=".7"/>';
+    return '<polygon points="'+(cx-10)+','+cy+' '+(cx+6)+','+(cy-7)+' '+(cx+6)+','+(cy+7)+'" fill="'+col+'" opacity=".7"/>';
   }
-  function distLabel(ax,ay1,ay2,txt,col,lnd){
-    var mx=(ay1+ay2)/2;
-    col=col||"#666";
-    if(lnd){
-      // horizontal label
-      return '<line x1="'+(ay1+2)+'" y1="'+ax+'" x2="'+(ay2-2)+'" y2="'+ax+'" stroke="'+col+'" stroke-width="1" stroke-dasharray="3,3"/>'
-        +'<line x1="'+(ay1+2)+'" y1="'+(ax-4)+'" x2="'+(ay1+2)+'" y2="'+(ax+4)+'" stroke="'+col+'" stroke-width="1.5"/>'
-        +'<line x1="'+(ay2-2)+'" y1="'+(ax-4)+'" x2="'+(ay2-2)+'" y2="'+(ax+4)+'" stroke="'+col+'" stroke-width="1.5"/>'
-        +'<text x="'+mx+'" y="'+(ax-6)+'" text-anchor="middle" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+txt+'</text>';
-    }
-    return '<line x1="'+ax+'" y1="'+(ay1+2)+'" x2="'+ax+'" y2="'+(ay2-2)+'" stroke="'+col+'" stroke-width="1" stroke-dasharray="3,3"/>'
-      +'<line x1="'+(ax-4)+'" y1="'+(ay1+2)+'" x2="'+(ax+4)+'" y2="'+(ay1+2)+'" stroke="'+col+'" stroke-width="1.5"/>'
-      +'<line x1="'+(ax-4)+'" y1="'+(ay2-2)+'" x2="'+(ax+4)+'" y2="'+(ay2-2)+'" stroke="'+col+'" stroke-width="1.5"/>'
-      +'<text x="'+(ax-6)+'" y="'+(mx+4)+'" text-anchor="end" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+txt+'</text>';
-  }
-  function tArrow(cx,cy,dir,col){
-    if(dir==="down")
-      return '<polygon points="'+cx+','+(cy+10)+' '+(cx-7)+','+(cy-6)+' '+(cx+7)+','+(cy-6)+'" fill="'+col+'" opacity=".6"/>';
-    if(dir==="up")
-      return '<polygon points="'+cx+','+(cy-10)+' '+(cx-7)+','+(cy+6)+' '+(cx+7)+','+(cy+6)+'" fill="'+col+'" opacity=".6"/>';
-    if(dir==="right")
-      return '<polygon points="'+(cx+10)+','+cy+' '+(cx-6)+','+(cy-7)+' '+(cx-6)+','+(cy+7)+'" fill="'+col+'" opacity=".6"/>';
-    return '<polygon points="'+(cx-10)+','+cy+' '+(cx+6)+','+(cy-7)+' '+(cx+6)+','+(cy+7)+'" fill="'+col+'" opacity=".6"/>';
+  function worker(cx,cy){
+    return '<circle cx="'+cx+'" cy="'+(cy-18)+'" r="7" fill="#FF6B00"/>'
+      +'<rect x="'+(cx-8)+'" y="'+(cy-11)+'" width="16" height="18" rx="3" fill="#FF6B00" opacity=".9"/>'
+      +'<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" fill="#FF6B00" font-size="9" font-weight="bold" font-family="Barlow Condensed,sans-serif">OP</text>';
   }
 
   var svg;
 
   if(!landscape){
-    // ── PORTRAIT (0° or 180°) ──
-    var W=360, pad=30;
-    var roadX=100, roadW=140, laneW=70;
-    var H=Math.max(700, totalM*4+pad*2);
+    var W=340, pad=24;
+    var roadX=80, roadW=100;
+    var H=Math.max(700, totalM*3.5+pad*2);
     var scale=(H-pad*2)/totalM;
     function yP(m){ return flip?(H-pad-m*scale):(pad+m*scale); }
-    var rightEdge=roadX+roadW, cx2=roadX+laneW;
+    var re=roadX+roadW;
+    var yCentre=W/2;
 
-    var yAdv=yP(0), yTaperStart=yP(advM), yTaperEnd=yP(advM+tapM);
-    var yWZEnd=yP(advM+tapM+wzM), yDnEnd=yP(totalM);
-    var yAdv2=spd>=40?yP(advM*0.55):null;
-    var ySpeed=spd>=40?yP(advM*0.75):null;
-    var yArrow=spd>=50?yP(advM):null;
+    // Y positions
+    var yAdvUp=yP(0);
+    var yTMup=yP(advM);
+    var yWZtop=yP(advM+holdM);
+    var yWZbot=yP(advM+holdM+wzM);
+    var yTMdn=yP(advM+holdM+wzM+holdM);
+    var yAdvDn=yP(totalM);
 
     svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111;display:block;">';
+    // Verges
     svg+='<rect x="0" y="0" width="'+roadX+'" height="'+H+'" fill="#1a2a1a"/>';
-    svg+='<rect x="'+rightEdge+'" y="0" width="'+(W-rightEdge)+'" height="'+H+'" fill="#1a2a1a"/>';
+    svg+='<rect x="'+re+'" y="0" width="'+(W-re)+'" height="'+H+'" fill="#1a2a1a"/>';
+    // Road — single lane (no divider for narrow)
     svg+='<rect x="'+roadX+'" y="0" width="'+roadW+'" height="'+H+'" fill="#2d2d2d"/>';
     svg+='<line x1="'+roadX+'" y1="0" x2="'+roadX+'" y2="'+H+'" stroke="#aaa" stroke-width="3"/>';
-    svg+='<line x1="'+rightEdge+'" y1="0" x2="'+rightEdge+'" y2="'+H+'" stroke="#aaa" stroke-width="3"/>';
-    var dashH=14*scale,gapH=7*scale;
-    svg+='<line x1="'+cx2+'" y1="0" x2="'+cx2+'" y2="'+H+'" stroke="#FFD600" stroke-width="2" stroke-dasharray="'+dashH+','+gapH+'"/>';
+    svg+='<line x1="'+re+'" y1="0" x2="'+re+'" y2="'+H+'" stroke="#aaa" stroke-width="3"/>';
 
-    // Traffic arrows — oncoming opposes travel direction
-    var tDir=flip?"up":"down";        // travel lane direction
-    var tDirOpp=flip?"down":"up";     // oncoming = opposite
-    // Lane labels
-    svg+='<text x="'+(roadX+laneW/2)+'" y="18" text-anchor="middle" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ONCOMING</text>';
-    svg+='<text x="'+(roadX+laneW*1.5)+'" y="18" text-anchor="middle" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">TRAVEL</text>';
-    [0.15,0.35,0.55,0.75].forEach(function(f){svg+=tArrow(roadX+laneW/2,pad+f*(H-pad*2),tDirOpp,"#4a7a4a");});
-    [0.1,0.3].forEach(function(f){var fy=pad+f*(H-pad*2);if(fy<Math.min(yTaperStart,yAdv)-10)svg+=tArrow(roadX+laneW*1.5,fy,tDir,"#2a5a8a");});
-    svg+=tArrow(roadX+laneW*1.5, yWZEnd+(flip?-25:25), tDir,"#2a5a8a");
+    var cx=roadX+roadW/2;
+    // Lane label
+    svg+='<text x="'+cx+'" y="16" text-anchor="middle" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ONE LANE</text>';
 
-    // Taper cones
-    var nCones=Math.max(4,Math.floor(tapM/d.coneGap));
-    for(var ci=0;ci<=nCones;ci++){
-      var t=ci/nCones;
-      var cy3=yTaperStart+t*(yTaperEnd-yTaperStart);
-      svg+=cone(rightEdge-t*laneW, cy3, 8);
+    // Traffic arrows — up direction (stopped by upstream TM)
+    var tDir=flip?"down":"up";
+    [0.1,0.25].forEach(function(f){svg+=tArrow2(cx,pad+f*(yTMup-pad),flip?"down":"up","#4a7a4a");});
+    // Downstream traffic (stopped by downstream TM)
+    [0.75,0.9].forEach(function(f){svg+=tArrow2(cx,yTMdn+f*(H-pad-yTMdn),flip?"up":"down","#2a5a8a");});
+
+    // Work zone — full road width blocked
+    svg+='<rect x="'+roadX+'" y="'+Math.min(yWZtop,yWZbot)+'" width="'+roadW+'" height="'+Math.abs(yWZbot-yWZtop)+'" fill="rgba(180,0,0,0.25)" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,4"/>';
+    var wzMid=(yWZtop+yWZbot)/2;
+    svg+='<text x="'+cx+'" y="'+(wzMid-6)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORK</text>';
+    svg+='<text x="'+cx+'" y="'+(wzMid+8)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">ZONE</text>';
+    svg+=beacon2(roadX+8,Math.min(yWZtop,yWZbot)+6);
+    svg+=beacon2(roadX+8,Math.max(yWZtop,yWZbot)-6);
+
+    // TM units — upstream and downstream
+    if(useStopGo){
+      svg+=worker(re+28, yTMup);
+      svg+=stopgo(re+28, yTMup+30, 11);
+      svg+=worker(re+28, yTMdn);
+      svg+=stopgo(re+28, yTMdn+30, 11);
+    } else {
+      svg+=lights(roadX-22, yTMup, 11);
+      svg+=lights(roadX-22, yTMdn, 11);
     }
-    // Work zone
-    var wzH2=Math.abs(yWZEnd-yTaperEnd);
-    var wzTop=Math.min(yTaperEnd,yWZEnd);
-    svg+='<rect x="'+cx2+'" y="'+wzTop+'" width="'+laneW+'" height="'+wzH2+'" fill="rgba(180,0,0,0.22)" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,4"/>';
-    var wzMid=wzTop+wzH2/2;
-    svg+='<text x="'+(cx2+laneW/2)+'" y="'+(wzMid-6)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORK</text>';
-    svg+='<text x="'+(cx2+laneW/2)+'" y="'+(wzMid+8)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">ZONE</text>';
-    svg+='<line x1="'+cx2+'" y1="'+wzTop+'" x2="'+rightEdge+'" y2="'+wzTop+'" stroke="#FFD600" stroke-width="4"/>';
-    svg+='<line x1="'+cx2+'" y1="'+(wzTop+wzH2)+'" x2="'+rightEdge+'" y2="'+(wzTop+wzH2)+'" stroke="#FFD600" stroke-width="4"/>';
-    svg+=beacon(cx2+8,wzTop); svg+=beacon(cx2+8,wzTop+wzH2);
-    // Downstream cones
-    for(var di=0;di<3;di++){var t2=(di+1)/4;svg+=cone(rightEdge-laneW*(1-t2*0.7),yWZEnd+t2*(yDnEnd-yWZEnd),8);}
-    // Vehicle
-    svg+=vehicle(cx2+laneW/2,Math.min(yWZEnd+(flip?-35:35),yDnEnd-(flip?-20:20)),false);
-    // Signs
-    var signX=rightEdge+42;
-    svg+=sign(signX,yAdv,["ROAD","WORKS","AHEAD"],"#FFD600",false);
-    svg+='<line x1="'+(signX-28)+'" y1="'+yAdv+'" x2="'+rightEdge+'" y2="'+yAdv+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';
-    if(yAdv2){svg+=sign(signX,yAdv2,["ROAD","WORKS"],"#FFD600",false);svg+='<line x1="'+(signX-28)+'" y1="'+yAdv2+'" x2="'+rightEdge+'" y2="'+yAdv2+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    if(ySpeed){svg+=sign(signX,ySpeed,[(spd-20)+"mph","LIMIT"],"#FF4444",false);svg+='<line x1="'+(signX+28)+'" y1="'+ySpeed+'" x2="'+roadX+'" y2="'+ySpeed+'" stroke="#FF4444" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    if(yArrow){svg+=arrowBoard(signX,yArrow,false);svg+='<line x1="'+(signX+24)+'" y1="'+yArrow+'" x2="'+roadX+'" y2="'+yArrow+'" stroke="#FF6B00" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    // Distance labels
-    svg+=distLabel(rightEdge+14,yAdv,yTaperStart,advM+"m","#FFD600",false);
-    svg+=distLabel(rightEdge+42,yTaperStart,yTaperEnd,tapM+"m taper","#FF6B00",false);
+    // TM labels
+    svg+='<text x="'+(useStopGo?re+56:roadX-22)+'" y="'+yTMup+'" fill="#FF6B00" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+tmLabel+'</text>';
+    svg+='<text x="'+(useStopGo?re+56:roadX-22)+'" y="'+yTMdn+'" fill="#FF6B00" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+tmLabel+'</text>';
+
+    // Advance signs
+    svg+=sign2(re+40, yAdvUp, ["ROAD","WORKS","AHEAD"],"#FFD600",60);
+    svg+='<line x1="'+(re+10)+'" y1="'+yAdvUp+'" x2="'+re+'" y2="'+yAdvUp+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".6"/>';
+    svg+=sign2(re+40, yAdvDn, ["ROAD","WORKS","AHEAD"],"#FFD600",60);
+    svg+='<line x1="'+(re+10)+'" y1="'+yAdvDn+'" x2="'+re+'" y2="'+yAdvDn+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".6"/>';
+
+    // Distance labels left side
+    svg+='<line x1="'+(roadX-12)+'" y1="'+yAdvUp+'" x2="'+(roadX-12)+'" y2="'+yTMup+'" stroke="#555" stroke-width="1" stroke-dasharray="3,3"/>';
+    svg+='<text x="'+(roadX-16)+'" y="'+((yAdvUp+yTMup)/2+4)+'" text-anchor="end" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+advM+'m</text>';
+    svg+='<line x1="'+(roadX-12)+'" y1="'+yAdvDn+'" x2="'+(roadX-12)+'" y2="'+yTMdn+'" stroke="#555" stroke-width="1" stroke-dasharray="3,3"/>';
+    svg+='<text x="'+(roadX-16)+'" y="'+((yAdvDn+yTMdn)/2+4)+'" text-anchor="end" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+advM+'m</text>';
+
     svg+='</svg>';
 
   } else {
-    // ── LANDSCAPE (90° or 270°) ──
-    // Road runs horizontally — traffic flows left-to-right (90°) or right-to-left (270°/flip)
-    var H2=320, padL=30;
-    var roadY=H2/2-70, roadH2=140, laneH=70;
-    var W2=Math.max(900, totalM*4+padL*2);
-    var scaleL=(W2-padL*2)/totalM;
-    function xP(m){ return flip?(W2-padL-m*scaleL):(padL+m*scaleL); }
-    var bottomEdge=roadY+roadH2, cy4=roadY+laneH;
+    // Landscape
+    var H3=300, padL=24;
+    var roadY=H3/2-50, roadH3=100;
+    var W3=Math.max(800,totalM*3+padL*2);
+    var scaleL=(W3-padL*2)/totalM;
+    function xP(m){ return flip?(W3-padL-m*scaleL):(padL+m*scaleL); }
+    var bEdge=roadY+roadH3, cLane=roadY+roadH3/2;
 
-    var xAdv=xP(0), xTaperStart=xP(advM), xTaperEnd=xP(advM+tapM);
-    var xWZEnd=xP(advM+tapM+wzM), xDnEnd=xP(totalM);
-    var xAdv2=spd>=40?xP(advM*0.55):null;
-    var xSpeed=spd>=40?xP(advM*0.75):null;
-    var xArrow=spd>=50?xP(advM):null;
-    var tDirL=flip?"left":"right";
+    var xAdvUp=xP(0), xTMup=xP(advM), xWZtop=xP(advM+holdM);
+    var xWZbot=xP(advM+holdM+wzM), xTMdn=xP(advM+holdM+wzM+holdM), xAdvDn=xP(totalM);
 
-    svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W2+'" height="'+H2+'" viewBox="0 0 '+W2+' '+H2+'" style="background:#111;display:block;">';
-    // Verges
-    svg+='<rect x="0" y="0" width="'+W2+'" height="'+roadY+'" fill="#1a2a1a"/>';
-    svg+='<rect x="0" y="'+bottomEdge+'" width="'+W2+'" height="'+(H2-bottomEdge)+'" fill="#1a2a1a"/>';
-    // Road
-    svg+='<rect x="0" y="'+roadY+'" width="'+W2+'" height="'+roadH2+'" fill="#2d2d2d"/>';
-    svg+='<line x1="0" y1="'+roadY+'" x2="'+W2+'" y2="'+roadY+'" stroke="#aaa" stroke-width="3"/>';
-    svg+='<line x1="0" y1="'+bottomEdge+'" x2="'+W2+'" y2="'+bottomEdge+'" stroke="#aaa" stroke-width="3"/>';
-    var dashL=14*scaleL,gapL=7*scaleL;
-    svg+='<line x1="0" y1="'+cy4+'" x2="'+W2+'" y2="'+cy4+'" stroke="#FFD600" stroke-width="2" stroke-dasharray="'+dashL+','+gapL+'"/>';
-    // Lane labels
-    svg+='<text x="20" y="'+(roadY+laneH/2+4)+'" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ONCOMING</text>';
-    svg+='<text x="20" y="'+(cy4+laneH/2+4)+'" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">TRAVEL</text>';
-    // Traffic arrows
-    var tDirLOpp=flip?"right":"left";
-    [0.15,0.35,0.55,0.75].forEach(function(f){svg+=tArrow(padL+f*(W2-padL*2),roadY+laneH/2,tDirLOpp,"#4a7a4a");});
-    [0.1,0.3].forEach(function(f){
-      var fx=padL+f*(W2-padL*2);
-      if((flip&&fx>Math.max(xTaperStart,xAdv)+10)||(!flip&&fx<Math.min(xTaperStart,xAdv)-10))
-        svg+=tArrow(fx,cy4+laneH/2,tDirL,"#2a5a8a");
+    svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W3+'" height="'+H3+'" viewBox="0 0 '+W3+' '+H3+'" style="background:#111;display:block;">';
+    svg+='<rect x="0" y="0" width="'+W3+'" height="'+roadY+'" fill="#1a2a1a"/>';
+    svg+='<rect x="0" y="'+bEdge+'" width="'+W3+'" height="'+(H3-bEdge)+'" fill="#1a2a1a"/>';
+    svg+='<rect x="0" y="'+roadY+'" width="'+W3+'" height="'+roadH3+'" fill="#2d2d2d"/>';
+    svg+='<line x1="0" y1="'+roadY+'" x2="'+W3+'" y2="'+roadY+'" stroke="#aaa" stroke-width="3"/>';
+    svg+='<line x1="0" y1="'+bEdge+'" x2="'+W3+'" y2="'+bEdge+'" stroke="#aaa" stroke-width="3"/>';
+    svg+='<text x="40" y="'+(cLane+4)+'" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ONE LANE ROAD</text>';
+
+    var tDirL=flip?"left":"right", tDirLOpp=flip?"right":"left";
+    [[0.1,tDirLOpp,"#4a7a4a"],[0.25,tDirLOpp,"#4a7a4a"],[0.75,tDirL,"#2a5a8a"],[0.9,tDirL,"#2a5a8a"]].forEach(function(a){
+      svg+=tArrow2(padL+a[0]*(W3-padL*2),cLane,a[1],a[2]);
     });
-    svg+=tArrow(xWZEnd+(flip?-30:30),cy4+laneH/2,tDirL,"#2a5a8a");
-    // Taper cones
-    var nConesL=Math.max(4,Math.floor(tapM/d.coneGap));
-    for(var ci2=0;ci2<=nConesL;ci2++){
-      var t4=ci2/nConesL;
-      var cx4=xTaperStart+t4*(xTaperEnd-xTaperStart);
-      svg+=cone(cx4, bottomEdge-t4*laneH, 8);
-    }
+
     // Work zone
-    var wzW=Math.abs(xWZEnd-xTaperEnd);
-    var wzLeft=Math.min(xTaperEnd,xWZEnd);
-    svg+='<rect x="'+wzLeft+'" y="'+cy4+'" width="'+wzW+'" height="'+laneH+'" fill="rgba(180,0,0,0.22)" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,4"/>';
-    var wzMidX=wzLeft+wzW/2;
-    svg+='<text x="'+wzMidX+'" y="'+(cy4+laneH/2+5)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORK ZONE</text>';
-    svg+='<line x1="'+wzLeft+'" y1="'+cy4+'" x2="'+wzLeft+'" y2="'+bottomEdge+'" stroke="#FFD600" stroke-width="4"/>';
-    svg+='<line x1="'+(wzLeft+wzW)+'" y1="'+cy4+'" x2="'+(wzLeft+wzW)+'" y2="'+bottomEdge+'" stroke="#FFD600" stroke-width="4"/>';
-    svg+=beacon(wzLeft,cy4+8); svg+=beacon(wzLeft+wzW,cy4+8);
-    // Downstream cones
-    for(var di2=0;di2<3;di2++){var t5=(di2+1)/4;svg+=cone(xWZEnd+t5*(xDnEnd-xWZEnd),bottomEdge-laneH*(1-t5*0.7),8);}
-    // Vehicle
-    svg+=vehicle(xWZEnd+(flip?-40:40),cy4+laneH/2,true);
-    // Signs on bottom verge — same side as works
-    var signY=bottomEdge+22;
-    svg+=sign(xAdv,signY,["ROAD WORKS AHEAD"],"#FFD600",true);
-    svg+='<line x1="'+xAdv+'" y1="'+bottomEdge+'" x2="'+xAdv+'" y2="'+(signY-8)+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';
-    if(xAdv2){svg+=sign(xAdv2,signY,["ROAD WORKS"],"#FFD600",true);svg+='<line x1="'+xAdv2+'" y1="'+bottomEdge+'" x2="'+xAdv2+'" y2="'+(signY-8)+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    if(xSpeed){svg+=sign(xSpeed,signY,[(spd-20)+"mph LIMIT"],"#FF4444",true);svg+='<line x1="'+xSpeed+'" y1="'+bottomEdge+'" x2="'+xSpeed+'" y2="'+(signY-8)+'" stroke="#FF4444" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    if(xArrow){svg+=arrowBoard(xArrow,signY,true);svg+='<line x1="'+xArrow+'" y1="'+bottomEdge+'" x2="'+xArrow+'" y2="'+(signY-14)+'" stroke="#FF6B00" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    // Distance labels above road (away from signs)
-    svg+=distLabel(roadY-18,xAdv,xTaperStart,advM+"m","#FFD600",true);
-    svg+=distLabel(roadY-40,xTaperStart,xTaperEnd,tapM+"m","#FF6B00",true);
+    var wzL=Math.min(xWZtop,xWZbot), wzW=Math.abs(xWZbot-xWZtop);
+    svg+='<rect x="'+wzL+'" y="'+roadY+'" width="'+wzW+'" height="'+roadH3+'" fill="rgba(180,0,0,0.25)" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,4"/>';
+    svg+='<text x="'+(wzL+wzW/2)+'" y="'+(cLane+5)+'" text-anchor="middle" fill="#FF4444" font-size="14" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORK ZONE</text>';
+    svg+=beacon2(wzL+8,roadY+8); svg+=beacon2(wzL+wzW-8,roadY+8);
+
+    // TM units
+    if(useStopGo){
+      svg+=worker(xTMup,roadY-28); svg+=stopgo(xTMup,roadY-70,10);
+      svg+=worker(xTMdn,roadY-28); svg+=stopgo(xTMdn,roadY-70,10);
+    } else {
+      svg+=lights(xTMup,roadY-28,10); svg+=lights(xTMdn,roadY-28,10);
+    }
+    svg+='<text x="'+xTMup+'" y="'+(roadY-85)+'" text-anchor="middle" fill="#FF6B00" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+tmLabel+'</text>';
+    svg+='<text x="'+xTMdn+'" y="'+(roadY-85)+'" text-anchor="middle" fill="#FF6B00" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+tmLabel+'</text>';
+
+    // Signs
+    svg+=sign2(xAdvUp,bEdge+22,["ROAD WORKS AHEAD"],"#FFD600",100);
+    svg+='<line x1="'+xAdvUp+'" y1="'+bEdge+'" x2="'+xAdvUp+'" y2="'+(bEdge+8)+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".6"/>';
+    svg+=sign2(xAdvDn,bEdge+22,["ROAD WORKS AHEAD"],"#FFD600",100);
+    svg+='<line x1="'+xAdvDn+'" y1="'+bEdge+'" x2="'+xAdvDn+'" y2="'+(bEdge+8)+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".6"/>';
+
+    // Distance labels
+    svg+='<line x1="'+xAdvUp+'" y1="'+(roadY-12)+'" x2="'+xTMup+'" y2="'+(roadY-12)+'" stroke="#555" stroke-width="1" stroke-dasharray="3,3"/>';
+    svg+='<text x="'+((xAdvUp+xTMup)/2)+'" y="'+(roadY-16)+'" text-anchor="middle" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+advM+'m</text>';
+    svg+='<line x1="'+xAdvDn+'" y1="'+(roadY-12)+'" x2="'+xTMdn+'" y2="'+(roadY-12)+'" stroke="#555" stroke-width="1" stroke-dasharray="3,3"/>';
+    svg+='<text x="'+((xAdvDn+xTMdn)/2)+'" y="'+(roadY-16)+'" text-anchor="middle" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+advM+'m</text>';
+
     svg+='</svg>';
   }
 
   var scrollStyle=landscape?"overflow-x:auto;overflow-y:hidden;":"overflow:hidden;";
   cont.innerHTML=
     '<div style="background:var(--dark2);border-bottom:1px solid var(--orange);padding:10px 16px;font-size:.78rem;color:#ffcc80;line-height:1.5;">'
-    +'<strong>'+spd+'mph '+S.road+' — '+tradeName+'</strong>'
-    +' &nbsp;<span style="color:var(--muted);">'+rot+'° rotation</span><br>'
-    +'Advance: '+advM+'m &nbsp;|&nbsp; Taper: '+tapM+'m &nbsp;|&nbsp; Gap: '+d.coneGap+'m'
+    +'<strong>Plan View — '+spd+'mph '+( S.width==="narrow"?"Narrow Road":"Single Lane")+(useStopGo?" — Stop/Go Working":" — Temp Traffic Lights")+'</strong><br>'
+    +tradeName+' &nbsp;|&nbsp; Advance: '+advM+'m each end'
     +'</div>'
     +'<div id="diagram-svg-wrap" style="'+scrollStyle+'">'+svg+'</div>'
     +'<div style="background:var(--dark2);border-top:1px solid var(--mid);padding:10px 16px;font-size:.72rem;color:var(--muted);line-height:1.8;margin-bottom:120px;">'
-    +'<span style="color:#FFD600;">&#9646;</span> Advance signs &nbsp;'
-    +'<span style="color:#CC0000;">&#9650;</span> Cones &nbsp;'
-    +'<span style="color:#FF6B00;">&#9679;</span> Beacon &nbsp;'
-    +'<span style="color:#2979FF;">&#9646;</span> Vehicle &nbsp;'
-    +'<span style="color:#FF4444;">&#9646;</span> Work zone'
+    +'<span style="color:#FFD600;">&#9646;</span> Advance signs (both ends) &nbsp;'
+    +'<span style="color:#FF6B00;">&#9646;</span> '+(useStopGo?"Stop/Go operative":"Temp traffic light")+'(both ends) &nbsp;'
+    +'<span style="color:#FF4444;">&#9646;</span> Work zone (full carriageway width)'
     +'</div>';
 }
+
 
 // ════ GPS + CAMERA AR WALK-OUT ════
 var WO={seq:[],current:0,placed:[],startLat:null,startLng:null,
@@ -1712,4 +1683,4 @@ renderChecklist();
 </body>
 </html>
 conesout.html
-Displaying conesout.html.
+Displaying conesout.html. 
