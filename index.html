@@ -203,7 +203,11 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .check-item.checked .check-title{text-decoration:line-through;color:var(--muted);}
 
 /* ── NAVBAR ── */
-.navbar{background:var(--dark2);border-top:2px solid var(--mid);display:flex;flex-shrink:0;z-index:100;}
+.navbar{position:fixed;bottom:0;left:0;right:0;background:rgba(20,20,20,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(255,107,0,0.3);display:flex;z-index:200;transition:transform .3s ease,opacity .3s ease;}
+.navbar.hidden{transform:translateY(100%);opacity:0;}
+.nav-btn.active::before{content:"";position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--orange);border-radius:0 0 4px 4px;}
+/* Add bottom padding to all screens so content isn't hidden under floating navbar */
+.screen{padding-bottom:60px;}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 4px 7px;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:color .2s;gap:2px;position:relative;}
 .nav-btn.active{color:var(--orange);}
 .nav-btn.active::before{content:"";position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--orange);border-radius:0 0 4px 4px;}
@@ -966,56 +970,202 @@ function setupTab(tab){
 }
 
 function renderDiagram(){
-  const cont=document.getElementById("tab-diagram-content");
+  var cont=document.getElementById("tab-diagram-content");
   if(!S.speed||!S.trade){
-    cont.innerHTML="<div style='text-align:center;padding:40px 20px;color:var(--muted);'><div style='font-size:3rem;margin-bottom:12px;'>&#128208;</div><div style='font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;color:var(--orange);'>Select Trade and Speed First</div><div style='font-size:.78rem;margin-top:8px;'>Go to Home, fill in all fields and tap Generate Setup Plan to see the layout diagram.</div></div>";
+    cont.innerHTML="<div style='text-align:center;padding:40px 20px;color:var(--muted);'><div style='font-size:3rem;margin-bottom:12px;'>&#128208;</div><div style='font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;color:var(--orange);'>Select Trade and Speed First</div><div style='font-size:.78rem;margin-top:8px;'>Go to Home, fill in all fields and tap Generate Setup Plan to see the plan view.</div></div>";
     return;
   }
-  const d=DIST[S.speed];
-  const seq=getPlacementSeq();
-  const up=seq.filter(function(i){return i.dir==="upstream";}).reverse();
-  const wk=seq.filter(function(i){return i.dir==="works";});
-  const dn=seq.filter(function(i){return i.dir==="downstream";});
 
-  let html="<div style='background:var(--dark2);border:1px solid var(--orange);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:.72rem;color:#ffcc80;line-height:1.5;'><strong>Layout for "+S.speed+"mph - "+S.road+" - "+(TRADES[S.trade]?TRADES[S.trade].name:"")+"</strong><br>Advance: "+d.advance+"m - Taper: "+d.taper+"m - Cone gap: "+d.coneGap+"m</div>";
-  html+="<div style='font-family:Barlow Condensed,sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:1px;'>ONCOMING TRAFFIC APPROACHING</div>";
+  var d=DIST[S.speed];
+  var spd=S.speed;
+  var tradeName=TRADES[S.trade]?TRADES[S.trade].name:"";
 
-  up.forEach(function(item,i){
-    html+="<div class='layout-item' style='border-left:4px solid "+item.color+";'>"
-      +"<div class='layout-item-icon'>"+renderIcon(item)+"</div>"
-      +"<div class='layout-item-info'>"
-        +"<div class='layout-item-name' style='color:"+item.color+";'>"+item.name+"</div>"
-        +"<div class='layout-item-detail'>"+item.detail+"</div>"
-        +"<div class='layout-item-dist' style='border-color:"+item.color+";color:"+item.color+";'>"+item.dist+"m from works</div>"
-      +"</div>"
-    +"</div>";
-    if(i<up.length-1){
-      const gap=Math.abs(up[i].dist-(up[i+1]?up[i+1].dist:0));
-      if(gap>0)html+="<div style='text-align:center;color:var(--muted);font-size:.75rem;margin-bottom:6px;'>"+gap+"m</div>";
+  // ── Layout constants ──
+  // Total scene height in metres: advance + taper + workzone + downstream
+  var advM=d.advance;
+  var tapM=d.taper;
+  var wzM=20;   // work zone fixed 20m
+  var dnM=20;   // downstream fixed 20m
+  var totalM=advM+tapM+wzM+dnM;
+
+  // SVG dimensions
+  var W=320;
+  var H=600;
+  var pad=20;
+  var roadX=W/2-30;  // road left edge
+  var roadW=60;      // road width in px
+  var laneW=roadW/2;
+
+  // Scale: pixels per metre
+  var scale=(H-pad*2)/totalM;
+
+  // Y positions (top=upstream/furthest, bottom=downstream)
+  function yPos(mFromTop){ return pad+mFromTop*scale; }
+
+  var yAdv=yPos(0);                    // advance sign
+  var yAdv2=spd>=40?yPos(advM/2):null; // second advance sign
+  var yTaperStart=yPos(advM);          // taper start
+  var yTaperEnd=yPos(advM+tapM);       // taper end = works entry
+  var yWZEnd=yPos(advM+tapM+wzM);      // work zone end
+  var yDnEnd=yPos(totalM);             // bottom
+
+  // ── Build SVG ──
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111;display:block;font-family:sans-serif;">';
+
+  // Traffic direction arrows at top
+  svg+='<text x="'+(roadX+laneW/2)+'" y="'+(pad-4)+'" text-anchor="middle" fill="#555" font-size="9" font-weight="bold">ONCOMING</text>';
+  svg+='<text x="'+(roadX+laneW*1.5)+'" y="'+(pad-4)+'" text-anchor="middle" fill="#555" font-size="9" font-weight="bold">TRAVEL</text>';
+
+  // Road surface
+  svg+='<rect x="'+roadX+'" y="'+pad+'" width="'+roadW+'" height="'+(H-pad*2)+'" fill="#2a2a2a" rx="0"/>';
+
+  // Lane dividing line (dashed white)
+  var dashLen=10*scale, gapLen=5*scale;
+  svg+='<line x1="'+(roadX+laneW)+'" y1="'+pad+'" x2="'+(roadX+laneW)+'" y2="'+(H-pad)+'" stroke="#555" stroke-width="1.5" stroke-dasharray="'+dashLen+','+gapLen+'"/>';
+
+  // Road edges
+  svg+='<line x1="'+roadX+'" y1="'+pad+'" x2="'+roadX+'" y2="'+(H-pad)+'" stroke="#666" stroke-width="2"/>';
+  svg+='<line x1="'+(roadX+roadW)+'" y1="'+pad+'" x2="'+(roadX+roadW)+'" y2="'+(H-pad)+'" stroke="#666" stroke-width="2"/>';
+
+  // Kerb / verge areas
+  svg+='<rect x="0" y="'+pad+'" width="'+roadX+'" height="'+(H-pad*2)+'" fill="#1a1f1a"/>';
+  svg+='<rect x="'+(roadX+roadW)+'" y="'+pad+'" width="'+(W-roadX-roadW)+'" height="'+(H-pad*2)+'" fill="#1a1f1a"/>';
+
+  // ── TAPER CONES ──
+  // Draw cones from taper start, angling across the nearside lane
+  var nCones=Math.max(3,Math.floor(tapM/d.coneGap));
+  for(var ci=0;ci<=nCones;ci++){
+    var t=ci/nCones;
+    var cy=yTaperStart+t*(yTaperEnd-yTaperStart);
+    // Cone moves from right edge of nearside lane to centre line
+    var cx=roadX+roadW-(t*laneW);
+    drawSVGCone(cx,cy,7);
+    // Mini cone SVG inline
+    svg+=svgCone(cx,cy,6);
+  }
+
+  // ── WORK ZONE ──
+  var wzY=yTaperEnd;
+  var wzH=yWZEnd-yTaperEnd;
+  // Block the nearside lane (right lane from viewer perspective = travel lane being blocked)
+  svg+='<rect x="'+(roadX+laneW)+'" y="'+wzY+'" width="'+laneW+'" height="'+wzH+'" fill="rgba(200,0,0,0.18)" stroke="#CC0000" stroke-width="1.5" stroke-dasharray="4,3"/>';
+  // Work zone label
+  var wzMidY=wzY+wzH/2;
+  svg+='<text x="'+(roadX+laneW+laneW/2)+'" y="'+(wzMidY-8)+'" text-anchor="middle" fill="#CC0000" font-size="8" font-weight="bold">WORK</text>';
+  svg+='<text x="'+(roadX+laneW+laneW/2)+'" y="'+(wzMidY+4)+'" text-anchor="middle" fill="#CC0000" font-size="8" font-weight="bold">ZONE</text>';
+  // Amber beacon circles each end
+  svg+=svgBeacon(roadX+laneW+laneW/2, wzY+4);
+  svg+=svgBeacon(roadX+laneW+laneW/2, wzY+wzH-4);
+  // Barriers across entry and exit
+  svg+='<line x1="'+(roadX+laneW)+'" y1="'+wzY+'" x2="'+(roadX+roadW)+'" y2="'+wzY+'" stroke="#FFD600" stroke-width="3"/>';
+  svg+='<line x1="'+(roadX+laneW)+'" y1="'+(wzY+wzH)+'" x2="'+(roadX+roadW)+'" y2="'+(wzY+wzH)+'" stroke="#FFD600" stroke-width="3"/>';
+
+  // ── DOWNSTREAM CONES (3 cones guiding traffic back) ──
+  for(var di=0;di<3;di++){
+    var t2=(di+1)/4;
+    var dcy=yWZEnd+t2*(yDnEnd-yWZEnd);
+    var dcx=roadX+roadW-laneW*(1-t2*0.8);
+    svg+=svgCone(dcx,dcy,6);
+  }
+
+  // ── WORKS VEHICLE ──
+  var vehY=yWZEnd+5*scale;
+  svg+=svgVehicle(roadX+laneW+laneW/2, Math.min(vehY, yDnEnd-18));
+
+  // ── ADVANCE SIGNS ──
+  // Sign 1 — furthest, left verge (nearside)
+  svg+=svgSign(roadX-8, yAdv, "ADV", "#FFD600");
+  // Distance label
+  svg+='<text x="'+(roadX-10)+'" y="'+(yAdv+3)+'" text-anchor="end" fill="#FFD600" font-size="8">'+advM+'m</text>';
+
+  // Sign 2 — if applicable
+  if(yAdv2!==null){
+    svg+=svgSign(roadX-8, yAdv2, "ADV2", "#FFD600");
+    svg+='<text x="'+(roadX-10)+'" y="'+(yAdv2+3)+'" text-anchor="end" fill="#FFD600" font-size="8">'+(Math.round(advM/2))+'m</text>';
+  }
+
+  // Arrow board at taper start
+  if(spd>=50){
+    svg+=svgArrowBoard(roadX-8, yTaperStart);
+  }
+
+  // ── DISTANCE LABELS (right side) ──
+  var labelX=roadX+roadW+6;
+  // Advance distance brace
+  svg+='<line x1="'+labelX+'" y1="'+yAdv+'" x2="'+labelX+'" y2="'+yTaperStart+'" stroke="#555" stroke-width="1"/>';
+  svg+='<text x="'+(labelX+4)+'" y="'+((yAdv+yTaperStart)/2+3)+'" fill="#888" font-size="8">'+advM+'m</text>';
+  // Taper brace
+  svg+='<line x1="'+(labelX+20)+'" y1="'+yTaperStart+'" x2="'+(labelX+20)+'" y2="'+yTaperEnd+'" stroke="#555" stroke-width="1"/>';
+  svg+='<text x="'+(labelX+24)+'" y="'+((yTaperStart+yTaperEnd)/2+3)+'" fill="#888" font-size="8">'+tapM+'m taper</text>';
+
+  // ── TRAFFIC FLOW ARROWS ──
+  // Oncoming lane (left lane) — arrows going DOWN (toward works)
+  for(var ai=0;ai<3;ai++){
+    var ay=pad+60+ai*80;
+    if(ay<H-pad-20){
+      svg+=svgArrow(roadX+laneW/2, ay, "down", "#3a5a3a");
     }
-  });
+  }
+  // Travel lane (right) — arrows going UP above taper, then blocked
+  for(var ai2=0;ai2<2;ai2++){
+    var ay2=yAdv+20+ai2*70;
+    if(ay2<yTaperStart-10){
+      svg+=svgArrow(roadX+laneW+laneW/2, ay2, "down", "#1a3a5a");
+    }
+  }
+  // After works — travel lane restored
+  svg+=svgArrow(roadX+laneW+laneW/2, yDnEnd-15, "down", "#1a3a5a");
 
-  html+="<div style='text-align:center;color:var(--muted);font-size:.75rem;margin-bottom:6px;'>taper distance</div>";
-  html+="<div style='background:#1a0000;border:3px solid var(--red);border-radius:8px;margin-bottom:8px;padding:12px;text-align:center;'>"
-    +"<div style='font-size:1.5rem;margin-bottom:4px;'>&#9935;&#65039; &#128679;</div>"
-    +"<div style='font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;text-transform:uppercase;color:var(--red);'>WORK ZONE</div>"
-    +"<div style='font-size:.72rem;color:#ffccbc;margin-top:4px;'>Chapter 8 barriers - Amber beacons - 0.5m clearance from excavation</div>"
-  +"</div>";
+  // ── LEGEND ──
+  var legY=H-pad+12;
+  // (legend removed to keep clean — labels on diagram are sufficient)
 
-  dn.forEach(function(item){
-    html+="<div class='layout-item' style='border-left:4px solid "+item.color+";'>"
-      +"<div class='layout-item-icon'>"+renderIcon(item)+"</div>"
-      +"<div class='layout-item-info'>"
-        +"<div class='layout-item-name' style='color:"+item.color+";'>"+item.name+"</div>"
-        +"<div class='layout-item-detail'>"+item.detail+"</div>"
-        +"<div class='layout-item-dist' style='border-color:"+item.color+";color:"+item.color+";'>"+item.dist+"m past works</div>"
-      +"</div>"
-    +"</div>";
-  });
+  svg+='</svg>';
 
-  html+="<div style='font-family:Barlow Condensed,sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:4px;letter-spacing:1px;'>TRAFFIC DEPARTING</div>";
-  html+="<div style='background:#00101a;border:1px solid var(--blue);border-radius:8px;padding:10px 12px;margin-top:12px;margin-bottom:20px;font-size:.7rem;color:#82b1ff;line-height:1.5;'>Chapter 8 CoP - TSRGD 2016 - All distances are minimums - increase for poor visibility or adverse conditions</div>";
-  cont.innerHTML=html;
+  // Helper functions defined inline
+  function svgCone(cx,cy,r){
+    return '<polygon points="'+cx+','+(cy-r*1.5)+' '+(cx+r*.9)+','+(cy+r*.6)+' '+(cx-r*.9)+','+(cy+r*.6)+'" fill="#CC0000"/>'
+      +'<polygon points="'+(cx-r*.5)+','+(cy-r*.1)+' '+(cx+r*.5)+','+(cy-r*.1)+' '+(cx+r*.65)+','+(cy+r*.25)+' '+(cx-r*.65)+','+(cy+r*.25)+'" fill="white" opacity=".9"/>'
+      +'<rect x="'+(cx-r)+'" y="'+(cy+r*.6)+'" width="'+(r*2)+'" height="'+(r*.4)+'" rx="1" fill="#111"/>';
+  }
+  function svgBeacon(cx,cy){
+    return '<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#FF6B00" opacity=".9"/>'
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="none" stroke="#FF6B00" stroke-width="1" opacity=".4"/>';
+  }
+  function svgVehicle(cx,cy){
+    var vw=22,vh=12;
+    return '<rect x="'+(cx-vw/2)+'" y="'+(cy-vh/2)+'" width="'+vw+'" height="'+vh+'" rx="3" fill="#1a3a6a" stroke="#2979FF" stroke-width="1.5"/>'
+      +'<text x="'+cx+'" y="'+(cy+3)+'" text-anchor="middle" fill="#2979FF" font-size="7" font-weight="bold">VEH</text>';
+  }
+  function svgSign(x,y,label,col){
+    return '<rect x="'+(x-10)+'" y="'+(y-8)+'" width="20" height="14" rx="2" fill="#1a1a00" stroke="'+col+'" stroke-width="1.5"/>'
+      +'<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" fill="'+col+'" font-size="6" font-weight="bold">'+label+'</text>';
+  }
+  function svgArrowBoard(x,y){
+    return '<rect x="'+(x-10)+'" y="'+(y-7)+'" width="20" height="14" rx="2" fill="#1a1000" stroke="#FF6B00" stroke-width="1.5"/>'
+      +'<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" fill="#FF6B00" font-size="9">&#8599;</text>';
+  }
+  function svgArrow(cx,cy,dir,col){
+    if(dir==="down")
+      return '<polygon points="'+cx+','+(cy+6)+' '+(cx-5)+','+(cy-4)+' '+(cx+5)+','+(cy-4)+'" fill="'+col+'"/>';
+    return '<polygon points="'+cx+','+(cy-6)+' '+(cx-5)+','+(cy+4)+' '+(cx+5)+','+(cy+4)+'" fill="'+col+'"/>';
+  }
+
+  cont.innerHTML=
+    '<div style="background:var(--dark2);border-bottom:1px solid var(--orange);padding:10px 16px;font-size:.72rem;color:#ffcc80;line-height:1.5;">'
+    +'<strong>Plan View — '+spd+'mph '+S.road+' — '+tradeName+'</strong><br>'
+    +'Advance: '+advM+'m &nbsp;|&nbsp; Taper: '+tapM+'m &nbsp;|&nbsp; Cone gap: '+d.coneGap+'m'
+    +'</div>'
+    +'<div style="padding:12px 16px;">'
+    +svg
+    +'</div>'
+    +'<div style="background:var(--dark2);border-top:1px solid var(--mid);padding:10px 16px;font-size:.68rem;color:var(--muted);line-height:1.6;">'
+    +'<span style="color:#FFD600;">&#9632;</span> Advance sign &nbsp; '
+    +'<span style="color:#CC0000;">&#9650;</span> Cone &nbsp; '
+    +'<span style="color:#FF6B00;">&#9632;</span> Beacon/Arrow &nbsp; '
+    +'<span style="color:#2979FF;">&#9632;</span> Works vehicle &nbsp; '
+    +'<span style="color:#CC0000;">&#9632;</span> Work zone'
+    +'</div>';
 }
 
 // ════ GPS + CAMERA AR WALK-OUT ════
@@ -1471,8 +1621,34 @@ navigator.geolocation&&navigator.geolocation.getCurrentPosition(function(p){
 
 renderChecklist();
 
+// ════ NAVBAR FLOAT + AUTO-HIDE ════
+(function(){
+  var lastY=0,tOut=null;
+  var nav=document.querySelector('.navbar');
+  function showNav(){
+    nav.classList.remove('hidden');
+    clearTimeout(tOut);
+    tOut=setTimeout(function(){
+      var active=document.querySelector('.screen.active');
+      if(active&&active.scrollHeight>active.clientHeight+20)nav.classList.add('hidden');
+    },4000);
+  }
+  document.addEventListener('touchstart',showNav,{passive:true});
+  document.addEventListener('click',showNav);
+  document.querySelectorAll('.screen').forEach(function(scr){
+    scr.addEventListener('scroll',function(){
+      var y=scr.scrollTop;
+      if(y>lastY+10){nav.classList.add('hidden');}
+      else if(y<lastY-5){showNav();}
+      lastY=y;
+    },{passive:true});
+  });
+  var _os=window.showScreen;
+  window.showScreen=function(n){_os(n);lastY=0;showNav();};
+})();
+
 </script>
 </body>
 </html>
 conesout.html
-Displaying conesout.html. 
+Displaying conesout.html.
