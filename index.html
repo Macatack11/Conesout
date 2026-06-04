@@ -1010,6 +1010,35 @@ function renderDiagram(){
   var yDnEnd=yPos(totalM);             // bottom
 
   // ── Build SVG ──
+// Helper functions defined inline
+  function svgCone(cx,cy,r){
+    return '<polygon points="'+cx+','+(cy-r*1.5)+' '+(cx+r*.9)+','+(cy+r*.6)+' '+(cx-r*.9)+','+(cy+r*.6)+'" fill="#CC0000"/>'
+      +'<polygon points="'+(cx-r*.5)+','+(cy-r*.1)+' '+(cx+r*.5)+','+(cy-r*.1)+' '+(cx+r*.65)+','+(cy+r*.25)+' '+(cx-r*.65)+','+(cy+r*.25)+'" fill="white" opacity=".9"/>'
+      +'<rect x="'+(cx-r)+'" y="'+(cy+r*.6)+'" width="'+(r*2)+'" height="'+(r*.4)+'" rx="1" fill="#111"/>';
+  }
+  function svgBeacon(cx,cy){
+    return '<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#FF6B00" opacity=".9"/>'
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="none" stroke="#FF6B00" stroke-width="1" opacity=".4"/>';
+  }
+  function svgVehicle(cx,cy){
+    var vw=22,vh=12;
+    return '<rect x="'+(cx-vw/2)+'" y="'+(cy-vh/2)+'" width="'+vw+'" height="'+vh+'" rx="3" fill="#1a3a6a" stroke="#2979FF" stroke-width="1.5"/>'
+      +'<text x="'+cx+'" y="'+(cy+3)+'" text-anchor="middle" fill="#2979FF" font-size="7" font-weight="bold">VEH</text>';
+  }
+  function svgSign(x,y,label,col){
+    return '<rect x="'+(x-10)+'" y="'+(y-8)+'" width="20" height="14" rx="2" fill="#1a1a00" stroke="'+col+'" stroke-width="1.5"/>'
+      +'<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" fill="'+col+'" font-size="6" font-weight="bold">'+label+'</text>';
+  }
+  function svgArrowBoard(x,y){
+    return '<rect x="'+(x-10)+'" y="'+(y-7)+'" width="20" height="14" rx="2" fill="#1a1000" stroke="#FF6B00" stroke-width="1.5"/>'
+      +'<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" fill="#FF6B00" font-size="9">&#8599;</text>';
+  }
+  function svgArrow(cx,cy,dir,col){
+    if(dir==="down")
+      return '<polygon points="'+cx+','+(cy+6)+' '+(cx-5)+','+(cy-4)+' '+(cx+5)+','+(cy-4)+'" fill="'+col+'"/>';
+    return '<polygon points="'+cx+','+(cy-6)+' '+(cx-5)+','+(cy+4)+' '+(cx+5)+','+(cy+4)+'" fill="'+col+'"/>';
+  }
+
   var svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111;display:block;font-family:sans-serif;">';
 
   // Traffic direction arrows at top
@@ -1039,8 +1068,6 @@ function renderDiagram(){
     var cy=yTaperStart+t*(yTaperEnd-yTaperStart);
     // Cone moves from right edge of nearside lane to centre line
     var cx=roadX+roadW-(t*laneW);
-    drawSVGCone(cx,cy,7);
-    // Mini cone SVG inline
     svg+=svgCone(cx,cy,6);
   }
 
@@ -1121,35 +1148,6 @@ function renderDiagram(){
   // (legend removed to keep clean — labels on diagram are sufficient)
 
   svg+='</svg>';
-
-  // Helper functions defined inline
-  function svgCone(cx,cy,r){
-    return '<polygon points="'+cx+','+(cy-r*1.5)+' '+(cx+r*.9)+','+(cy+r*.6)+' '+(cx-r*.9)+','+(cy+r*.6)+'" fill="#CC0000"/>'
-      +'<polygon points="'+(cx-r*.5)+','+(cy-r*.1)+' '+(cx+r*.5)+','+(cy-r*.1)+' '+(cx+r*.65)+','+(cy+r*.25)+' '+(cx-r*.65)+','+(cy+r*.25)+'" fill="white" opacity=".9"/>'
-      +'<rect x="'+(cx-r)+'" y="'+(cy+r*.6)+'" width="'+(r*2)+'" height="'+(r*.4)+'" rx="1" fill="#111"/>';
-  }
-  function svgBeacon(cx,cy){
-    return '<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#FF6B00" opacity=".9"/>'
-      +'<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="none" stroke="#FF6B00" stroke-width="1" opacity=".4"/>';
-  }
-  function svgVehicle(cx,cy){
-    var vw=22,vh=12;
-    return '<rect x="'+(cx-vw/2)+'" y="'+(cy-vh/2)+'" width="'+vw+'" height="'+vh+'" rx="3" fill="#1a3a6a" stroke="#2979FF" stroke-width="1.5"/>'
-      +'<text x="'+cx+'" y="'+(cy+3)+'" text-anchor="middle" fill="#2979FF" font-size="7" font-weight="bold">VEH</text>';
-  }
-  function svgSign(x,y,label,col){
-    return '<rect x="'+(x-10)+'" y="'+(y-8)+'" width="20" height="14" rx="2" fill="#1a1a00" stroke="'+col+'" stroke-width="1.5"/>'
-      +'<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" fill="'+col+'" font-size="6" font-weight="bold">'+label+'</text>';
-  }
-  function svgArrowBoard(x,y){
-    return '<rect x="'+(x-10)+'" y="'+(y-7)+'" width="20" height="14" rx="2" fill="#1a1000" stroke="#FF6B00" stroke-width="1.5"/>'
-      +'<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" fill="#FF6B00" font-size="9">&#8599;</text>';
-  }
-  function svgArrow(cx,cy,dir,col){
-    if(dir==="down")
-      return '<polygon points="'+cx+','+(cy+6)+' '+(cx-5)+','+(cy-4)+' '+(cx+5)+','+(cy-4)+'" fill="'+col+'"/>';
-    return '<polygon points="'+cx+','+(cy-6)+' '+(cx-5)+','+(cy+4)+' '+(cx+5)+','+(cy+4)+'" fill="'+col+'"/>';
-  }
 
   cont.innerHTML=
     '<div style="background:var(--dark2);border-bottom:1px solid var(--orange);padding:10px 16px;font-size:.72rem;color:#ffcc80;line-height:1.5;">'
@@ -1651,4 +1649,4 @@ renderChecklist();
 </body>
 </html>
 conesout.html
-Displaying conesout.html.
+Displaying conesout.html. 
