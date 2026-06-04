@@ -44,13 +44,13 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 
 /* ── TOPBAR ── */
 .topbar{background:var(--dark2);border-bottom:3px solid var(--orange);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;z-index:100;flex-shrink:0;}
-.topbar-logo{font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:1px;color:#CC0000;display:flex;align-items:center;gap:8px;}
+.topbar-logo{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:1px;color:#CC0000;display:flex;align-items:center;gap:8px;}
 .topbar-logo span{color:#ffffff;}
 .topbar-right{display:flex;align-items:center;gap:10px;}
 .topbar-status{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted);}
 .status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.install-btn{background:var(--orange);color:#000;border:none;border-radius:6px;padding:5px 10px;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.75rem;cursor:pointer;display:none;}
+.install-btn{background:var(--orange);color:#000;border:none;border-radius:6px;padding:5px 10px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.75rem;cursor:pointer;display:none;}
 .install-btn.visible{display:block;}
 
 /* ── SCREENS ── */
@@ -60,11 +60,11 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 /* ── HOME ── */
 #screen-home{overflow-y:auto;}
 .hero-banner{background:var(--dark2);border-bottom:4px solid var(--orange);padding:14px 16px 14px;}
-.hero-title{font-family:"Barlow Condensed",sans-serif;font-size:1.9rem;font-weight:900;line-height:1.1;text-transform:uppercase;}
+.hero-title{font-family:Barlow Condensed,sans-serif;font-size:1.9rem;font-weight:900;line-height:1.1;text-transform:uppercase;}
 .hero-title .hi{color:var(--orange);}
 .hero-sub{font-size:.78rem;color:var(--muted);margin-top:4px;line-height:1.4;}
 .hero-badge{display:inline-block;background:#1a1a00;border:1px solid var(--yellow);color:var(--yellow);font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:5px;}
-.section-label{font-family:"Barlow Condensed",sans-serif;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);padding:12px 16px 6px;}
+.section-label{font-family:Barlow Condensed,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);padding:12px 16px 6px;}
 
 .trade-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 16px 12px;}
 .trade-card{background:var(--dark3);border:2px solid var(--mid);border-radius:10px;padding:14px 12px;display:flex;flex-direction:column;gap:7px;cursor:pointer;transition:border-color .2s,transform .15s;position:relative;overflow:hidden;}
@@ -73,7 +73,7 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .trade-card::after{content:"";position:absolute;top:0;right:0;width:4px;height:100%;background:var(--orange);opacity:0;transition:opacity .2s;}
 .trade-card.selected::after{opacity:1;}
 .trade-icon{font-size:1.8rem;}
-.trade-name{font-family:"Barlow Condensed",sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;line-height:1.2;}
+.trade-name{font-family:Barlow Condensed,sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;line-height:1.2;}
 .trade-desc{font-size:.7rem;color:var(--muted);line-height:1.3;}
 
 .road-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 12px;}
@@ -84,8 +84,8 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .width-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 16px 12px;}
 .width-card{background:var(--dark3);border:2px solid var(--mid);border-radius:10px;padding:12px 10px;cursor:pointer;transition:border-color .2s;}
 .width-card.selected{border-color:var(--orange);background:#2a1500;}
-.width-val{font-family:"Barlow Condensed",sans-serif;font-size:1.4rem;font-weight:900;color:var(--orange);}
-.width-label{font-family:"Barlow Condensed",sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;margin-top:2px;}
+.width-val{font-family:Barlow Condensed,sans-serif;font-size:1.4rem;font-weight:900;color:var(--orange);}
+.width-label{font-family:Barlow Condensed,sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;margin-top:2px;}
 .width-desc{font-size:.68rem;color:var(--muted);margin-top:3px;line-height:1.3;}
 .width-outcome{font-size:.7rem;color:var(--green);font-weight:600;margin-top:4px;}
 .tm-box{margin:0 16px 12px;border-radius:8px;padding:12px 14px;font-size:.78rem;line-height:1.5;display:none;}
@@ -93,23 +93,23 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .tm-box.closure{background:#1a0000;border:2px solid var(--red);color:#ff8a80;}
 .tm-box.oneway{background:#1a1000;border:2px solid var(--orange);color:#ffcc80;}
 .tm-box.laneclosure{background:#00101a;border:2px solid var(--blue);color:#82b1ff;}
-.tm-box-title{font-family:"Barlow Condensed",sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;margin-bottom:4px;}
+.tm-box-title{font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;margin-bottom:4px;}
 
 .vis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 12px;}
 .vis-card{background:var(--dark3);border:2px solid var(--mid);border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:border-color .2s;}
 .vis-card.selected{border-color:var(--orange);background:#2a1500;}
 .vis-card .vis-icon{font-size:1.4rem;margin-bottom:3px;}
-.vis-card .vis-label{font-size:.72rem;font-weight:700;font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;}
+.vis-card .vis-label{font-size:.72rem;font-weight:700;font-family:Barlow Condensed,sans-serif;text-transform:uppercase;}
 .vis-card .vis-sub{font-size:.62rem;color:var(--muted);margin-top:2px;}
 .vis-warning{margin:0 16px 12px;background:#1a0500;border:2px solid var(--red);border-radius:8px;padding:12px 14px;display:none;}
 .vis-warning.show{display:block;}
-.vis-warning-title{font-family:"Barlow Condensed",sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
-.vis-extra-badge{display:inline-block;background:var(--red);color:#fff;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.72rem;padding:3px 8px;border-radius:10px;margin-left:6px;}
+.vis-warning-title{font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.vis-extra-badge{display:inline-block;background:var(--red);color:#fff;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.72rem;padding:3px 8px;border-radius:10px;margin-left:6px;}
 .vis-rule{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:.76rem;color:#ffccbc;line-height:1.4;}
 
 .speed-trigger{margin:0 16px 4px;background:var(--dark3);border:2px dashed var(--mid);color:var(--muted);border-radius:8px;padding:12px;font-family:"Barlow",sans-serif;font-size:.88rem;cursor:pointer;width:calc(100% - 32px);text-align:left;transition:border-color .2s;}
 .speed-trigger.set{border-color:var(--orange);color:var(--text);border-style:solid;}
-.start-btn{margin:10px 16px 20px;background:#555;color:#999;border:none;border-radius:10px;padding:18px;font-family:"Barlow Condensed",sans-serif;font-size:1.3rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;cursor:pointer;width:calc(100% - 32px);transition:background .3s,color .3s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.start-btn{margin:10px 16px 20px;background:#555;color:#999;border:none;border-radius:10px;padding:18px;font-family:Barlow Condensed,sans-serif;font-size:1.3rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;cursor:pointer;width:calc(100% - 32px);transition:background .3s,color .3s;display:flex;align-items:center;justify-content:center;gap:10px;}
 .start-btn.ready{background:var(--orange);color:#000;}
 .start-btn:active{opacity:.85;}
 
@@ -117,17 +117,17 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 #screen-guide{background:var(--dark);}
 .guide-header{background:var(--dark2);border-bottom:3px solid var(--orange);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .back-btn{background:var(--dark3);border:1px solid var(--mid);color:var(--text);border-radius:6px;padding:6px 12px;font-size:.82rem;cursor:pointer;font-family:"Barlow",sans-serif;flex-shrink:0;}
-.guide-title{font-family:"Barlow Condensed",sans-serif;font-size:1.15rem;font-weight:800;text-transform:uppercase;flex:1;}
+.guide-title{font-family:Barlow Condensed,sans-serif;font-size:1.15rem;font-weight:800;text-transform:uppercase;flex:1;}
 .steps-container{flex:1;overflow-y:auto;padding:12px 16px;}
 .dist-banner{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
 .dist-cell{background:var(--dark2);border-radius:6px;padding:8px;text-align:center;}
-.dist-val{font-family:"Barlow Condensed",sans-serif;font-size:1.4rem;font-weight:900;}
+.dist-val{font-family:Barlow Condensed,sans-serif;font-size:1.4rem;font-weight:900;}
 .dist-key{font-size:.62rem;color:var(--muted);text-transform:uppercase;margin-top:1px;}
 .step-card{background:var(--dark2);border-left:4px solid var(--orange);border-radius:0 8px 8px 0;margin-bottom:10px;overflow:hidden;}
 .step-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;}
-.step-num{background:var(--orange);color:#000;font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:1rem;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-num{background:var(--orange);color:#000;font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:1rem;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .step-num.done{background:var(--green);}
-.step-title{font-family:"Barlow Condensed",sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;flex:1;}
+.step-title{font-family:Barlow Condensed,sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;flex:1;}
 .step-dist{background:var(--dark3);border:1px solid var(--orange);color:var(--orange);font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;}
 .chevron{transition:transform .2s;font-size:.85rem;color:var(--muted);}
 .chevron.open{transform:rotate(90deg);}
@@ -139,7 +139,7 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .warn-box{background:#1a0000;border:1px solid var(--red);border-radius:6px;padding:9px 11px;margin-top:8px;font-size:.76rem;color:#ff8a80;display:flex;gap:7px;}
 .reg-box{background:#00101a;border:1px solid var(--blue);border-radius:6px;padding:7px 11px;margin-top:6px;font-size:.7rem;color:#82b1ff;}
 .step-actions{display:flex;gap:7px;margin-top:10px;}
-.action-btn{flex:1;padding:10px 6px;border-radius:7px;border:none;font-family:"Barlow Condensed",sans-serif;font-size:.88rem;font-weight:700;text-transform:uppercase;cursor:pointer;}
+.action-btn{flex:1;padding:10px 6px;border-radius:7px;border:none;font-family:Barlow Condensed,sans-serif;font-size:.88rem;font-weight:700;text-transform:uppercase;cursor:pointer;}
 .btn-cam{background:var(--blue);color:#fff;}
 .btn-map{background:var(--dark3);color:var(--orange);border:1px solid var(--orange);}
 .btn-done{background:var(--green);color:#000;}
@@ -147,7 +147,7 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 /* ── SETUP SCREEN ── */
 #screen-setup{background:var(--dark);}
 .setup-tabs{display:flex;background:var(--dark3);border-bottom:1px solid var(--mid);flex-shrink:0;}
-.setup-tab-btn{flex:1;padding:10px;border:none;font-family:"Barlow Condensed",sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s;}
+.setup-tab-btn{flex:1;padding:10px;border:none;font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s;}
 .setup-tab-btn.active{background:var(--orange);color:#000;}
 .setup-tab-btn.inactive{background:transparent;color:var(--muted);}
 #tab-diagram-content{flex:1;overflow-y:auto;padding:14px 16px;}
@@ -155,19 +155,19 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .layout-item{background:var(--dark2);border-radius:0 8px 8px 0;margin-bottom:8px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;}
 .layout-item-icon{font-size:1.5rem;flex-shrink:0;display:flex;align-items:center;}
 .layout-item-info{flex:1;}
-.layout-item-name{font-family:"Barlow Condensed",sans-serif;font-size:.95rem;font-weight:800;text-transform:uppercase;}
+.layout-item-name{font-family:Barlow Condensed,sans-serif;font-size:.95rem;font-weight:800;text-transform:uppercase;}
 .layout-item-detail{font-size:.72rem;color:#ccc;margin-top:2px;line-height:1.4;}
 .layout-item-dist{display:inline-block;border:1px solid;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:5px;}
 .wo-card{background:var(--dark2);border:3px solid var(--orange);border-radius:12px;padding:16px;margin:16px;text-align:center;}
-.wo-dist{font-family:"Barlow Condensed",sans-serif;font-size:4rem;font-weight:900;color:var(--orange);line-height:1;}
-.wo-unit{font-family:"Barlow Condensed",sans-serif;font-size:1rem;color:var(--muted);font-weight:700;}
-.wo-btn{width:100%;padding:16px;border:none;border-radius:10px;font-family:"Barlow Condensed",sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;cursor:pointer;}
+.wo-dist{font-family:Barlow Condensed,sans-serif;font-size:4rem;font-weight:900;color:var(--orange);line-height:1;}
+.wo-unit{font-family:Barlow Condensed,sans-serif;font-size:1rem;color:var(--muted);font-weight:700;}
+.wo-btn{width:100%;padding:16px;border:none;border-radius:10px;font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;cursor:pointer;}
 
 /* ── VEHICLE SCREEN ── */
 #screen-vehicle{overflow-y:auto;background:var(--dark);}
 .vehicle-header{background:var(--dark2);border-bottom:3px solid var(--blue);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .veh-section{background:var(--dark2);border-radius:10px;margin:0 16px 12px;overflow:hidden;}
-.veh-section-title{background:var(--dark3);padding:12px 14px;font-family:"Barlow Condensed",sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--mid);}
+.veh-section-title{background:var(--dark3);padding:12px 14px;font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--mid);}
 .veh-rule{padding:10px 14px;border-bottom:1px solid #1c1c1c;display:flex;gap:10px;align-items:flex-start;}
 .veh-rule:last-child{border-bottom:none;}
 .veh-rule-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
@@ -179,7 +179,7 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .veh-rule.good{background:#000d00;}
 .veh-rule.good .veh-rule-title{color:#a5d6a7;}
 .spd-table{width:100%;border-collapse:collapse;font-size:.72rem;}
-.spd-table th{background:var(--dark3);color:var(--orange);font-family:"Barlow Condensed",sans-serif;font-weight:700;text-transform:uppercase;padding:6px 8px;text-align:left;border-bottom:1px solid var(--mid);}
+.spd-table th{background:var(--dark3);color:var(--orange);font-family:Barlow Condensed,sans-serif;font-weight:700;text-transform:uppercase;padding:6px 8px;text-align:left;border-bottom:1px solid var(--mid);}
 .spd-table td{padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;}
 .spd-table tr:last-child td{border-bottom:none;}
 .req{color:var(--green);font-weight:600;}
@@ -189,12 +189,12 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 #screen-checklist{overflow-y:auto;}
 .checklist-wrap{padding:0;}
 .prog-card{background:var(--dark2);border-radius:10px;padding:14px;margin-bottom:14px;text-align:center;}
-.prog-label{font-family:"Barlow Condensed",sans-serif;font-size:1.3rem;font-weight:800;color:var(--orange);}
+.prog-label{font-family:Barlow Condensed,sans-serif;font-size:1.3rem;font-weight:800;color:var(--orange);}
 .prog-bar-wrap{background:var(--dark3);border-radius:20px;height:10px;margin:8px 0 4px;overflow:hidden;}
 .prog-bar-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--yellow));border-radius:20px;transition:width .4s ease;}
 .prog-sub{font-size:.72rem;color:var(--muted);}
 .check-group{margin-bottom:18px;}
-.check-group-title{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--mid);}
+.check-group-title{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--mid);}
 .check-item{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid #1c1c1c;cursor:pointer;}
 .check-box{width:22px;height:22px;border:2px solid var(--mid);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s;margin-top:1px;font-size:.8rem;}
 .check-item.checked .check-box{background:var(--green);border-color:var(--green);color:#000;}
@@ -214,26 +214,26 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;display:none;align-items:flex-end;}
 .modal-overlay.open{display:flex;}
 .modal-sheet{background:var(--dark2);border-radius:16px 16px 0 0;border-top:3px solid var(--orange);padding:20px 20px 36px;width:100%;max-height:80vh;overflow-y:auto;}
-.modal-title{font-family:"Barlow Condensed",sans-serif;font-size:1.25rem;font-weight:800;text-transform:uppercase;margin-bottom:6px;color:var(--orange);}
+.modal-title{font-family:Barlow Condensed,sans-serif;font-size:1.25rem;font-weight:800;text-transform:uppercase;margin-bottom:6px;color:var(--orange);}
 .modal-sub{font-size:.78rem;color:var(--muted);margin-bottom:14px;}
 .modal-close{float:right;background:var(--dark3);border:1px solid var(--mid);color:var(--text);border-radius:50%;width:28px;height:28px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .speed-opt{background:var(--dark3);border:2px solid var(--mid);border-radius:8px;padding:14px 8px;text-align:center;cursor:pointer;transition:border-color .2s;}
 .speed-opt.selected{border-color:var(--orange);background:#2a1500;}
-.speed-num{font-family:"Barlow Condensed",sans-serif;font-size:1.8rem;font-weight:900;color:var(--orange);}
+.speed-num{font-family:Barlow Condensed,sans-serif;font-size:1.8rem;font-weight:900;color:var(--orange);}
 .speed-unit{font-size:.65rem;color:var(--muted);}
 
 /* ── DISCLAIMER ── */
 .disc-overlay{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;overflow-y:auto;}
 .disc-overlay.hidden{display:none;}
 .disc-header{background:var(--orange);padding:20px;flex-shrink:0;display:flex;align-items:center;gap:12px;}
-.disc-logo{font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:1.8rem;color:#CC0000;display:flex;align-items:center;gap:10px;}
+.disc-logo{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:1.8rem;color:#CC0000;display:flex;align-items:center;gap:10px;}
 .disc-logo span{color:#ffffff;}
 .disc-body{padding:20px;flex:1;}
-.disc-title{font-family:"Barlow Condensed",sans-serif;font-size:1.4rem;font-weight:900;text-transform:uppercase;color:var(--orange);margin-bottom:4px;}
+.disc-title{font-family:Barlow Condensed,sans-serif;font-size:1.4rem;font-weight:900;text-transform:uppercase;color:var(--orange);margin-bottom:4px;}
 .disc-sub{font-size:.78rem;color:var(--muted);margin-bottom:16px;}
 .disc-box{background:var(--dark2);border:1px solid var(--mid);border-radius:8px;padding:14px;margin-bottom:12px;}
-.disc-box-title{font-family:"Barlow Condensed",sans-serif;font-size:.88rem;font-weight:800;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;}
+.disc-box-title{font-family:Barlow Condensed,sans-serif;font-size:.88rem;font-weight:800;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;}
 .disc-box p{font-size:.78rem;color:#ccc;line-height:1.6;margin-bottom:6px;}
 .disc-box p:last-child{margin-bottom:0;}
 .disc-box.warn{border-color:var(--red);background:#0d0000;}
@@ -244,11 +244,11 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .disc-cb{width:24px;height:24px;border:2px solid var(--mid);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
 .disc-cb-row.checked .disc-cb{background:var(--green);border-color:var(--green);}
 .disc-cb-text{font-size:.78rem;color:#ccc;line-height:1.5;}
-.disc-accept-btn{width:100%;background:var(--mid);color:var(--muted);border:none;border-radius:10px;padding:18px;font-family:"Barlow Condensed",sans-serif;font-size:1.2rem;font-weight:800;text-transform:uppercase;cursor:not-allowed;margin-bottom:8px;}
+.disc-accept-btn{width:100%;background:var(--mid);color:var(--muted);border:none;border-radius:10px;padding:18px;font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:800;text-transform:uppercase;cursor:not-allowed;margin-bottom:8px;}
 .disc-accept-btn.ready{background:var(--orange);color:#000;cursor:pointer;}
 
 /* ── MISC ── */
-.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.92rem;padding:9px 18px;border-radius:20px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.92rem;padding:9px 18px;border-radius:20px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;}
 .app-footer{background:var(--dark2);border-top:1px solid var(--mid);padding:8px 16px;text-align:center;font-size:.62rem;color:#555;flex-shrink:0;line-height:1.6;}
 .app-footer a{color:#666;text-decoration:none;}
@@ -470,97 +470,21 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 </div>
 
 <!-- VEHICLE -->
-<div id="screen-vehicle" class="screen">
-  <div class="vehicle-header">
-    <button class="back-btn" onclick="showScreen('guide')">Back</button>
-    <div class="guide-title" style="color:var(--blue);">Vehicle Positioning</div>
-  </div>
-  <div style="padding:14px 0 20px;">
-    <div class="veh-section">
-      <div class="veh-section-title">Buffer Distances by Speed</div>
-      <div style="padding:12px 14px;">
-        <table class="spd-table">
-          <tr><th>Speed</th><th>Buffer Zone</th><th>Shadow Vehicle</th><th>Cones</th></tr>
-          <tr><td>20mph</td><td class="req">5m min</td><td>Not required</td><td>500mm</td></tr>
-          <tr><td>30mph</td><td class="req">5m min</td><td>Not required</td><td>500mm</td></tr>
-          <tr><td>40mph</td><td class="req">10m min</td><td>Recommended</td><td>750mm</td></tr>
-          <tr><td>50mph</td><td class="req">15m min</td><td class="warn-r">Required</td><td>750mm</td></tr>
-          <tr><td>60mph</td><td class="req">25m min</td><td class="warn-r">Required</td><td>750mm</td></tr>
-          <tr><td>70mph</td><td class="req">25m min</td><td class="warn-r">Required</td><td>750mm</td></tr>
-        </table>
-      </div>
-    </div>
-    <div class="veh-section">
-      <div class="veh-section-title">Works Vehicle Rules</div>
-      <div class="veh-rule good"><div class="veh-rule-icon">&#9989;</div><div><div class="veh-rule-title">Park as close to kerb as possible</div><div class="veh-rule-sub">Min 0.5m from kerb. Wheels turned away from work area so vehicle rolls away from operatives if struck.</div></div></div>
-      <div class="veh-rule good"><div class="veh-rule-icon">&#9989;</div><div><div class="veh-rule-title">Keys in ignition at all times</div><div class="veh-rule-sub">Vehicle must be movable instantly. Handbrake on, in gear, hazard lights and amber beacon active.</div></div></div>
-      <div class="veh-rule good"><div class="veh-rule-icon">&#9989;</div><div><div class="veh-rule-title">Vehicle between traffic and operatives</div><div class="veh-rule-sub">The works vehicle acts as a physical buffer. Operatives must NEVER work on the traffic side of the vehicle.</div><div class="veh-rule-dist">Chapter 8 s.5.4</div></div></div>
-      <div class="veh-rule danger"><div class="veh-rule-icon">&#128683;</div><div><div class="veh-rule-title">NO reversing on live carriageway</div><div class="veh-rule-sub">Absolute prohibition. If unavoidable, a trained banksman must be in position before any movement.</div><div class="veh-rule-dist">Chapter 8 s.5.6 - CDM 2015</div></div></div>
-      <div class="veh-rule danger"><div class="veh-rule-icon">&#128683;</div><div><div class="veh-rule-title">NO operative between vehicle and live traffic</div><div class="veh-rule-sub">Always work on the protected kerb side. Working on the offside of a vehicle on a live road is a serious safety violation.</div></div></div>
-      <div class="veh-rule danger"><div class="veh-rule-icon">&#128683;</div><div><div class="veh-rule-title">NO vehicle parked on approach side of works</div><div class="veh-rule-sub">Vehicle must be on the departure (downstream) side only - never between advance signs and the works.</div></div></div>
-    </div>
-    <div class="veh-section">
-      <div class="veh-section-title">Shadow Vehicle (roads 50mph+)</div>
-      <div class="veh-rule"><div class="veh-rule-icon">&#128737;&#65039;</div><div><div class="veh-rule-title">Required on all roads 50mph and above</div><div class="veh-rule-sub">Dedicated vehicle behind works vehicle acting as crash buffer. TMA mandatory on motorways.</div><div class="veh-rule-dist">Chapter 8 s.5.5 - BD 52</div></div></div>
-      <div class="veh-rule"><div class="veh-rule-icon">&#128678;</div><div><div class="veh-rule-title">Arrow board and amber beacon active</div><div class="veh-rule-sub">Driver stays in cab, seatbelt on at all times. Min 5m gap between shadow and works vehicle.</div></div></div>
-    </div>
-    <div style="background:#00101a;border:1px solid var(--blue);border-radius:8px;padding:10px 12px;margin:0;font-size:.72rem;color:#82b1ff;line-height:1.5;">
-      Reference: Chapter 8 CoP s.5 - HSE HSG185 - CDM 2015 - Road Vehicles (Construction and Use) Regulations - BD 52
-    </div>
-  </div>
-</div>
-
 <!-- REFERENCE SCREEN -->
 <div id="screen-checklist" class="screen">
   <div class="guide-header">
     <div class="guide-title">&#128218; Reference Guide</div>
   </div>
   <div style="display:flex;background:var(--dark3);border-bottom:1px solid var(--mid);flex-shrink:0;">
-    <button id="ref-tab-pre" onclick="refTab('pre')" style="flex:1;padding:10px;background:var(--orange);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;cursor:pointer;">Pre-Works</button>
-    <button id="ref-tab-veh" onclick="refTab('veh')" style="flex:1;padding:10px;background:transparent;color:var(--muted);border:none;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;cursor:pointer;">Vehicle</button>
-    <button id="ref-tab-dist" onclick="refTab('dist')" style="flex:1;padding:10px;background:transparent;color:var(--muted);border:none;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;cursor:pointer;">Distances</button>
+    <button id="ref-tab-pre" onclick="refTab('pre')" style="flex:1;padding:10px;background:var(--orange);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.78rem;text-transform:uppercase;cursor:pointer;">Pre-Works</button>
+    <button id="ref-tab-regs" onclick="refTab('regs')" style="flex:1;padding:10px;background:transparent;color:var(--muted);border:none;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.78rem;text-transform:uppercase;cursor:pointer;">Regulations</button>
+    <button id="ref-tab-veh" onclick="refTab('veh')" style="flex:1;padding:10px;background:transparent;color:var(--muted);border:none;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.78rem;text-transform:uppercase;cursor:pointer;">Vehicle</button>
+    <button id="ref-tab-dist" onclick="refTab('dist')" style="flex:1;padding:10px;background:transparent;color:var(--muted);border:none;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.78rem;text-transform:uppercase;cursor:pointer;">Distances</button>
   </div>
-
-  <!-- PRE-WORKS TAB -->
-  <div id="ref-pre" style="flex:1;overflow-y:auto;padding:10px 0;">
-    <div style="background:var(--dark2);border-bottom:1px solid var(--orange);padding:12px 16px;margin-bottom:0;font-size:.78rem;color:#ffcc80;line-height:1.6;">
-      <strong>&#128218; Pre-Works Reference</strong><br>
-      Reference guide for all pre-works requirements. Chapter 8 CoP, NRSWA 1991, TMA 2004.
-    </div>
-    <div id="checklist-content"></div>
-  </div>
-
-  <!-- VEHICLE TAB -->
-  <div id="ref-veh" style="flex:1;overflow-y:auto;padding:10px 0;display:none;">
-    <div style="background:var(--dark2);border-bottom:1px solid var(--blue);padding:12px 16px;margin-bottom:0;border-radius:0;font-size:.78rem;color:#82b1ff;line-height:1.6;">
-      <strong>&#128663; Vehicle Positioning Reference</strong><br>
-      Chapter 8 CoP s.5 · HSE HSG185 · CDM 2015
-    </div>
-    <div style="background:var(--dark2);border-radius:0;overflow:hidden;margin-bottom:1px;">
-      <div style="background:var(--dark3);padding:12px 14px;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;text-transform:uppercase;border-bottom:1px solid var(--mid);">Buffer Distances by Speed</div>
-      <div style="padding:12px 14px;">
-        <table style="width:100%;border-collapse:collapse;font-size:.72rem;">
-          <tr style="background:var(--dark3);"><th style="color:var(--orange);font-family:'Barlow Condensed',sans-serif;padding:6px 8px;text-align:left;border-bottom:1px solid var(--mid);">Speed</th><th style="color:var(--orange);font-family:'Barlow Condensed',sans-serif;padding:6px 8px;text-align:left;border-bottom:1px solid var(--mid);">Buffer</th><th style="color:var(--orange);font-family:'Barlow Condensed',sans-serif;padding:6px 8px;text-align:left;border-bottom:1px solid var(--mid);">Shadow</th><th style="color:var(--orange);font-family:'Barlow Condensed',sans-serif;padding:6px 8px;text-align:left;border-bottom:1px solid var(--mid);">Cones</th></tr>
-          <tr><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">20mph</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:var(--green);font-weight:600;">5m min</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">Not required</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">500mm</td></tr>
-          <tr><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">30mph</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:var(--green);font-weight:600;">5m min</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">Not required</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">500mm</td></tr>
-          <tr><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">40mph</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:var(--green);font-weight:600;">10m min</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">Recommended</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">750mm</td></tr>
-          <tr><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">50mph</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:var(--green);font-weight:600;">15m min</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:var(--red);font-weight:600;">Required</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">750mm</td></tr>
-          <tr><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">60mph</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:var(--green);font-weight:600;">25m min</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:var(--red);font-weight:600;">Required</td><td style="padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;">750mm</td></tr>
-          <tr><td style="padding:6px 8px;color:#ccc;">70mph</td><td style="padding:6px 8px;color:var(--green);font-weight:600;">25m min</td><td style="padding:6px 8px;color:var(--red);font-weight:600;">Required</td><td style="padding:6px 8px;color:#ccc;">750mm</td></tr>
-        </table>
-      </div>
-    </div>
-    <div id="veh-rules-content" style="margin:0;"></div>
-  </div>
-
-  <!-- DISTANCES TAB -->
-  <div id="ref-dist" style="flex:1;overflow-y:auto;padding:10px 0;display:none;">
-    <div style="background:var(--dark2);border-bottom:1px solid var(--yellow);padding:12px 16px;margin-bottom:0;font-size:.78rem;color:#ffcc80;line-height:1.6;">
-      <strong>&#128207; Chapter 8 Distances Reference</strong><br>
-      Minimum distances — Table 8-3 and Table 8-4
-    </div>
-    <div id="dist-ref-content"></div>
-  </div>
+  <div id="ref-pre"  style="flex:1;overflow-y:auto;display:block;"></div>
+  <div id="ref-regs" style="flex:1;overflow-y:auto;display:none;"></div>
+  <div id="ref-veh"  style="flex:1;overflow-y:auto;display:none;"></div>
+  <div id="ref-dist" style="flex:1;overflow-y:auto;display:none;"></div>
 </div>
 
 <!-- NAVBAR -->
@@ -845,7 +769,7 @@ function startGuide(){
     const vr=VIS_RULES[S.vis];
     const vbox=document.createElement("div");
     vbox.style.cssText="background:#1a0500;border:2px solid var(--red);border-radius:8px;padding:12px 14px;margin-bottom:12px;";
-    vbox.innerHTML="<div style='font-family:\"Barlow Condensed\",sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;color:var(--red);margin-bottom:8px;'>&#9888;&#65039; "+vr.title+"</div>"+
+    vbox.innerHTML="<div style='font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;color:var(--red);margin-bottom:8px;'>&#9888;&#65039; "+vr.title+"</div>"+
       vr.rules.map(r=>"<div style='display:flex;gap:8px;margin-bottom:6px;font-size:.76rem;color:#ffccbc;line-height:1.4;'><span>"+r.i+"</span><div><strong>"+r.t+"</strong> - "+r.s+"</div></div>").join("")+
       "<div style='font-size:.65rem;color:#ff8a80;margin-top:8px;border-top:1px solid #3a1000;padding-top:6px;'>Chapter 8 CoP s.4.3</div>";
     c.appendChild(vbox);
@@ -866,28 +790,49 @@ function startGuide(){
     "<div class='dist-cell' style='border:1px solid var(--green)'><div class='dist-val' style='color:var(--green)'>"+d.coneGap+"m</div><div class='dist-key'>Cone Gap</div></div>";
   c.appendChild(db);
 
+  // Steps to exclude from on-site guide (move to reference)
+  const refStepIds=["Notify","Permit","Advance Warning","Lane Taper","Lead-In","Work Zone Guarding","End of Works","Clearance","Isolate","Permit to Work","S50","Approval","Highways Approval","TM Approval","Emergency","Qualify"];
+
+  function isRefStep(title){
+    return refStepIds.some(function(k){return title.toLowerCase().indexOf(k.toLowerCase())!==-1;});
+  }
+
   tr.steps.forEach(function(step,i){
     const dist=step.distKey?d[step.distKey]:null;
-    const done=S.completedSteps.has(i);
     const card=document.createElement("div");
     card.className="step-card";
     card.id="step-"+i;
-    card.style.cssText="background:var(--dark2);border-radius:8px;margin-bottom:10px;overflow:hidden;border:2px solid "+(done?"var(--green)":"var(--mid)")+";";
-    const equipEl=step.equip.length?"<div class='equip-list' style='margin:8px 0;'>"+step.equip.map(function(e){return "<div class='equip-tag'>"+e+"</div>";}).join("")+"</div>":"";
-    const camBtn=step.cam?"<button class='action-btn btn-cam' onclick='openCameraStep("+i+",event)' style='margin-top:8px;'>AR View</button>":"";
-    const distBadge=dist?"<span style='background:var(--dark3);border:1px solid var(--orange);color:var(--orange);font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px;'>"+dist+"m</span>":"";
-    card.innerHTML=
-      "<div style='display:flex;align-items:flex-start;gap:12px;padding:12px 14px;cursor:pointer;' onclick='markDone("+i+",event)'>"
-        +"<div style='width:26px;height:26px;border-radius:6px;border:2px solid "+(done?"var(--green)":"var(--mid)")+";background:"+(done?"var(--green)":"transparent")+";display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:.9rem;font-weight:900;color:#000;'>"+(done?"V":"")+"</div>"
-        +"<div style='flex:1;'>"
-          +"<div style='font-family:\"Barlow Condensed\",sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;"+(done?"color:var(--muted);text-decoration:line-through;":"")+"'>"+step.icon+" "+step.title+distBadge+"</div>"
-          +"<div style='font-size:.78rem;line-height:1.5;color:"+(done?"var(--muted)":"#ccc")+";margin-top:5px;'>"+step.body+"</div>"
-          +equipEl
-          +"<div style='background:#1a0000;border:1px solid var(--red);border-radius:6px;padding:7px 10px;margin-top:8px;font-size:.73rem;color:#ff8a80;display:flex;gap:6px;'><span>&#9888;</span><span>"+step.warn+"</span></div>"
-          +"<div style='background:#00101a;border:1px solid var(--blue);border-radius:6px;padding:6px 10px;margin-top:6px;font-size:.68rem;color:#82b1ff;'>&#128218; "+step.reg+"</div>"
-          +camBtn
-        +"</div>"
-      +"</div>";
+
+    if(isRefStep(step.title)){
+      // Reference-only step — show as compact info card, no checkbox
+      card.style.cssText="background:var(--dark3);border-radius:8px;margin-bottom:8px;overflow:hidden;border:1px solid var(--mid);";
+      card.innerHTML=
+        "<div style='display:flex;align-items:flex-start;gap:10px;padding:10px 14px;'>"
+          +"<div style='font-size:1.2rem;flex-shrink:0;'>"+step.icon+"</div>"
+          +"<div style='flex:1;'>"
+            +"<div style='display:flex;align-items:center;gap:6px;'>"
+              +"<div style='font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:700;text-transform:uppercase;color:var(--muted);'>"+step.title+"</div>"
+              +"<span style='background:var(--dark2);border:1px solid var(--mid);color:var(--muted);font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:8px;'>REFERENCE</span>"
+            +"</div>"
+            +"<div style='font-size:.72rem;color:#666;margin-top:3px;'>See Reference tab for full details</div>"
+          +"</div>"
+        +"</div>";
+    } else {
+      // On-site action step — show as full card, no checkbox
+      const equipEl=step.equip.length?"<div class='equip-list' style='margin:8px 0;'>"+step.equip.map(function(e){return "<div class='equip-tag'>"+e+"</div>";}).join("")+"</div>":"";
+      const distBadge=dist?"<span style='background:var(--dark3);border:1px solid var(--orange);color:var(--orange);font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px;'>"+dist+"m</span>":"";
+      card.style.cssText="background:var(--dark2);border-radius:8px;margin-bottom:10px;overflow:hidden;border:2px solid var(--orange);";
+      card.innerHTML=
+        "<div style='display:flex;align-items:flex-start;gap:12px;padding:12px 14px;'>"
+          +"<div style='flex:1;'>"
+            +"<div style='font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;'>"+step.icon+" "+step.title+distBadge+"</div>"
+            +"<div style='font-size:.78rem;line-height:1.5;color:#ccc;margin-top:5px;'>"+step.body+"</div>"
+            +equipEl
+            +"<div style='background:#1a0000;border:1px solid var(--red);border-radius:6px;padding:7px 10px;margin-top:8px;font-size:.73rem;color:#ff8a80;display:flex;gap:6px;'><span>&#9888;</span><span>"+step.warn+"</span></div>"
+            +"<div style='background:#00101a;border:1px solid var(--blue);border-radius:6px;padding:6px 10px;margin-top:6px;font-size:.68rem;color:#82b1ff;'>&#128218; "+step.reg+"</div>"
+          +"</div>"
+        +"</div>";
+    }
     c.appendChild(card);
   });
   showScreen("guide");
@@ -897,22 +842,10 @@ function toggleStep(i){
   document.getElementById("stepbody-"+i).classList.toggle("open");
   document.getElementById("chev-"+i).classList.toggle("open");
 }
-function markDone(i,e){
-  e.stopPropagation();
-  if(S.completedSteps.has(i)){
-    S.completedSteps.delete(i);
-  } else {
-    S.completedSteps.add(i);
-    showToast("Step complete");
-  }
-  startGuide();
-}
+function markDone(i,e){if(e)e.stopPropagation();} // retained for compatibility
 
 // ════ CAMERA ════
-function openCameraStep(i,e){
-  e.stopPropagation();
-  showToast("AR Camera - point phone at road");
-}
+
 
 // ════ SETUP / LAYOUT ════
 function getPlacementSeq(){
@@ -1040,7 +973,7 @@ function setupTab(tab){
 function renderDiagram(){
   const cont=document.getElementById("tab-diagram-content");
   if(!S.speed||!S.trade){
-    cont.innerHTML="<div style='text-align:center;padding:40px 20px;color:var(--muted);'><div style='font-size:3rem;margin-bottom:12px;'>&#128208;</div><div style='font-family:\"Barlow Condensed\",sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;color:var(--orange);'>Select Trade and Speed First</div><div style='font-size:.78rem;margin-top:8px;'>Go to Home, fill in all fields and tap Generate Setup Plan to see the layout diagram.</div></div>";
+    cont.innerHTML="<div style='text-align:center;padding:40px 20px;color:var(--muted);'><div style='font-size:3rem;margin-bottom:12px;'>&#128208;</div><div style='font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;color:var(--orange);'>Select Trade and Speed First</div><div style='font-size:.78rem;margin-top:8px;'>Go to Home, fill in all fields and tap Generate Setup Plan to see the layout diagram.</div></div>";
     return;
   }
   const d=DIST[S.speed];
@@ -1050,7 +983,7 @@ function renderDiagram(){
   const dn=seq.filter(function(i){return i.dir==="downstream";});
 
   let html="<div style='background:var(--dark2);border:1px solid var(--orange);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:.72rem;color:#ffcc80;line-height:1.5;'><strong>Layout for "+S.speed+"mph - "+S.road+" - "+(TRADES[S.trade]?TRADES[S.trade].name:"")+"</strong><br>Advance: "+d.advance+"m - Taper: "+d.taper+"m - Cone gap: "+d.coneGap+"m</div>";
-  html+="<div style='font-family:\"Barlow Condensed\",sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:1px;'>ONCOMING TRAFFIC APPROACHING</div>";
+  html+="<div style='font-family:Barlow Condensed,sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:1px;'>ONCOMING TRAFFIC APPROACHING</div>";
 
   up.forEach(function(item,i){
     html+="<div class='layout-item' style='border-left:4px solid "+item.color+";'>"
@@ -1070,7 +1003,7 @@ function renderDiagram(){
   html+="<div style='text-align:center;color:var(--muted);font-size:.75rem;margin-bottom:6px;'>taper distance</div>";
   html+="<div style='background:#1a0000;border:3px solid var(--red);border-radius:8px;margin-bottom:8px;padding:12px;text-align:center;'>"
     +"<div style='font-size:1.5rem;margin-bottom:4px;'>&#9935;&#65039; &#128679;</div>"
-    +"<div style='font-family:\"Barlow Condensed\",sans-serif;font-size:1rem;font-weight:900;text-transform:uppercase;color:var(--red);'>WORK ZONE</div>"
+    +"<div style='font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;text-transform:uppercase;color:var(--red);'>WORK ZONE</div>"
     +"<div style='font-size:.72rem;color:#ffccbc;margin-top:4px;'>Chapter 8 barriers - Amber beacons - 0.5m clearance from excavation</div>"
   +"</div>";
 
@@ -1085,7 +1018,7 @@ function renderDiagram(){
     +"</div>";
   });
 
-  html+="<div style='font-family:\"Barlow Condensed\",sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:4px;letter-spacing:1px;'>TRAFFIC DEPARTING</div>";
+  html+="<div style='font-family:Barlow Condensed,sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:4px;letter-spacing:1px;'>TRAFFIC DEPARTING</div>";
   html+="<div style='background:#00101a;border:1px solid var(--blue);border-radius:8px;padding:10px 12px;margin-top:12px;margin-bottom:20px;font-size:.7rem;color:#82b1ff;line-height:1.5;'>Chapter 8 CoP - TSRGD 2016 - All distances are minimums - increase for poor visibility or adverse conditions</div>";
   cont.innerHTML=html;
 }
@@ -1368,97 +1301,140 @@ function resetWalkout(){
 
 // ════ REFERENCE GUIDE ════
 function refTab(tab){
-  ["pre","veh","dist"].forEach(function(t){
-    document.getElementById("ref-"+t).style.display=t===tab?"flex":"none";
+  ["pre","regs","veh","dist"].forEach(function(t){
+    var el=document.getElementById("ref-"+t);
+    if(el)el.style.display=t===tab?"block":"none";
     var btn=document.getElementById("ref-tab-"+t);
-    btn.style.background=t===tab?"var(--orange)":"transparent";
-    btn.style.color=t===tab?"#000":"var(--muted)";
+    if(btn){btn.style.background=t===tab?"var(--orange)":"transparent";btn.style.color=t===tab?"#000":"var(--muted)";}
   });
-  if(tab==="veh")renderVehRules();
+  if(tab==="pre")renderPreRef();
+  if(tab==="regs")renderRegsRef();
+  if(tab==="veh")renderVehRef();
   if(tab==="dist")renderDistRef();
 }
 
-function renderVehRules(){
-  var rules=[
-    {good:true, icon:"&#9989;",t:"Park as close to kerb as possible",s:"Min 0.5m from kerb. Wheels turned away from work area so vehicle rolls away from operatives if struck."},
-    {good:true, icon:"&#9989;",t:"Keys in ignition at all times",s:"Vehicle must be movable instantly. Handbrake on, in gear, hazard lights and amber beacon active."},
-    {good:true, icon:"&#9989;",t:"Vehicle between traffic and operatives",s:"The works vehicle acts as a physical buffer. Operatives must NEVER work on the traffic side of the vehicle. Chapter 8 s.5.4"},
-    {good:false,icon:"&#128683;",t:"NO reversing on live carriageway",s:"Absolute prohibition. Trained banksman required before any movement. Chapter 8 s.5.6 - CDM 2015"},
-    {good:false,icon:"&#128683;",t:"NO operative between vehicle and live traffic",s:"Always work on the protected kerb side of the vehicle."},
-    {good:false,icon:"&#128683;",t:"NO vehicle parked on approach side of works",s:"Vehicle must be on the departure side only - never between advance signs and the works."},
-    {good:true, icon:"&#128737;&#65039;",t:"Shadow vehicle required at 50mph+",s:"Dedicated vehicle acting as crash buffer. Arrow board active. Driver in cab, seatbelt on. TMA mandatory on motorways. Chapter 8 s.5.5 - BD 52"},
-    {good:true, icon:"&#128663;",t:"Mobile works: max speed 10mph below limit",s:"Minimum 2 cones behind vehicle at all times. Amber beacon and Road Works sign displayed. Chapter 8 s.8.3"}
-  ];
-  var cont=document.getElementById("veh-rules-content");
-  cont.innerHTML="";
-  rules.forEach(function(r){
-    var el=document.createElement("div");
-    el.style.cssText="background:var(--dark2);border-bottom:1px solid #1c1c1c;padding:12px 16px;display:flex;gap:12px;align-items:flex-start;border-left:4px solid "+(r.good?"var(--green)":"var(--red)")+";";
-    el.innerHTML="<div style='font-size:1.1rem;flex-shrink:0;'>"+r.icon+"</div>"
-      +"<div><div style='font-size:.85rem;font-weight:700;color:"+(r.good?"#a5d6a7":"#ff8a80")+"'>"+r.t+"</div>"
-      +"<div style='font-size:.72rem;color:var(--muted);margin-top:2px;line-height:1.4;'>"+r.s+"</div></div>";
-    cont.appendChild(el);
-  });
+// ── Shared helper: section header ──
+function refHeader(icon,title,sub,color){
+  return "<div style='background:var(--dark3);padding:10px 16px;font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:800;text-transform:uppercase;color:"+color+";border-bottom:1px solid var(--mid);'>"+icon+" "+title+"</div>"
+    +"<div style='background:var(--dark2);border-bottom:1px solid var(--mid);padding:10px 16px;font-size:.72rem;color:var(--muted);line-height:1.5;'>"+sub+"</div>";
 }
 
-function renderDistRef(){
-  var cont=document.getElementById("dist-ref-content");
-  var rows=[
-    [20,25,25,1,"500mm","Not required"],
-    [30,50,35,1,"500mm","Not required"],
-    [40,80,50,1.5,"750mm","Recommended"],
-    [50,100,65,2,"750mm","Required"],
-    [60,160,85,2,"750mm","Required"],
-    [70,200,100,2,"750mm","Required"]
-  ];
-  var html="<div style='background:var(--dark2);overflow:hidden;margin-bottom:1px;'>";
-  html+="<table style='width:100%;border-collapse:collapse;font-size:.72rem;'>";
-  html+="<tr style='background:var(--dark3);'><th style='color:var(--orange);font-family:\"Barlow Condensed\",sans-serif;padding:8px;text-align:left;border-bottom:1px solid var(--mid);'>Speed</th><th style='color:var(--orange);font-family:\"Barlow Condensed\",sans-serif;padding:8px;text-align:left;border-bottom:1px solid var(--mid);'>Advance</th><th style='color:var(--orange);font-family:\"Barlow Condensed\",sans-serif;padding:8px;text-align:left;border-bottom:1px solid var(--mid);'>Taper</th><th style='color:var(--orange);font-family:\"Barlow Condensed\",sans-serif;padding:8px;text-align:left;border-bottom:1px solid var(--mid);'>Gap</th><th style='color:var(--orange);font-family:\"Barlow Condensed\",sans-serif;padding:8px;text-align:left;border-bottom:1px solid var(--mid);'>Cone</th></tr>";
-  rows.forEach(function(r,i){
-    var last=i===rows.length-1;
-    var b=last?"":"border-bottom:1px solid #1c1c1c;";
-    html+="<tr><td style='padding:8px;"+b+"color:#ccc;font-weight:700;'>"+r[0]+"mph</td><td style='padding:8px;"+b+"color:var(--yellow);font-weight:700;'>"+r[1]+"m</td><td style='padding:8px;"+b+"color:var(--orange);font-weight:700;'>"+r[2]+"m</td><td style='padding:8px;"+b+"color:var(--green);font-weight:700;'>"+r[3]+"m</td><td style='padding:8px;"+b+"color:#ccc;'>"+r[4]+"</td></tr>";
+// ── Shared helper: plain row ──
+function refRow(title,sub,last){
+  return "<div style='background:var(--dark2);padding:10px 16px;"+(last?"":"border-bottom:1px solid #1c1c1c;")+";'>"
+    +"<div style='font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:3px;'>"+title+"</div>"
+    +"<div style='font-size:.72rem;color:var(--muted);line-height:1.5;'>"+sub+"</div>"
+    +"</div>";
+}
+
+// ── PRE-WORKS ──
+function renderPreRef(){
+  var cont=document.getElementById("ref-pre");
+  if(!cont||cont.innerHTML.trim().length>50)return;
+  var html=refHeader("&#128221;","Pre-Works Reference","Complete all items before commencing work on the public highway. Chapter 8 CoP, NRSWA 1991, TMA 2004.","var(--orange)");
+  CHECKS.forEach(function(group){
+    html+="<div style='background:var(--dark3);padding:8px 16px;font-family:Barlow Condensed,sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;color:var(--orange);border-top:1px solid var(--mid);border-bottom:1px solid var(--mid);'>"+group.group+"</div>";
+    group.items.forEach(function(item,i){
+      html+=refRow(item.t,item.s,i===group.items.length-1);
+    });
   });
-  html+="</table></div>";
-  html+="<div style='background:var(--dark2);border-top:1px solid var(--mid);padding:12px 16px;font-size:.75rem;color:#ccc;line-height:1.8;'>"
-    +"<strong style='color:var(--orange);font-family:\"Barlow Condensed\",sans-serif;text-transform:uppercase;'>Key Notes</strong><br>"
-    +"<strong style='color:var(--yellow);'>Advance</strong> — Distance from works to first Road Works Ahead sign<br>"
-    +"<strong style='color:var(--orange);'>Taper</strong> — Length of cone taper to close lane<br>"
-    +"<strong style='color:var(--green);'>Gap</strong> — Maximum spacing between cones in taper<br>"
-    +"All distances are <strong>minimums</strong> — increase for poor visibility, bends or brows<br>"
-    +"Reference: Chapter 8 CoP Tables 8-3 and 8-4 · TSRGD 2016"
-  +"</div>";
   cont.innerHTML=html;
 }
 
-function renderChecklist(){
-  var cont=document.getElementById("checklist-content");
-  cont.innerHTML="";
-  CHECKS.forEach(function(group){
-    var g=document.createElement("div");
-    g.style.cssText="margin-bottom:0;";
-    g.innerHTML="<div style='font-family:\"Barlow Condensed\",sans-serif;font-weight:700;font-size:.82rem;letter-spacing:1px;text-transform:uppercase;color:var(--orange);padding:10px 16px 6px;background:var(--dark3);border-bottom:1px solid var(--mid);'>"+group.group+"</div>";
-    group.items.forEach(function(item){
-      var el=document.createElement("div");
-      el.style.cssText="display:flex;align-items:flex-start;gap:12px;padding:10px 16px;border-bottom:1px solid #1c1c1c;background:var(--dark2);";
-      el.innerHTML="<div style='width:6px;height:6px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:6px;'></div>"
-        +"<div><div style='font-size:.85rem;font-weight:600;line-height:1.3;'>"+item.t+"</div>"
-        +"<div style='font-size:.7rem;color:var(--muted);margin-top:2px;'>"+item.s+"</div></div>";
-      g.appendChild(el);
+// ── REGULATIONS ──
+function renderRegsRef(){
+  var cont=document.getElementById("ref-regs");
+  if(!cont||cont.innerHTML.trim().length>50)return;
+  var html=refHeader("&#128218;","Regulatory Requirements","Permit, signing and clearance obligations. Chapter 8 CoP, NRSWA 1991, TMA 2004.","var(--blue)");
+  var refStepIds=["Notify","Permit","Advance Warning","Lane Taper","Lead-In","Work Zone Guarding","End of Works","Clearance","Isolate","Permit to Work","S50","Approval","Highways Approval","TM Approval","Emergency","Qualify"];
+  function isRefStep(title){return refStepIds.some(function(k){return title.toLowerCase().indexOf(k.toLowerCase())!==-1;});}
+  var seen={};
+  Object.keys(TRADES).forEach(function(tradeKey){
+    var trade=TRADES[tradeKey];
+    trade.steps.forEach(function(step){
+      if(!isRefStep(step.title)||seen[step.title])return;
+      seen[step.title]=true;
+      html+="<div style='background:var(--dark2);border-bottom:1px solid #1c1c1c;padding:12px 16px;'>"
+        +"<div style='font-size:.85rem;font-weight:700;color:var(--yellow);margin-bottom:3px;'>"+step.icon+" "+step.title+"</div>"
+        +"<div style='font-size:.68rem;color:var(--muted);margin-bottom:6px;'>"+trade.name+"</div>"
+        +"<div style='font-size:.78rem;color:#ccc;line-height:1.5;margin-bottom:6px;'>"+step.body+"</div>"
+        +(step.equip.length?"<div style='display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;'>"+step.equip.map(function(e){return "<span style='background:var(--dark3);border:1px solid var(--mid);border-radius:12px;padding:2px 8px;font-size:.68rem;color:#ccc;'>"+e+"</span>";}).join("")+"</div>":"")
+        +"<div style='font-size:.72rem;color:#ff8a80;margin-bottom:4px;'>&#9888; "+step.warn+"</div>"
+        +"<div style='font-size:.65rem;color:#82b1ff;'>&#128218; "+step.reg+"</div>"
+        +"</div>";
     });
-    cont.appendChild(g);
   });
+  cont.innerHTML=html;
 }
+
+// ── VEHICLE ──
+function renderVehRef(){
+  var cont=document.getElementById("ref-veh");
+  if(!cont||cont.innerHTML.trim().length>50)return;
+  var html=refHeader("&#128663;","Vehicle Positioning","Required distances and rules for works vehicles on public highway.","var(--blue)");
+
+  // Buffer distances — each speed as a row
+  html+="<div style='background:var(--dark3);padding:8px 16px;font-family:Barlow Condensed,sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;color:var(--orange);border-top:1px solid var(--mid);border-bottom:1px solid var(--mid);'>Buffer Distances by Speed</div>";
+  var speeds=[[20,"5m","Not required","500mm"],[30,"5m","Not required","500mm"],[40,"10m","Recommended","750mm"],[50,"15m","Required","750mm"],[60,"25m","Required","750mm"],[70,"25m","Required","750mm"]];
+  speeds.forEach(function(r,i){
+    html+="<div style='background:var(--dark2);border-bottom:1px solid #1c1c1c;padding:10px 16px;'>"
+      +"<div style='font-size:.85rem;font-weight:700;color:var(--orange);margin-bottom:3px;'>"+r[0]+"mph</div>"
+      +"<div style='font-size:.72rem;color:var(--muted);line-height:1.7;'>"
+      +"Buffer zone: <strong style='color:var(--green);'>"+r[1]+" minimum</strong><br>"
+      +"Shadow vehicle: <strong style='color:"+(r[2]==="Required"?"var(--red)":"#ccc")+";'>"+r[2]+"</strong><br>"
+      +"Cone size: <strong style='color:#ccc;'>"+r[3]+"</strong>"
+      +"</div></div>";
+  });
+
+  // Vehicle rules
+  html+="<div style='background:var(--dark3);padding:8px 16px;font-family:Barlow Condensed,sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;color:var(--orange);border-top:1px solid var(--mid);border-bottom:1px solid var(--mid);'>Works Vehicle Rules</div>";
+  var rules=[
+    {good:true, t:"Park as close to kerb as possible",s:"Min 0.5m from kerb. Wheels turned away from work area."},
+    {good:true, t:"Keys in ignition at all times",s:"Vehicle must be movable instantly. Handbrake on, in gear, hazard lights and amber beacon active."},
+    {good:true, t:"Vehicle between traffic and operatives",s:"Acts as a physical buffer. Operatives must NEVER work on the traffic side. Chapter 8 s.5.4"},
+    {good:false,t:"NO reversing on live carriageway",s:"Absolute prohibition. Trained banksman required. Chapter 8 s.5.6 - CDM 2015"},
+    {good:false,t:"NO operative between vehicle and live traffic",s:"Always work on the protected kerb side only."},
+    {good:false,t:"NO vehicle parked on approach side of works",s:"Vehicle must be downstream only - never between advance signs and works."},
+    {good:true, t:"Shadow vehicle required at 50mph and above",s:"Dedicated crash buffer vehicle. Arrow board active. Driver in cab, seatbelt on. TMA mandatory on motorways. Chapter 8 s.5.5"},
+    {good:true, t:"Mobile works: maximum 10mph below speed limit",s:"Min 2 cones behind vehicle at all times. Amber beacon and Road Works sign displayed. Chapter 8 s.8.3"}
+  ];
+  rules.forEach(function(r,i){
+    html+="<div style='background:var(--dark2);border-bottom:1px solid #1c1c1c;padding:10px 16px;'>"
+      +"<div style='font-size:.85rem;font-weight:700;color:"+(r.good?"#a5d6a7":"#ff8a80")+";margin-bottom:3px;'>"+(r.good?"&#9989;":"&#128683;")+" "+r.t+"</div>"
+      +"<div style='font-size:.72rem;color:var(--muted);line-height:1.5;'>"+r.s+"</div>"
+      +"</div>";
+  });
+  html+="<div style='background:var(--dark2);border-top:1px solid var(--blue);padding:10px 16px;font-size:.7rem;color:#82b1ff;line-height:1.5;'>Reference: Chapter 8 CoP s.5 - HSE HSG185 - CDM 2015 - Road Vehicles (Construction and Use) Regulations - BD 52</div>";
+  cont.innerHTML=html;
+}
+
+// ── DISTANCES ──
+function renderDistRef(){
+  var cont=document.getElementById("ref-dist");
+  if(!cont||cont.innerHTML.trim().length>50)return;
+  var html=refHeader("&#128207;","Chapter 8 Distances","Minimum distances for signs, tapers and cones. All values in metres.","var(--yellow)");
+  var rows=[[20,25,25,1,"500mm"],[30,50,35,1,"500mm"],[40,80,50,1.5,"750mm"],[50,100,65,2,"750mm"],[60,160,85,2,"750mm"],[70,200,100,2,"750mm"]];
+  rows.forEach(function(r){
+    html+="<div style='background:var(--dark2);border-bottom:1px solid #1c1c1c;padding:10px 16px;'>"
+      +"<div style='font-size:.85rem;font-weight:700;color:var(--orange);margin-bottom:4px;'>"+r[0]+"mph</div>"
+      +"<div style='font-size:.72rem;color:var(--muted);line-height:1.8;'>"
+      +"Advance sign: <strong style='color:var(--yellow);'>"+r[1]+"m</strong><br>"
+      +"Taper length: <strong style='color:var(--orange);'>"+r[2]+"m</strong><br>"
+      +"Cone gap: <strong style='color:var(--green);'>"+r[3]+"m</strong><br>"
+      +"Cone size: <strong style='color:#ccc;'>"+r[4]+"</strong>"
+      +"</div></div>";
+  });
+  html+="<div style='background:var(--dark2);border-top:1px solid var(--mid);padding:10px 16px;font-size:.72rem;color:var(--muted);line-height:1.7;'>"
+    +"All distances are <strong style='color:var(--text);'>minimum values</strong> — increase for bends, brows, junctions or poor visibility.<br>"
+    +"Reference: Chapter 8 CoP Tables 8-3 and 8-4 - TSRGD 2016"
+    +"</div>";
+  cont.innerHTML=html;
+}
+
+// Legacy — kept for compatibility
+function renderChecklist(){renderPreRef();}
 function resetChecklist(){}
 
-// ════ MAP ════
-function showMap(){
-  if(S.lat){
-    window.open("https://maps.google.com/maps?q="+S.lat+","+S.lng+"&t=k&z=19","_blank");
-  }else{
-    window.open("https://maps.google.com/","_blank");
-  }
-}
 
 // ════ TOAST ════
 function showToast(msg){
@@ -1502,3 +1478,5 @@ renderChecklist();
 </script>
 </body>
 </html>
+conesout.html
+Displaying conesout.html.
