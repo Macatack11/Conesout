@@ -284,15 +284,29 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
       <p>This app does NOT replace formal training, a site-specific Risk Assessment, Method Statement, or a Traffic Management Plan approved by the relevant Highway Authority.</p>
       <p>All distances and procedures are based on Chapter 8 of the Traffic Signs Manual, TSRGD 2016, NRSWA 1991 and TMA 2004 as guidance only.</p>
     </div>
-    <div class="disc-box">
-      <div class="disc-box-title">User Responsibilities</div>
-      <p>By using this app you confirm that you are a trained and competent operative, supervisor or manager responsible for road works traffic management.</p>
-      <p>You remain solely responsible for assessing site-specific conditions, obtaining all required permits and licences, and ensuring all traffic management complies with current legislation.</p>
+
+    <!-- Expandable: User Responsibilities -->
+    <div class="disc-box" id="disc-expand-1" style="cursor:pointer;" onclick="toggleDiscExpand(1)">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="disc-box-title" style="margin-bottom:0;">User Responsibilities</div>
+        <div id="disc-chevron-1" style="color:var(--yellow);font-size:1.1rem;transition:transform .25s;">&#8250;</div>
+      </div>
+      <div id="disc-content-1" style="display:none;margin-top:10px;">
+        <p>By using this app you confirm that you are a trained and competent operative, supervisor or manager responsible for road works traffic management.</p>
+        <p>You remain solely responsible for assessing site-specific conditions, obtaining all required permits and licences, and ensuring all traffic management complies with current legislation.</p>
+      </div>
     </div>
-    <div class="disc-box">
-      <div class="disc-box-title">Limitation of Liability</div>
-      <p>Courseway Ltd accepts no liability for any loss, injury, damage or legal consequence arising from reliance on information provided by this application.</p>
-      <p>In the event of any conflict between this app and official published guidance, the official published guidance takes precedence at all times.</p>
+
+    <!-- Expandable: Limitation of Liability -->
+    <div class="disc-box" id="disc-expand-2" style="cursor:pointer;" onclick="toggleDiscExpand(2)">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="disc-box-title" style="margin-bottom:0;">Limitation of Liability</div>
+        <div id="disc-chevron-2" style="color:var(--yellow);font-size:1.1rem;transition:transform .25s;">&#8250;</div>
+      </div>
+      <div id="disc-content-2" style="display:none;margin-top:10px;">
+        <p>Courseway Ltd accepts no liability for any loss, injury, damage or legal consequence arising from reliance on information provided by this application.</p>
+        <p>In the event of any conflict between this app and official published guidance, the official published guidance takes precedence at all times.</p>
+      </div>
     </div>
     <div class="disc-cb-row" id="cb-row-1" onclick="toggleCb(1)">
       <div class="disc-cb" id="cb-1"></div>
@@ -681,6 +695,13 @@ const CHECKS=[
 ];
 
 // ════ DISCLAIMER ════
+function toggleDiscExpand(n){
+  var content=document.getElementById("disc-content-"+n);
+  var chevron=document.getElementById("disc-chevron-"+n);
+  var open=content.style.display==="block";
+  content.style.display=open?"none":"block";
+  chevron.style.transform=open?"rotate(0deg)":"rotate(90deg)";
+}
 const DCB={1:false,2:false,3:false};
 function toggleCb(n){
   DCB[n]=!DCB[n];
@@ -895,16 +916,9 @@ function getPlacementSeqClosure(d,spd){
   // Road Closed sign and barriers — upstream closure point
   seq.push({id:"close_up",icon:"&#128721;",
     name:"Upstream Road Closed Sign + Barriers",
-    detail:"Walk back to closure point (10m from works). Place Road Closed sign and Chapter 8 barriers across FULL carriageway width. No vehicle should pass this point.",
-    dist:spd>=40?Math.round(d.advance*0.5):Math.round(d.advance*0.6),dir:"downstream",phase:"Set upstream closure",
+    detail:"Walk back to closure point. Place Road Closed sign and Chapter 8 barriers across FULL carriageway width. Also place pedestrian diversion signs — a signed accessible route around works is mandatory. No vehicle passes this point.",
+    dist:spd>=40?Math.round(d.advance*0.5):Math.round(d.advance*0.6),dir:"downstream",phase:"Walk back — set upstream closure",
     reg:"Chapter 8 s.6.5 - TSRGD 2016 Diagram 619",color:"var(--red)"});
-
-  // Pedestrian diversion sign
-  seq.push({id:"ped_up",icon:"&#128694;",
-    name:"Pedestrian Diversion Route",
-    detail:"Place pedestrian diversion signs at the upstream closure point. Chapter 8 requires an accessible signed pedestrian route around the works at all times.",
-    dist:2,dir:"upstream",phase:"Set upstream closure",
-    reg:"Chapter 8 s.8, DDA 1995",color:"var(--orange)"});
 
   // Work zone guarding
   seq.push({id:"barriers",icon:"&#128679;",
@@ -916,8 +930,8 @@ function getPlacementSeqClosure(d,spd){
   // Works vehicle
   seq.push({id:"vehicle",icon:"&#128666;",
     name:"Works Vehicle — Inside Closure",
-    detail:"Position works vehicle inside the closed section. Hazard lights and amber beacon on. Road Works sign displayed. Keys in ignition.",
-    dist:5,dir:"downstream",phase:"At works — inside closure",
+    detail:"You are now at the works. Position vehicle inside the closed section. Hazard lights and amber beacon on. Road Works sign displayed. Keys in ignition.",
+    dist:0,dir:"works",phase:"At works — inside closure",
     reg:"Chapter 8 s.5.4",color:"var(--blue)"});
 
   // Downstream barriers and Road Closed sign
@@ -1152,7 +1166,7 @@ function getPlacementSeqLights(d,spd){
   seq.push({id:"vehicle",icon:"&#128666;",
     name:"Works Vehicle",
     detail:"Position works vehicle at the upstream "+tmLabel+" location or at the works entry. Hazard lights AND amber beacon on. Keys in ignition. Road Works sign displayed.",
-    dist:5,dir:"upstream",phase:"Position vehicle",
+    dist:0,dir:"works",phase:"At works",
     reg:"Chapter 8 s.5.4",color:"var(--blue)"});
 
   return seq;
@@ -1205,31 +1219,31 @@ function getPlacementSeqTaper(d,spd){
   var nc=Math.max(2,Math.floor(d.taper/d.coneGap)-1);
   seq.push({id:"taper_mid",icon:"CONE",
     name:"Taper Cones x "+nc,
-    detail:"Walk the "+d.taper+"m taper toward works. Place "+nc+" cones every "+d.coneGap+"m at 45 degrees.",
-    dist:d.coneGap,dir:"downstream",phase:"Walk taper back to works",
+    detail:"Walk continuously back toward works placing "+nc+" cones every "+d.coneGap+"m. Each cone angles further across the lane. GPS alerts at each "+d.coneGap+"m interval.",
+    dist:d.coneGap,dir:"downstream",phase:"Walk taper back to works — "+nc+" cones at "+d.coneGap+"m gaps",
     reg:"Chapter 8 Table 8-4",color:"var(--orange)"});
 
   seq.push({id:"barriers",icon:"&#128679;",
     name:"Work Zone Guarding",
-    detail:"At works. Chapter 8 barriers around full work area. Min 0.5m clearance from excavation. Amber beacon each end.",
-    dist:d.taper-d.coneGap,dir:"downstream",phase:"At works",
+    detail:"You are now at the works. Set up Chapter 8 barriers around full work area. Min 0.5m clearance from excavation. Amber beacon each end.",
+    dist:0,dir:"works",phase:"At works",
     reg:"Chapter 8 CoP s.7 - CDM 2015",color:"var(--red)"});
 
   var bufDist=spd>=50?25:spd>=40?10:5;
-  seq.push({id:"vehicle",icon:"&#128666;",
-    name:"Works Vehicle",
-    detail:"Walk "+bufDist+"m past works downstream. Park on nearside - hazard lights AND amber beacon on - keys in ignition - Road Works sign displayed.",
-    dist:bufDist,dir:"downstream",phase:"Walk downstream",
-    reg:"Chapter 8 s.5.4 - HSG185",color:"var(--blue)"});
-
   if(spd>=50){
     var shadDist=spd>=60?30:20;
     seq.push({id:"shadow",icon:"&#128737;&#65039;",
       name:"Shadow Vehicle",
-      detail:"Position shadow vehicle "+shadDist+"m upstream of works vehicle. Arrow board active. Driver in cab seatbelt on.",
-      dist:shadDist,dir:"upstream",phase:"Position shadow vehicle",
+      detail:"Walk "+shadDist+"m upstream from works. Position shadow vehicle here. Arrow board active. Driver in cab seatbelt on. Min 5m gap from works vehicle.",
+      dist:shadDist,dir:"upstream",phase:"Walk upstream — position shadow vehicle",
       reg:"Chapter 8 s.5.5 - BD 52",color:"var(--blue)"});
   }
+
+  seq.push({id:"vehicle",icon:"&#128666;",
+    name:"Works Vehicle",
+    detail:"Walk back "+bufDist+"m downstream to works. Park vehicle on nearside — hazard lights AND amber beacon on — keys in ignition — Road Works sign displayed.",
+    dist:bufDist+(spd>=50?(spd>=60?30:20):0),dir:"downstream",phase:"Walk downstream — position works vehicle",
+    reg:"Chapter 8 s.5.4 - HSG185",color:"var(--blue)"});
 
   seq.push({id:"downstream",icon:"CONE",
     name:"Downstream Clearance Cones",
@@ -1908,4 +1922,4 @@ renderChecklist();
 </body>
 </html>
 conesout.html
-Displaying conesout.html.
+Displaying conesout.html. 
