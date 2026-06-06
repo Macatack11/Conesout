@@ -1701,10 +1701,17 @@ function renderDiagramLights(cont,d,spd,tradeName,rot,landscape,flip){
 }
 
 
-// ════ GPS + CAMERA AR WALK-OUT ════
-var WO={seq:[],current:0,placed:[],startLat:null,startLng:null,
-  watchId:null,camStream:null,arFrame:null,manualMode:false,
-  currentLat:null,currentLng:null,targetReached:false};
+// ════ GPS + CAMERA AR WALK-OUT — Waze-style engine ════
+var WO={
+  seq:[],current:0,placed:[],
+  startLat:null,startLng:null,
+  watchId:null,camStream:null,arFrame:null,
+  manualMode:false,targetReached:false,
+  currentLat:null,currentLng:null,currentAcc:999,currentSpd:0,currentHdg:0,
+  kLat:null,kLng:null,kVLat:0,kVLng:0,kP:1,kLastT:0,
+  smoothWalked:0,displayWalked:0,lastGPSWalked:0,lastGPST:0,
+  targetBearing:null
+};
 
 function gpsDistance(lat1,lng1,lat2,lng2){
   var R=6371000;
@@ -1716,6 +1723,45 @@ function gpsDistance(lat1,lng1,lat2,lng2){
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
+function projectOntoLine(startLat,startLng,bearing,targetDist,curLat,curLng){
+  var R=6371000;
+  var latRad=startLat*Math.PI/180;
+  var dx=(curLng-startLng)*Math.PI/180*R*Math.cos(latRad);
+  var dy=(curLat-startLat)*Math.PI/180*R;
+  var bearRad=bearing*Math.PI/180;
+  var tx=Math.sin(bearRad);
+  var ty=Math.cos(bearRad);
+  var proj=dx*tx+dy*ty;
+  return Math.max(0,Math.min(targetDist,proj));
+}
+
+function kalmanUpdate(pos){
+  var lat=pos.coords.latitude;
+  var lng=pos.coords.longitude;
+  var acc=pos.coords.accuracy||10;
+  var now=pos.timestamp||Date.now();
+  if(WO.kLat===null){
+    WO.kLat=lat;WO.kLng=lng;WO.kVLat=0;WO.kVLng=0;
+    WO.kP=acc*acc;WO.kLastT=now;
+    return {lat:lat,lng:lng};
+  }
+  var dtSec=(now-WO.kLastT)/1000;
+  WO.kLastT=now;
+  var predLat=WO.kLat+WO.kVLat*dtSec;
+  var predLng=WO.kLng+WO.kVLng*dtSec;
+  var predP=WO.kP+dtSec*2;
+  var R2=acc*acc;
+  var K=predP/(predP+R2);
+  var newLat=predLat+K*(lat-predLat);
+  var newLng=predLng+K*(lng-predLng);
+  if(dtSec>0){
+    WO.kVLat=WO.kVLat*0.8+(newLat-predLat)/dtSec*0.2;
+    WO.kVLng=WO.kVLng*0.8+(newLng-predLng)/dtSec*0.2;
+  }
+  WO.kLat=newLat;WO.kLng=newLng;WO.kP=(1-K)*predP;
+  return {lat:WO.kLat,lng:WO.kLng};
+}
+
 function initWalkoutGPS(){
   var status=document.getElementById("gps-ready-status");
   var btn=document.getElementById("wo-start-btn");
@@ -1725,21 +1771,17 @@ function initWalkoutGPS(){
   }
   status.textContent="Acquiring GPS signal...";
   navigator.geolocation.getCurrentPosition(function(pos){
-    WO.currentLat=pos.coords.latitude;
-    WO.currentLng=pos.coords.longitude;
-    var acc=Math.round(pos.coords.accuracy);
-    if(acc<=15){
-      status.textContent="GPS Ready - Accuracy: "+acc+"m";
-      status.style.color="var(--green)";
-    }else{
-      status.textContent="GPS signal "+acc+"m accuracy - move to open area for better signal";
-      status.style.color="var(--yellow)";
-    }
+    var smooth=kalmanUpdate(pos);
+    WO.currentLat=smooth.lat;WO.currentLng=smooth.lng;
+    WO.currentAcc=Math.round(pos.coords.accuracy);
+    var acc=WO.currentAcc;
+    status.textContent=acc<=10?"GPS Excellent — "+acc+"m":acc<=20?"GPS Ready — "+acc+"m":"GPS weak ("+acc+"m) — move to open area";
+    status.style.color=acc<=20?"var(--green)":"var(--yellow)";
     btn.disabled=false;btn.style.background="var(--orange)";btn.style.color="#000";
   },function(){
-    status.textContent="GPS permission denied - use Manual Mode below";
+    status.textContent="GPS permission denied — use Manual Mode";
     status.style.color="var(--red)";
-  },{enableHighAccuracy:true,timeout:10000});
+  },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
 
 async function startWalkout(){
@@ -1748,6 +1790,8 @@ async function startWalkout(){
   WO.seq=getPlacementSeq();WO.current=0;WO.placed=[];
   WO.manualMode=false;WO.targetReached=false;
   WO.startLat=WO.currentLat;WO.startLng=WO.currentLng;
+  WO.smoothWalked=0;WO.displayWalked=0;WO.lastGPSWalked=0;WO.lastGPST=Date.now();
+  WO.targetBearing=null;
   await launchWalkoutCamera();
 }
 
@@ -1755,20 +1799,23 @@ function startWalkoutNoGPS(){
   if(!S.speed||!S.trade){showToast("Complete setup on Home first");showScreen("home");return;}
   WO.seq=getPlacementSeq();WO.current=0;WO.placed=[];
   WO.manualMode=true;WO.startLat=null;WO.startLng=null;WO.targetReached=false;
+  WO.smoothWalked=0;WO.displayWalked=0;
   launchWalkoutCamera();
 }
 
 async function launchWalkoutCamera(){
   try{
-    var stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:1920},height:{ideal:1080}}});
+    var stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:"environment",width:{ideal:1920},height:{ideal:1080}}
+    });
     WO.camStream=stream;
     document.getElementById("wo-camera").srcObject=stream;
-  }catch(e){showToast("Camera unavailable - GPS tracking still active");}
+  }catch(e){showToast("Camera unavailable — GPS tracking still active");}
   if(!WO.manualMode&&navigator.geolocation){
     WO.watchId=navigator.geolocation.watchPosition(
       function(pos){onGPSUpdate(pos);},
-      function(){document.getElementById("wo-gps-acc").textContent="GPS lost";},
-      {enableHighAccuracy:true,maximumAge:1000,timeout:15000}
+      function(){var el=document.getElementById("wo-gps-acc");if(el)el.textContent="GPS lost";},
+      {enableHighAccuracy:true,maximumAge:0,timeout:5000}
     );
   }
   document.getElementById("wo-start-panel").style.display="none";
@@ -1779,20 +1826,51 @@ async function launchWalkoutCamera(){
 }
 
 function onGPSUpdate(pos){
-  WO.currentLat=pos.coords.latitude;WO.currentLng=pos.coords.longitude;
-  var acc=Math.round(pos.coords.accuracy);
+  var now=pos.timestamp||Date.now();
+  var acc=pos.coords.accuracy;
+
+  // Kalman-smoothed position
+  var smooth=kalmanUpdate(pos);
+  WO.currentLat=smooth.lat;WO.currentLng=smooth.lng;WO.currentAcc=Math.round(acc);
+
+  // Speed and heading from GPS
+  if(pos.coords.speed!=null&&pos.coords.speed>=0)WO.currentSpd=pos.coords.speed;
+  if(pos.coords.heading!=null&&!isNaN(pos.coords.heading))WO.currentHdg=pos.coords.heading;
+
+  // Auto-detect target bearing from first movement
+  if(WO.currentSpd>0.3&&WO.targetBearing===null&&WO.startLat){
+    WO.targetBearing=WO.currentHdg;
+  }
+
+  // Update accuracy display
   var accEl=document.getElementById("wo-gps-acc");
-  if(accEl)accEl.textContent="GPS: "+acc+"m";
+  if(accEl){
+    accEl.textContent=acc<=5?"GPS: "+Math.round(acc)+"m ●":acc<=15?"GPS: "+Math.round(acc)+"m ○":"GPS: "+Math.round(acc)+"m △";
+    accEl.style.color=acc<=5?"#00C853":acc<=15?"var(--yellow)":"var(--red)";
+  }
+
   if(!WO.startLat||WO.current>=WO.seq.length)return;
   var item=WO.seq[WO.current];
-  var walked=gpsDistance(WO.startLat,WO.startLng,WO.currentLat,WO.currentLng);
-  var remaining=Math.max(0,Math.round(item.dist-walked));
+  var target=item.dist;
+
+  // Line-snapped distance or straight Haversine
+  var rawWalked=(WO.targetBearing!==null)?
+    projectOntoLine(WO.startLat,WO.startLng,WO.targetBearing,target,WO.currentLat,WO.currentLng):
+    gpsDistance(WO.startLat,WO.startLng,WO.currentLat,WO.currentLng);
+
+  // Weighted smoothing — poor accuracy = less influence
+  var w=Math.min(1,8/Math.max(acc,1));
+  WO.smoothWalked=WO.smoothWalked*(1-w*0.35)+rawWalked*(w*0.35)+WO.smoothWalked*0.65;
+  WO.lastGPSWalked=WO.smoothWalked;
+  WO.lastGPST=now;
+
+  var remaining=Math.max(0,target-WO.smoothWalked);
   var remEl=document.getElementById("wo-remaining");
   if(remEl){
-    remEl.textContent=remaining;
-    // Colour: white when far, yellow when 10m, green when 2m
+    remEl.textContent=Math.round(remaining);
     remEl.style.color=remaining<=2?"var(--green)":remaining<=10?"var(--yellow)":"#ffffff";
   }
+
   if(remaining<=2&&!WO.targetReached){
     WO.targetReached=true;
     triggerPlacementAlert();
@@ -1813,42 +1891,69 @@ function drawARFrame(){
   ctx.clearRect(0,0,w,h);
   if(WO.current>=WO.seq.length){WO.arFrame=requestAnimationFrame(drawARFrame);return;}
   var item=WO.seq[WO.current];
-  var walked=(!WO.manualMode&&WO.startLat&&WO.currentLat)?gpsDistance(WO.startLat,WO.startLng,WO.currentLat,WO.currentLng):0;
-  var target=item.dist;
+  var target=item.dist||1;
+  var now=Date.now();
+
+  // Dead reckoning — predict position between GPS fixes
+  var walked;
+  if(WO.manualMode){
+    walked=0;
+  }else{
+    var dtSinceGPS=(now-WO.lastGPST)/1000;
+    var predicted=WO.lastGPSWalked+(WO.currentSpd||0)*Math.min(dtSinceGPS,2);
+    // Smooth display toward predicted — creates gliding motion
+    WO.displayWalked=WO.displayWalked+(predicted-WO.displayWalked)*0.08;
+    walked=Math.min(target,Math.max(0,WO.displayWalked));
+  }
+
   var remaining=Math.max(0,target-walked);
+  var progress=Math.min(1,walked/target);
+
+  // Horizon guide
   var horizon=h*0.42;
-  // Horizon line
   ctx.strokeStyle="rgba(255,214,0,0.35)";ctx.lineWidth=1;
   ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(0,horizon);ctx.lineTo(w,horizon);ctx.stroke();ctx.setLineDash([]);
-  // Road centre guide
   ctx.strokeStyle="rgba(255,255,255,0.15)";ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(w/2,h);ctx.lineTo(w/2,horizon);ctx.stroke();
-  // Marker position
-  var progress=Math.min(1,walked/Math.max(target,1));
-  var markerY=horizon+(h-horizon)*progress;
-  var markerY2=Math.min(h*0.82,Math.max(horizon+20,markerY));
-  var scale=0.25+0.75*progress;
-  drawCanvasCone(ctx,w/2,markerY2,scale,remaining<=2);
-  // Distance label
-  if(remaining>0){
-    ctx.font="bold "+(12+10*scale)+"px sans-serif";
-    ctx.fillStyle=remaining<=2?"rgba(0,200,83,1)":"rgba(255,214,0,0.9)";
+
+  // Cone — eased approach animation
+  var easedProgress=1-Math.pow(1-progress,2);
+  var markerY=horizon+20+easedProgress*(h*0.82-horizon-20);
+  var scale=0.2+0.8*easedProgress;
+  drawCanvasCone(ctx,w/2,markerY,scale,remaining<=2);
+
+  // Distance
+  if(!WO.manualMode&&target>0){
+    ctx.font="bold "+(14+8*scale)+"px sans-serif";
+    ctx.fillStyle=remaining<=2?"rgba(0,200,83,1)":remaining<=10?"rgba(255,214,0,1)":"rgba(255,255,255,0.9)";
     ctx.textAlign="center";
-    ctx.fillText(Math.round(remaining)+"m",w/2,markerY2-52*scale-8);
+    ctx.fillText(Math.round(remaining)+"m",w/2,markerY-52*scale-8);
   }
+
   // Item name
   ctx.font="bold 13px sans-serif";
   ctx.fillStyle="rgba(255,255,255,0.85)";
   ctx.textAlign="center";
-  ctx.fillText(item.name.toUpperCase(),w/2,markerY2+55*scale+14);
-  // Walk guide dots when far
+  ctx.fillText(item.name.toUpperCase(),w/2,markerY+55*scale+14);
+
+  // Pulsing walk guide dots
   if(remaining>5&&!WO.manualMode){
+    var pulse=0.5+0.5*Math.sin(now/300);
     for(var i=0;i<4;i++){
-      var dotY=h*0.72-i*(h*0.1);
-      ctx.fillStyle="rgba(255,107,0,"+(0.8-i*0.15)+")";
-      ctx.beginPath();ctx.arc(w/2,dotY,5-i,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle="rgba(255,107,0,"+((0.8-i*0.15)*pulse)+")";
+      ctx.beginPath();ctx.arc(w/2,h*0.72-i*(h*0.1),5-i,0,Math.PI*2);ctx.fill();
     }
   }
+
+  // GPS quality indicator (top right)
+  if(!WO.manualMode){
+    var qa=WO.currentAcc<=5?0.8:WO.currentAcc<=15?0.5:0.2;
+    ctx.strokeStyle="rgba(0,200,83,"+qa+")";ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(w-20,20,8,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle="rgba(0,200,83,"+(qa+0.1)+")";
+    ctx.beginPath();ctx.arc(w-20,20,3,0,Math.PI*2);ctx.fill();
+  }
+
   WO.arFrame=requestAnimationFrame(drawARFrame);
 }
 
@@ -1909,13 +2014,11 @@ function confirmPlacement(){
   var item=WO.seq[WO.current];
   WO.placed.push({name:item.name,dist:item.dist,confirmed:true});
   WO.current++;
-  // CRITICAL: reset start point to current position for next item
-  // Each item measures distance from where you currently are
-  if(WO.currentLat){
-    WO.startLat=WO.currentLat;
-    WO.startLng=WO.currentLng;
-  }
-  WO.targetReached=false;
+  // Reset start point to current smoothed position for next item
+  if(WO.currentLat){WO.startLat=WO.currentLat;WO.startLng=WO.currentLng;}
+  // Reset all tracking state for fresh measurement
+  WO.smoothWalked=0;WO.displayWalked=0;WO.lastGPSWalked=0;
+  WO.lastGPST=Date.now();WO.targetBearing=null;WO.targetReached=false;
   try{navigator.vibrate(100);}catch(e){}
   try{
     var ac=new(window.AudioContext||window.webkitAudioContext)();
@@ -1931,12 +2034,9 @@ function skipPlacement(){
   var item=WO.seq[WO.current];
   WO.placed.push({name:item.name,dist:item.dist,confirmed:false});
   WO.current++;
-  // Also reset start point on skip so next item measures from here
-  if(WO.currentLat){
-    WO.startLat=WO.currentLat;
-    WO.startLng=WO.currentLng;
-  }
-  WO.targetReached=false;
+  if(WO.currentLat){WO.startLat=WO.currentLat;WO.startLng=WO.currentLng;}
+  WO.smoothWalked=0;WO.displayWalked=0;WO.lastGPSWalked=0;
+  WO.lastGPST=Date.now();WO.targetBearing=null;WO.targetReached=false;
   if(WO.current>=WO.seq.length)completeWO();else showWOItem();
 }
 
