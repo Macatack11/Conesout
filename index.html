@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#FF6B00">
+<meta name="theme-color" content="#0d1f35">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ConesOut">
@@ -11,28 +11,46 @@
 <title>ConesOut - Road Works Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ── WAZE-STYLE THEME ── */
 :root{
-  --orange:#FF6B00;--yellow:#FFD600;--dark:#0D0D0D;--dark2:#1A1A1A;
-  --dark3:#252525;--mid:#333;--text:#F0F0F0;--muted:#888;
-  --green:#00C853;--red:#FF1744;--blue:#2979FF;
+  --waze-cyan:#32CCFE;
+  --waze-navy:#0d1f35;
+  --waze-dark:#111827;
+  --waze-card:#1e2d45;
+  --waze-card2:#243044;
+  --waze-border:rgba(50,204,254,0.18);
+  --waze-text:#ffffff;
+  --waze-muted:rgba(255,255,255,0.45);
+  --waze-muted2:rgba(255,255,255,0.2);
+  --green:#00C853;
+  --red:#FF4444;
+  --yellow:#FFD600;
+  --orange:#FF6B00;
+  /* legacy aliases so old code still works */
+  --dark:#111827;
+  --dark2:#1e2d45;
+  --dark3:#243044;
+  --mid:rgba(255,255,255,0.12);
+  --text:#ffffff;
+  --muted:rgba(255,255,255,0.45);
+  --blue:#32CCFE;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
+body{font-family:"Barlow",sans-serif;background:var(--waze-dark);color:var(--waze-text);height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
 
-/* ── CSS TRAFFIC CONE ── */
+/* ── SCROLLBARS ── */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(50,204,254,.3);border-radius:2px;}
+
+/* ── CSS CONE ── */
 .tc{display:inline-flex;flex-direction:column;align-items:center;justify-content:flex-end;vertical-align:middle;gap:0;}
 .tc-body{width:0;height:0;border-left:solid transparent;border-right:solid transparent;border-bottom:solid #CC0000;position:relative;}
 .tc-body::before{content:"";position:absolute;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.95);height:18%;width:65%;bottom:42%;}
 .tc-base{background:#111111;border-radius:1px;}
-
-/* SVG cone icon — used everywhere via .cone-svg class */
 .cone-svg{display:inline-block;vertical-align:middle;}
-.cone-svg-sm{width:18px;height:24px;}
-.cone-svg-md{width:26px;height:34px;}
-.cone-svg-lg{width:36px;height:48px;}
-.cone-svg-xl{width:56px;height:74px;}
-
-/* Size variants */
+.cone-svg-sm{width:18px;height:24px;} .cone-svg-md{width:26px;height:34px;}
+.cone-svg-lg{width:36px;height:48px;} .cone-svg-xl{width:56px;height:74px;}
 .tc-sm .tc-body{border-left-width:9px;border-right-width:9px;border-bottom-width:22px;}
 .tc-sm .tc-base{width:22px;height:4px;}
 .tc-md .tc-body{border-left-width:13px;border-right-width:13px;border-bottom-width:32px;}
@@ -43,224 +61,182 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 .tc-xl .tc-base{width:64px;height:11px;}
 
 /* ── TOPBAR ── */
-.topbar{background:var(--dark2);border-bottom:3px solid var(--orange);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;z-index:100;flex-shrink:0;}
-.topbar-logo{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:1px;color:#CC0000;display:flex;align-items:center;gap:8px;}
+.topbar{background:var(--waze-navy);border-bottom:1px solid var(--waze-border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;z-index:100;flex-shrink:0;}
+.topbar-logo{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:1px;color:#32CCFE;display:flex;align-items:center;gap:8px;}
 .topbar-logo span{color:#ffffff;}
 .topbar-right{display:flex;align-items:center;gap:10px;}
-.topbar-status{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted);}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+.topbar-status{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--waze-muted);}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--waze-cyan);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.install-btn{background:var(--orange);color:#000;border:none;border-radius:6px;padding:5px 10px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.75rem;cursor:pointer;display:none;}
+.install-btn{background:var(--waze-cyan);color:var(--waze-navy);border:none;border-radius:100px;padding:5px 12px;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.75rem;cursor:pointer;display:none;}
 .install-btn.visible{display:block;}
 
 /* ── SCREENS ── */
-.screen{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden;padding-bottom:60px;}
 .screen.active{display:flex;}
 
 /* ── HOME ── */
-#screen-home{overflow-y:auto;}
-.hero-banner{background:var(--dark2);border-bottom:4px solid var(--orange);padding:14px 16px 14px;}
-.hero-title{font-family:Barlow Condensed,sans-serif;font-size:1.9rem;font-weight:900;line-height:1.1;text-transform:uppercase;}
-.hero-title .hi{color:var(--orange);}
-.hero-sub{font-size:.78rem;color:var(--muted);margin-top:4px;line-height:1.4;}
-.hero-badge{display:inline-block;background:#1a1a00;border:1px solid var(--yellow);color:var(--yellow);font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:5px;}
-.section-label{font-family:Barlow Condensed,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);padding:12px 16px 6px;}
+#screen-home{overflow-y:auto;background:var(--waze-dark);}
+.hero-banner{background:linear-gradient(180deg,#1e3a5f 0%,var(--waze-dark) 100%);padding:22px 16px 20px;position:relative;overflow:hidden;border-bottom:1px solid var(--waze-border);min-height:110px;}
+.hero-title{font-family:Barlow Condensed,sans-serif;font-size:2rem;font-weight:900;line-height:1.1;text-transform:uppercase;}
+.hero-title .hi{color:var(--waze-cyan);}
+.hero-sub{font-size:.78rem;color:var(--waze-muted);margin-top:4px;line-height:1.4;}
+.hero-badge{display:inline-block;background:rgba(50,204,254,.1);border:1px solid var(--waze-border);color:var(--waze-cyan);font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:100px;margin-top:6px;}
 
+.section-label{font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--waze-cyan);padding:10px 16px 5px;opacity:.7;}
+
+/* Selection cards — Waze pill style */
 .trade-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 16px 12px;}
-.trade-card{background:var(--dark3);border:2px solid var(--mid);border-radius:10px;padding:14px 12px;display:flex;flex-direction:column;gap:7px;cursor:pointer;transition:border-color .2s,transform .15s;position:relative;overflow:hidden;}
+.trade-card{background:var(--waze-card);border:1.5px solid var(--waze-border);border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;gap:7px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
 .trade-card:active{transform:scale(.97);}
-.trade-card.selected{border-color:var(--orange);background:#2a1500;}
-.trade-card::after{content:"";position:absolute;top:0;right:0;width:4px;height:100%;background:var(--orange);opacity:0;transition:opacity .2s;}
-.trade-card.selected::after{opacity:1;}
+.trade-card.selected{border-color:var(--waze-cyan);background:rgba(50,204,254,.08);box-shadow:0 0 0 1px var(--waze-cyan);}
 .trade-icon{font-size:1.8rem;}
 .trade-name{font-family:Barlow Condensed,sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;line-height:1.2;}
-.trade-desc{font-size:.7rem;color:var(--muted);line-height:1.3;}
+.trade-desc{font-size:.7rem;color:var(--waze-muted);line-height:1.3;}
 
 .road-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 12px;}
-.road-card{background:var(--dark3);border:2px solid var(--mid);border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:border-color .2s;font-size:.75rem;font-weight:600;}
-.road-card.selected{border-color:var(--orange);background:#2a1500;}
+.road-card{background:var(--waze-card);border:1.5px solid var(--waze-border);border-radius:14px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s;font-size:.75rem;font-weight:600;}
+.road-card.selected{border-color:var(--waze-cyan);background:rgba(50,204,254,.08);}
 .road-card .road-icon{font-size:1.4rem;margin-bottom:3px;}
 
 .width-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 16px 12px;}
-.width-card{background:var(--dark3);border:2px solid var(--mid);border-radius:10px;padding:12px 10px;cursor:pointer;transition:border-color .2s;}
-.width-card.selected{border-color:var(--orange);background:#2a1500;}
-.width-val{font-family:Barlow Condensed,sans-serif;font-size:1.4rem;font-weight:900;color:var(--orange);}
+.width-card{background:var(--waze-card);border:1.5px solid var(--waze-border);border-radius:16px;padding:12px 10px;cursor:pointer;transition:all .2s;}
+.width-card.selected{border-color:var(--waze-cyan);background:rgba(50,204,254,.08);}
+.width-val{font-family:Barlow Condensed,sans-serif;font-size:1.4rem;font-weight:900;color:var(--waze-cyan);}
 .width-label{font-family:Barlow Condensed,sans-serif;font-size:.82rem;font-weight:700;text-transform:uppercase;margin-top:2px;}
-.width-desc{font-size:.68rem;color:var(--muted);margin-top:3px;line-height:1.3;}
-.width-outcome{font-size:.7rem;color:var(--green);font-weight:600;margin-top:4px;}
-.tm-box{margin:0 16px 12px;border-radius:8px;padding:12px 14px;font-size:.78rem;line-height:1.5;display:none;}
+.width-desc{font-size:.68rem;color:var(--waze-muted);margin-top:3px;line-height:1.3;}
+.width-outcome{font-size:.7rem;color:var(--waze-cyan);font-weight:600;margin-top:4px;opacity:.8;}
+
+.tm-box{margin:0 16px 12px;border-radius:14px;padding:12px 14px;font-size:.78rem;line-height:1.5;display:none;border:1.5px solid;}
 .tm-box.show{display:block;}
-.tm-box.closure{background:#1a0000;border:2px solid var(--red);color:#ff8a80;}
-.tm-box.oneway{background:#1a1000;border:2px solid var(--orange);color:#ffcc80;}
-.tm-box.laneclosure{background:#00101a;border:2px solid var(--blue);color:#82b1ff;}
+.tm-box.closure{background:rgba(255,68,68,.08);border-color:rgba(255,68,68,.4);color:#ff8a80;}
+.tm-box.oneway{background:rgba(50,204,254,.06);border-color:var(--waze-border);color:rgba(255,255,255,.75);}
+.tm-box.laneclosure{background:rgba(50,204,254,.06);border-color:var(--waze-border);color:rgba(255,255,255,.75);}
 .tm-box-title{font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;margin-bottom:4px;}
 
 .vis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 12px;}
-.vis-card{background:var(--dark3);border:2px solid var(--mid);border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:border-color .2s;}
-.vis-card.selected{border-color:var(--orange);background:#2a1500;}
+.vis-card{background:var(--waze-card);border:1.5px solid var(--waze-border);border-radius:14px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .2s;}
+.vis-card.selected{border-color:var(--waze-cyan);background:rgba(50,204,254,.08);}
 .vis-card .vis-icon{font-size:1.4rem;margin-bottom:3px;}
 .vis-card .vis-label{font-size:.72rem;font-weight:700;font-family:Barlow Condensed,sans-serif;text-transform:uppercase;}
-.vis-card .vis-sub{font-size:.62rem;color:var(--muted);margin-top:2px;}
-.vis-warning{margin:0 16px 12px;background:#1a0500;border:2px solid var(--red);border-radius:8px;padding:12px 14px;display:none;}
+.vis-card .vis-sub{font-size:.62rem;color:var(--waze-muted);margin-top:2px;}
+.vis-warning{margin:0 16px 12px;background:rgba(255,68,68,.08);border:1.5px solid rgba(255,68,68,.4);border-radius:14px;padding:12px 14px;display:none;}
 .vis-warning.show{display:block;}
 .vis-warning-title{font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
-.vis-extra-badge{display:inline-block;background:var(--red);color:#fff;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.72rem;padding:3px 8px;border-radius:10px;margin-left:6px;}
-.vis-rule{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:.76rem;color:#ffccbc;line-height:1.4;}
+.vis-extra-badge{display:inline-block;background:var(--red);color:#fff;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.72rem;padding:3px 8px;border-radius:100px;margin-left:6px;}
+.vis-rule{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:.76rem;color:rgba(255,150,130,.9);line-height:1.4;}
 
-.speed-trigger{margin:0 16px 4px;background:var(--dark3);border:2px dashed var(--mid);color:var(--muted);border-radius:8px;padding:12px;font-family:"Barlow",sans-serif;font-size:.88rem;cursor:pointer;width:calc(100% - 32px);text-align:left;transition:border-color .2s;}
-.speed-trigger.set{border-color:var(--orange);color:var(--text);border-style:solid;}
-.start-btn{margin:10px 16px 20px;background:#555;color:#999;border:none;border-radius:10px;padding:18px;font-family:Barlow Condensed,sans-serif;font-size:1.3rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;cursor:pointer;width:calc(100% - 32px);transition:background .3s,color .3s;display:flex;align-items:center;justify-content:center;gap:10px;}
-.start-btn.ready{background:var(--orange);color:#000;}
+.speed-trigger{margin:0 16px 4px;background:var(--waze-card);border:1.5px dashed var(--waze-border);color:var(--waze-muted);border-radius:100px;padding:12px 18px;font-family:"Barlow",sans-serif;font-size:.88rem;cursor:pointer;width:calc(100% - 32px);text-align:left;transition:all .2s;}
+.speed-trigger.set{border-color:var(--waze-cyan);color:var(--waze-text);border-style:solid;background:rgba(50,204,254,.06);}
+
+.start-btn{margin:10px 16px 20px;background:var(--waze-card);color:var(--waze-muted);border:none;border-radius:100px;padding:18px;font-family:Barlow Condensed,sans-serif;font-size:1.3rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;cursor:pointer;width:calc(100% - 32px);transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.start-btn.ready{background:var(--waze-cyan);color:var(--waze-navy);box-shadow:0 4px 20px rgba(50,204,254,.35);}
 .start-btn:active{opacity:.85;}
 
 /* ── GUIDE ── */
-#screen-guide{background:var(--dark);}
-.guide-header{background:var(--dark2);border-bottom:3px solid var(--orange);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
-.back-btn{background:var(--dark3);border:1px solid var(--mid);color:var(--text);border-radius:6px;padding:6px 12px;font-size:.82rem;cursor:pointer;font-family:"Barlow",sans-serif;flex-shrink:0;}
+#screen-guide{background:var(--waze-dark);}
+.guide-header{background:var(--waze-navy);border-bottom:1px solid var(--waze-border);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.back-btn{background:rgba(255,255,255,.08);border:1px solid var(--waze-border);color:var(--waze-text);border-radius:100px;padding:7px 16px;font-size:.82rem;cursor:pointer;font-family:"Barlow",sans-serif;flex-shrink:0;}
 .guide-title{font-family:Barlow Condensed,sans-serif;font-size:1.15rem;font-weight:800;text-transform:uppercase;flex:1;}
 .steps-container{flex:1;overflow-y:auto;padding:12px 16px;}
-.dist-banner{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
-.dist-cell{background:var(--dark2);border-radius:6px;padding:8px;text-align:center;}
+.dist-banner{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.dist-cell{background:var(--waze-card);border:1px solid var(--waze-border);border-radius:14px;padding:10px;text-align:center;}
 .dist-val{font-family:Barlow Condensed,sans-serif;font-size:1.4rem;font-weight:900;}
-.dist-key{font-size:.62rem;color:var(--muted);text-transform:uppercase;margin-top:1px;}
-.step-card{background:var(--dark2);border-left:4px solid var(--orange);border-radius:0 8px 8px 0;margin-bottom:10px;overflow:hidden;}
+.dist-key{font-size:.62rem;color:var(--waze-muted);text-transform:uppercase;margin-top:1px;}
+.step-card{background:var(--waze-card);border:1.5px solid var(--waze-border);border-radius:16px;margin-bottom:10px;overflow:hidden;}
 .step-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;}
-.step-num{background:var(--orange);color:#000;font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:1rem;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-num{background:var(--waze-cyan);color:var(--waze-navy);font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:1rem;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .step-num.done{background:var(--green);}
 .step-title{font-family:Barlow Condensed,sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;flex:1;}
-.step-dist{background:var(--dark3);border:1px solid var(--orange);color:var(--orange);font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;}
-.chevron{transition:transform .2s;font-size:.85rem;color:var(--muted);}
+.step-dist{background:rgba(50,204,254,.1);border:1px solid var(--waze-border);color:var(--waze-cyan);font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;}
+.chevron{transition:transform .2s;font-size:.85rem;color:var(--waze-muted);}
 .chevron.open{transform:rotate(90deg);}
 .step-body{padding:0 14px 14px;display:none;}
 .step-body.open{display:block;}
-.step-body p{font-size:.8rem;line-height:1.55;color:#ccc;margin-bottom:8px;}
+.step-body p{font-size:.8rem;line-height:1.55;color:rgba(255,255,255,.7);margin-bottom:8px;}
 .equip-list{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0;}
-.equip-tag{background:var(--dark3);border:1px solid var(--mid);border-radius:20px;padding:3px 9px;font-size:.7rem;display:flex;align-items:center;gap:4px;}
-.warn-box{background:#1a0000;border:1px solid var(--red);border-radius:6px;padding:9px 11px;margin-top:8px;font-size:.76rem;color:#ff8a80;display:flex;gap:7px;}
-.reg-box{background:#00101a;border:1px solid var(--blue);border-radius:6px;padding:7px 11px;margin-top:6px;font-size:.7rem;color:#82b1ff;}
+.equip-tag{background:rgba(255,255,255,.06);border:1px solid var(--waze-border);border-radius:100px;padding:4px 10px;font-size:.7rem;display:flex;align-items:center;gap:4px;color:rgba(255,255,255,.75);}
+.warn-box{background:rgba(255,68,68,.08);border:1px solid rgba(255,68,68,.3);border-radius:10px;padding:9px 11px;margin-top:8px;font-size:.76rem;color:#ff8a80;display:flex;gap:7px;}
+.reg-box{background:rgba(50,204,254,.06);border:1px solid var(--waze-border);border-radius:10px;padding:7px 11px;margin-top:6px;font-size:.7rem;color:var(--waze-cyan);opacity:.9;}
 .step-actions{display:flex;gap:7px;margin-top:10px;}
-.action-btn{flex:1;padding:10px 6px;border-radius:7px;border:none;font-family:Barlow Condensed,sans-serif;font-size:.88rem;font-weight:700;text-transform:uppercase;cursor:pointer;}
-.btn-cam{background:var(--blue);color:#fff;}
-.btn-map{background:var(--dark3);color:var(--orange);border:1px solid var(--orange);}
+.action-btn{flex:1;padding:10px 6px;border-radius:100px;border:none;font-family:Barlow Condensed,sans-serif;font-size:.88rem;font-weight:700;text-transform:uppercase;cursor:pointer;}
+.btn-map{background:rgba(50,204,254,.12);color:var(--waze-cyan);border:1px solid var(--waze-border);}
 .btn-done{background:var(--green);color:#000;}
 
-/* ── SETUP SCREEN ── */
-#screen-setup{background:var(--dark);}
-.setup-tabs{display:flex;background:var(--dark3);border-bottom:1px solid var(--mid);flex-shrink:0;}
-.setup-tab-btn{flex:1;padding:10px;border:none;font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s;}
-.setup-tab-btn.active{background:var(--orange);color:#000;}
-.setup-tab-btn.inactive{background:transparent;color:var(--muted);}
+/* ── SETUP ── */
+#screen-setup{background:var(--waze-dark);}
+.setup-tabs{display:flex;background:var(--waze-navy);border-bottom:1px solid var(--waze-border);flex-shrink:0;}
+.setup-tab-btn{flex:1;padding:11px;border:none;font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:.85rem;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.setup-tab-btn.active{background:var(--waze-cyan);color:var(--waze-navy);}
+.setup-tab-btn.inactive{background:transparent;color:var(--waze-muted);}
 #tab-diagram-content{flex:1;overflow-y:auto;padding:14px 16px;}
 #tab-walkout-content{flex:1;overflow-y:auto;display:none;flex-direction:column;}
-.layout-item{background:var(--dark2);border-radius:0 8px 8px 0;margin-bottom:8px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;}
-.layout-item-icon{font-size:1.5rem;flex-shrink:0;display:flex;align-items:center;}
-.layout-item-info{flex:1;}
-.layout-item-name{font-family:Barlow Condensed,sans-serif;font-size:.95rem;font-weight:800;text-transform:uppercase;}
-.layout-item-detail{font-size:.72rem;color:#ccc;margin-top:2px;line-height:1.4;}
-.layout-item-dist{display:inline-block;border:1px solid;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:5px;}
-.wo-card{background:var(--dark2);border:3px solid var(--orange);border-radius:12px;padding:16px;margin:16px;text-align:center;}
-.wo-dist{font-family:Barlow Condensed,sans-serif;font-size:4rem;font-weight:900;color:var(--orange);line-height:1;}
-.wo-unit{font-family:Barlow Condensed,sans-serif;font-size:1rem;color:var(--muted);font-weight:700;}
-.wo-btn{width:100%;padding:16px;border:none;border-radius:10px;font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;cursor:pointer;}
+.wo-btn{width:100%;padding:16px;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;cursor:pointer;}
 
-/* ── VEHICLE SCREEN ── */
-#screen-vehicle{overflow-y:auto;background:var(--dark);}
-.vehicle-header{background:var(--dark2);border-bottom:3px solid var(--blue);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
-.veh-section{background:var(--dark2);border-radius:10px;margin:0 16px 12px;overflow:hidden;}
-.veh-section-title{background:var(--dark3);padding:12px 14px;font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--mid);}
-.veh-rule{padding:10px 14px;border-bottom:1px solid #1c1c1c;display:flex;gap:10px;align-items:flex-start;}
-.veh-rule:last-child{border-bottom:none;}
-.veh-rule-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
-.veh-rule-title{font-size:.85rem;font-weight:700;line-height:1.3;}
-.veh-rule-sub{font-size:.72rem;color:var(--muted);margin-top:2px;line-height:1.4;}
-.veh-rule-dist{display:inline-block;background:var(--dark3);border:1px solid var(--orange);color:var(--orange);font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:10px;margin-top:4px;}
-.veh-rule.danger{background:#0d0000;}
-.veh-rule.danger .veh-rule-title{color:#ff8a80;}
-.veh-rule.good{background:#000d00;}
-.veh-rule.good .veh-rule-title{color:#a5d6a7;}
-.spd-table{width:100%;border-collapse:collapse;font-size:.72rem;}
-.spd-table th{background:var(--dark3);color:var(--orange);font-family:Barlow Condensed,sans-serif;font-weight:700;text-transform:uppercase;padding:6px 8px;text-align:left;border-bottom:1px solid var(--mid);}
-.spd-table td{padding:6px 8px;border-bottom:1px solid #1c1c1c;color:#ccc;}
-.spd-table tr:last-child td{border-bottom:none;}
-.req{color:var(--green);font-weight:600;}
-.warn-r{color:var(--red);font-weight:600;}
-
-/* ── CHECKLIST ── */
-#screen-checklist{overflow-y:auto;}
+/* ── REFERENCE/CHECKLIST ── */
+#screen-checklist{overflow-y:auto;background:var(--waze-dark);}
 .checklist-wrap{padding:0;}
-.prog-card{background:var(--dark2);border-radius:10px;padding:14px;margin-bottom:14px;text-align:center;}
-.prog-label{font-family:Barlow Condensed,sans-serif;font-size:1.3rem;font-weight:800;color:var(--orange);}
-.prog-bar-wrap{background:var(--dark3);border-radius:20px;height:10px;margin:8px 0 4px;overflow:hidden;}
-.prog-bar-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--yellow));border-radius:20px;transition:width .4s ease;}
-.prog-sub{font-size:.72rem;color:var(--muted);}
-.check-group{margin-bottom:18px;}
-.check-group-title{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--mid);}
-.check-item{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid #1c1c1c;cursor:pointer;}
-.check-box{width:22px;height:22px;border:2px solid var(--mid);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s;margin-top:1px;font-size:.8rem;}
-.check-item.checked .check-box{background:var(--green);border-color:var(--green);color:#000;}
-.check-title{font-size:.85rem;font-weight:600;line-height:1.3;}
-.check-sub{font-size:.7rem;color:var(--muted);margin-top:2px;}
-.check-item.checked .check-title{text-decoration:line-through;color:var(--muted);}
+.check-group{margin-bottom:0;}
+.check-group-title{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;color:var(--waze-cyan);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--waze-border);}
 
-/* ── NAVBAR ── */
-.navbar{position:fixed;bottom:0;left:0;right:0;background:rgba(20,20,20,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(255,107,0,0.3);display:flex;z-index:200;transition:transform .3s ease,opacity .3s ease;}
-.navbar.hidden{transform:translateY(100%);opacity:0;}
-.nav-btn.active::before{content:"";position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--orange);border-radius:0 0 4px 4px;}
-/* Add bottom padding to all screens so content isn't hidden under floating navbar */
-.screen{padding-bottom:60px;}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 4px 7px;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:color .2s;gap:2px;position:relative;}
-.nav-btn.active{color:var(--orange);}
-.nav-btn.active::before{content:"";position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--orange);border-radius:0 0 4px 4px;}
+/* ── NAVBAR — Waze floating pill style ── */
+.navbar{position:fixed;bottom:12px;left:12px;right:12px;background:rgba(13,31,53,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--waze-border);display:flex;z-index:200;transition:transform .3s ease,opacity .3s ease;border-radius:24px;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 1px rgba(50,204,254,.08);}
+.navbar.hidden{transform:translateY(calc(100% + 20px));opacity:0;}
+.screen{padding-bottom:80px;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;cursor:pointer;border:none;background:transparent;color:var(--waze-muted);transition:color .2s;gap:3px;position:relative;border-radius:24px;}
+.nav-btn.active{color:var(--waze-cyan);}
+.nav-btn.active::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:20px;height:3px;background:var(--waze-cyan);border-radius:100px;}
 .nav-icon{font-size:1.25rem;}
 .nav-label{font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;font-family:"Barlow",sans-serif;}
 
 /* ── MODALS ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;display:none;align-items:flex-end;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:500;display:none;align-items:flex-end;}
 .modal-overlay.open{display:flex;}
-.modal-sheet{background:var(--dark2);border-radius:16px 16px 0 0;border-top:3px solid var(--orange);padding:20px 20px 36px;width:100%;max-height:80vh;overflow-y:auto;}
-.modal-title{font-family:Barlow Condensed,sans-serif;font-size:1.25rem;font-weight:800;text-transform:uppercase;margin-bottom:6px;color:var(--orange);}
-.modal-sub{font-size:.78rem;color:var(--muted);margin-bottom:14px;}
-.modal-close{float:right;background:var(--dark3);border:1px solid var(--mid);color:var(--text);border-radius:50%;width:28px;height:28px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.speed-opt{background:var(--dark3);border:2px solid var(--mid);border-radius:8px;padding:14px 8px;text-align:center;cursor:pointer;transition:border-color .2s;}
-.speed-opt.selected{border-color:var(--orange);background:#2a1500;}
-.speed-num{font-family:Barlow Condensed,sans-serif;font-size:1.8rem;font-weight:900;color:var(--orange);}
-.speed-unit{font-size:.65rem;color:var(--muted);}
+.modal-sheet{background:var(--waze-navy);border-radius:24px 24px 0 0;border-top:2px solid var(--waze-border);padding:20px 20px 40px;width:100%;max-height:80vh;overflow-y:auto;}
+.modal-title{font-family:Barlow Condensed,sans-serif;font-size:1.3rem;font-weight:800;text-transform:uppercase;margin-bottom:6px;color:var(--waze-cyan);}
+.modal-sub{font-size:.78rem;color:var(--waze-muted);margin-bottom:16px;}
+.modal-close{float:right;background:rgba(255,255,255,.08);border:1px solid var(--waze-border);color:var(--waze-text);border-radius:50%;width:32px;height:32px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.speed-opt{background:var(--waze-card);border:1.5px solid var(--waze-border);border-radius:16px;padding:16px 8px;text-align:center;cursor:pointer;transition:all .2s;}
+.speed-opt.selected{border-color:var(--waze-cyan);background:rgba(50,204,254,.1);box-shadow:0 0 0 1px var(--waze-cyan);}
+.speed-num{font-family:Barlow Condensed,sans-serif;font-size:2rem;font-weight:900;color:var(--waze-cyan);}
+.speed-unit{font-size:.65rem;color:var(--waze-muted);}
 
 /* ── DISCLAIMER ── */
-.disc-overlay{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;overflow-y:auto;}
+.disc-overlay{position:fixed;inset:0;background:var(--waze-dark);z-index:9999;display:flex;flex-direction:column;overflow-y:auto;}
 .disc-overlay.hidden{display:none;}
-.disc-header{background:var(--orange);padding:20px;flex-shrink:0;display:flex;align-items:center;gap:12px;}
+.disc-header{background:var(--waze-navy);border-bottom:1px solid var(--waze-border);padding:20px;flex-shrink:0;display:flex;align-items:center;gap:12px;}
 .disc-logo{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:1.8rem;color:#CC0000;display:flex;align-items:center;gap:10px;}
 .disc-logo span{color:#ffffff;}
 .disc-body{padding:20px;flex:1;}
-.disc-title{font-family:Barlow Condensed,sans-serif;font-size:1.4rem;font-weight:900;text-transform:uppercase;color:var(--orange);margin-bottom:4px;}
-.disc-sub{font-size:.78rem;color:var(--muted);margin-bottom:16px;}
-.disc-box{background:var(--dark2);border:1px solid var(--mid);border-radius:8px;padding:14px;margin-bottom:12px;}
-.disc-box-title{font-family:Barlow Condensed,sans-serif;font-size:.88rem;font-weight:800;text-transform:uppercase;color:var(--yellow);margin-bottom:8px;}
-.disc-box p{font-size:.78rem;color:#ccc;line-height:1.6;margin-bottom:6px;}
+.disc-title{font-family:Barlow Condensed,sans-serif;font-size:1.4rem;font-weight:900;text-transform:uppercase;color:var(--waze-cyan);margin-bottom:4px;}
+.disc-sub{font-size:.78rem;color:var(--waze-muted);margin-bottom:16px;}
+.disc-box{background:var(--waze-card);border:1px solid var(--waze-border);border-radius:16px;padding:14px;margin-bottom:12px;}
+.disc-box-title{font-family:Barlow Condensed,sans-serif;font-size:.88rem;font-weight:800;text-transform:uppercase;color:var(--waze-cyan);margin-bottom:8px;}
+.disc-box p{font-size:.78rem;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:6px;}
 .disc-box p:last-child{margin-bottom:0;}
-.disc-box.warn{border-color:var(--red);background:#0d0000;}
+.disc-box.warn{border-color:rgba(255,68,68,.4);background:rgba(255,68,68,.06);}
 .disc-box.warn .disc-box-title{color:var(--red);}
-.disc-box.warn p{color:#ffccbc;}
-.disc-cb-row{display:flex;align-items:flex-start;gap:12px;background:var(--dark2);border:2px solid var(--mid);border-radius:8px;padding:14px;margin-bottom:12px;cursor:pointer;transition:border-color .2s;}
-.disc-cb-row.checked{border-color:var(--green);}
-.disc-cb{width:24px;height:24px;border:2px solid var(--mid);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
+.disc-box.warn p{color:rgba(255,180,160,.85);}
+.disc-cb-row{display:flex;align-items:flex-start;gap:12px;background:var(--waze-card);border:1.5px solid var(--waze-border);border-radius:16px;padding:14px;margin-bottom:12px;cursor:pointer;transition:all .2s;}
+.disc-cb-row.checked{border-color:var(--green);background:rgba(0,200,83,.06);}
+.disc-cb{width:24px;height:24px;border:2px solid var(--waze-border);border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
 .disc-cb-row.checked .disc-cb{background:var(--green);border-color:var(--green);}
-.disc-cb-text{font-size:.78rem;color:#ccc;line-height:1.5;}
-.disc-accept-btn{width:100%;background:var(--mid);color:var(--muted);border:none;border-radius:10px;padding:18px;font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:800;text-transform:uppercase;cursor:not-allowed;margin-bottom:8px;}
-.disc-accept-btn.ready{background:var(--orange);color:#000;cursor:pointer;}
+.disc-cb-text{font-size:.78rem;color:rgba(255,255,255,.65);line-height:1.5;}
+.disc-accept-btn{width:100%;background:var(--waze-card);color:var(--waze-muted);border:none;border-radius:100px;padding:18px;font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:800;text-transform:uppercase;cursor:not-allowed;margin-bottom:8px;transition:all .3s;}
+.disc-accept-btn.ready{background:var(--waze-cyan);color:var(--waze-navy);cursor:pointer;box-shadow:0 4px 20px rgba(50,204,254,.35);}
 
-/* ── MISC ── */
-.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.92rem;padding:9px 18px;border-radius:20px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+/* ── TOAST ── */
+.toast{position:fixed;top:72px;left:50%;transform:translateX(-50%);background:var(--waze-card);border:1px solid var(--waze-border);color:#fff;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:.92rem;padding:10px 20px;border-radius:100px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;backdrop-filter:blur(12px);box-shadow:0 4px 20px rgba(0,0,0,.4);}
 .toast.show{opacity:1;}
-.app-footer{background:var(--dark2);border-top:1px solid var(--mid);padding:8px 16px;text-align:center;font-size:.62rem;color:#555;flex-shrink:0;line-height:1.6;}
-.app-footer a{color:#666;text-decoration:none;}
-.offline-banner{background:var(--red);color:white;text-align:center;padding:6px;font-size:.75rem;font-weight:600;display:none;}
+
+/* ── FOOTER ── */
+.app-footer{background:var(--waze-navy);border-top:1px solid var(--waze-border);padding:8px 16px;text-align:center;font-size:.62rem;color:rgba(255,255,255,.25);flex-shrink:0;line-height:1.6;}
+.app-footer a{color:rgba(50,204,254,.5);text-decoration:none;}
+
+/* ── OFFLINE BANNER ── */
+.offline-banner{background:rgba(255,68,68,.9);color:white;text-align:center;padding:6px;font-size:.75rem;font-weight:600;display:none;backdrop-filter:blur(8px);}
 .offline-banner.show{display:block;}
-::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-track{background:var(--dark);}
-::-webkit-scrollbar-thumb{background:var(--mid);border-radius:2px;}
 </style>
 </head>
 <body>
@@ -273,7 +249,7 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 <div class="disc-overlay" id="disc-overlay">
   <div class="disc-header">
     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="48" viewBox="0 0 40 54" style="display:inline-block;vertical-align:middle;"><polygon points="20,2 36,46 4,46" fill="#CC0000"/><polygon points="11,26 29,26 31,33 9,33" fill="white" opacity="0.95"/><rect x="2" y="46" width="36" height="7" rx="2" fill="#111111"/></svg>
-    <div class="disc-logo">Cones<span>Out</span></div>
+    <div class="disc-logo"><span style="color:#32CCFE;">Cones</span><span style="color:#fff;">Out</span></div>
   </div>
   <div class="disc-body">
     <div class="disc-title">Important Disclaimer</div>
@@ -329,7 +305,7 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 <div class="topbar">
   <div class="topbar-logo">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="24" viewBox="0 0 40 54" style="display:inline-block;vertical-align:middle;"><polygon points="20,2 36,46 4,46" fill="#CC0000"/><polygon points="11,26 29,26 31,33 9,33" fill="white" opacity="0.95"/><rect x="2" y="46" width="36" height="7" rx="2" fill="#111111"/></svg>
-    Cones<span>Out</span>
+    <span style="color:#32CCFE;">Cones</span><span style="color:#fff;">Out</span>
   </div>
   <div class="topbar-right">
     <button class="install-btn" id="install-btn" onclick="installApp()">Install</button>
@@ -340,8 +316,13 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
 <!-- HOME -->
 <div id="screen-home" class="screen active">
   <div class="hero-banner">
+    <!-- Decorative road stripes -->
+    <div style="position:absolute;bottom:0;right:0;width:80px;height:100%;opacity:.07;pointer-events:none;">
+      <div style="position:absolute;right:28px;top:0;bottom:0;width:5px;background:repeating-linear-gradient(180deg,#fff 0,#fff 18px,transparent 18px,transparent 32px);"></div>
+      <div style="position:absolute;right:12px;top:0;bottom:0;width:5px;background:repeating-linear-gradient(180deg,#fff 0,#fff 18px,transparent 18px,transparent 32px);"></div>
+    </div>
     <div class="hero-title">Road Works<br><span class="hi">Setup Guide</span></div>
-    <div class="hero-sub">UK Chapter 8 - TSRGD - NRSWA compliant</div>
+    <div class="hero-sub">UK Chapter 8 · TSRGD · NRSWA compliant</div>
     <div class="hero-badge">UK Regulations 2024/25</div>
   </div>
   <div class="section-label">Your Trade / Discipline</div>
@@ -418,75 +399,117 @@ body{font-family:"Barlow",sans-serif;background:var(--dark);color:var(--text);he
     <button onclick="rotateDiagram(270)" id="rot-btn-270" style="background:var(--dark3);color:var(--muted);border:1px solid var(--mid);border-radius:6px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;">270°</button>
   </div>
   <div id="tab-walkout-content">
-    <div id="wo-start-panel" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:16px;">
-      <div style="font-size:3.5rem;">&#128205;</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:900;text-transform:uppercase;color:var(--orange);">Walk-Out Mode</div>
-      <div style="font-size:.82rem;color:var(--muted);line-height:1.6;">Stand at the centre of your work location then tap Begin.</div>
-      <div id="gps-ready-status" style="font-size:.78rem;color:var(--muted);padding:8px 16px;background:var(--dark3);border-radius:20px;width:100%;text-align:center;">Checking GPS...</div>
-      <button class="wo-btn" id="wo-start-btn" onclick="startWalkout()" style="background:var(--mid);color:#999;width:100%;" disabled>Begin</button>
-      <button onclick="startWalkoutNoGPS()" style="width:100%;background:transparent;color:var(--muted);border:1px solid var(--mid);border-radius:8px;padding:10px;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;">Manual Mode (no GPS)</button>
+
+    <!-- START PANEL — Waze style -->
+    <div id="wo-start-panel" style="flex:1;display:flex;flex-direction:column;background:#1a2233;overflow-y:auto;">
+      <div style="background:linear-gradient(180deg,#1e3a5f 0%,#1a2233 100%);padding:32px 24px 24px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60px;height:100%;opacity:.08;">
+          <div style="position:absolute;left:20px;top:0;bottom:0;width:4px;background:repeating-linear-gradient(180deg,#fff 0,#fff 20px,transparent 20px,transparent 36px);"></div>
+          <div style="position:absolute;right:20px;top:0;bottom:0;width:4px;background:repeating-linear-gradient(180deg,#fff 0,#fff 20px,transparent 20px,transparent 36px);"></div>
+        </div>
+        <div style="width:64px;height:64px;border-radius:50%;background:#32CCFE;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(50,204,254,0.2),0 0 0 16px rgba(50,204,254,0.08);">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 4C11.6 4 8 7.6 8 12C8 18 16 28 16 28C16 28 24 18 24 12C24 7.6 20.4 4 16 4Z" fill="white"/><circle cx="16" cy="12" r="4" fill="#32CCFE"/></svg>
+        </div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:1.6rem;font-weight:900;color:#fff;">Walk-Out Mode</div>
+        <div style="font-size:.8rem;color:rgba(255,255,255,.55);margin-top:6px;">GPS-guided Chapter 8 placement</div>
+      </div>
+      <div style="margin:16px 16px 0;background:#243044;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+        <div id="gps-dot" style="width:12px;height:12px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;"></div>
+        <div id="gps-ready-status" style="font-size:.82rem;color:rgba(255,255,255,.7);flex:1;">Checking GPS signal...</div>
+      </div>
+      <div style="margin:12px 16px 0;display:flex;flex-direction:column;gap:8px;">
+        <div style="background:#243044;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(50,204,254,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">&#128205;</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:#fff;">Stand at works centre</div><div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:1px;">GPS records your start point when you tap Begin</div></div>
+        </div>
+        <div style="background:#243044;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(50,204,254,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">&#128263;</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:#fff;">Vibrate and beep at each point</div><div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:1px;">Green flash confirms placement point reached</div></div>
+        </div>
+        <div style="background:#243044;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(50,204,254,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">&#128247;</div>
+          <div><div style="font-size:.82rem;font-weight:700;color:#fff;">Camera shows placement guide</div><div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:1px;">Cone appears on live road view as you approach</div></div>
+        </div>
+      </div>
+      <div style="padding:20px 16px 8px;">
+        <button id="wo-start-btn" onclick="startWalkout()" disabled style="width:100%;padding:18px;background:#32CCFE;color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;cursor:pointer;opacity:.35;transition:opacity .3s;box-shadow:0 4px 20px rgba(50,204,254,.3);">Start Walk-Out</button>
+      </div>
+      <div style="padding:0 16px 24px;">
+        <button onclick="startWalkoutNoGPS()" style="width:100%;padding:14px;background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.12);border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;">Manual Mode (no GPS)</button>
+      </div>
     </div>
 
-    <!-- ACTIVE WALKOUT — camera + AR overlay -->
-    <div id="wo-active-panel" style="display:none;flex:1;flex-direction:column;position:relative;">
-
-      <!-- Camera feed -->
+    <!-- ACTIVE WALKOUT -->
+    <div id="wo-active-panel" style="display:none;flex:1;flex-direction:column;position:relative;background:#000;">
       <video id="wo-camera" autoplay playsinline muted style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>
+      <canvas id="wo-ar-canvas" style="position:absolute;top:72px;left:0;right:0;bottom:220px;width:100%;pointer-events:none;"></canvas>
+      <div id="wo-place-flash" style="display:none;position:absolute;inset:0;background:rgba(50,204,254,.12);border:3px solid #32CCFE;z-index:15;pointer-events:none;"></div>
 
-      <!-- AR overlay canvas — covers only the middle camera zone -->
-      <canvas id="wo-ar-canvas" style="position:absolute;top:90px;left:0;right:0;bottom:200px;width:100%;pointer-events:none;"></canvas>
-
-      <!-- AT PLACEMENT — flash overlay -->
-      <div id="wo-place-flash" style="display:none;position:absolute;inset:0;background:rgba(0,200,83,.15);border:4px solid var(--green);z-index:15;pointer-events:none;"></div>
-
-      <!-- TOP BAR — progress and GPS -->
-      <div style="position:absolute;top:0;left:0;right:0;height:88px;background:rgba(0,0,0,.92);border-bottom:1px solid rgba(255,255,255,.1);padding:12px 16px;z-index:20;display:flex;flex-direction:column;justify-content:space-between;">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span id="wo-prog-label" style="font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:700;color:#fff;">Item 1 of 8</span>
-          <span id="wo-gps-acc" style="font-size:.72rem;color:#fff;background:rgba(255,255,255,.12);padding:3px 8px;border-radius:10px;">GPS: --m</span>
-          <button onclick="stopWalkout()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:50%;width:32px;height:32px;font-size:.8rem;cursor:pointer;font-weight:700;">X</button>
-        </div>
-        <div style="background:rgba(255,255,255,.15);border-radius:20px;height:6px;overflow:hidden;">
-          <div id="wo-prog-bar" style="height:100%;background:linear-gradient(90deg,var(--orange),var(--yellow));border-radius:20px;width:0%;transition:width .4s;"></div>
-        </div>
-      </div>
-
-      <!-- BOTTOM PANEL — solid dark background, no overlay on camera -->
-      <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.95);border-top:1px solid rgba(255,255,255,.1);padding:12px 16px 20px;z-index:20;">
-
-        <!-- Distance countdown — large and clear -->
-        <div style="text-align:center;margin-bottom:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1);">
-          <div style="font-size:.68rem;color:#fff;text-transform:uppercase;letter-spacing:2px;margin-bottom:2px;">Walk this distance</div>
-          <div id="wo-remaining" style="font-family:'Barlow Condensed',sans-serif;font-size:3.8rem;font-weight:900;color:#fff;line-height:1;text-shadow:none;">--</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:2px;">METRES</div>
-        </div>
-
-        <!-- Item info -->
-        <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
-          <div id="wo-item-icon-sm" style="font-size:1.8rem;flex-shrink:0;margin-top:2px;"></div>
-          <div style="flex:1;min-width:0;">
-            <div id="wo-phase-label" style="font-size:.62rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;"></div>
-            <div id="wo-item-name" style="font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:900;text-transform:uppercase;color:#fff;line-height:1.2;margin-bottom:3px;"></div>
-            <div id="wo-item-detail" style="font-size:.7rem;color:rgba(255,255,255,.75);line-height:1.45;"></div>
+      <!-- Top bar -->
+      <div style="position:absolute;top:0;left:0;right:0;z-index:20;padding:10px 12px 8px;background:linear-gradient(to bottom,rgba(0,0,0,.8) 0%,transparent 100%);">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button onclick="stopWalkout()" style="width:36px;height:36px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border:none;border-radius:50%;color:#fff;font-size:.85rem;font-weight:900;cursor:pointer;flex-shrink:0;">✕</button>
+          <div style="flex:1;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-radius:100px;padding:8px 14px;display:flex;align-items:center;gap:10px;">
+            <div id="wo-prog-bar-wrap" style="flex:1;background:rgba(255,255,255,.15);border-radius:100px;height:5px;overflow:hidden;">
+              <div id="wo-prog-bar" style="height:100%;background:#32CCFE;border-radius:100px;width:0%;transition:width .5s ease;"></div>
+            </div>
+            <span id="wo-prog-label" style="font-family:Barlow Condensed,sans-serif;font-size:.78rem;font-weight:700;color:#fff;white-space:nowrap;">1/8</span>
           </div>
-          <div id="wo-dir-arrow" style="font-size:1.8rem;flex-shrink:0;">&#11014;&#65039;</div>
+          <div id="wo-gps-acc" style="background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-radius:100px;padding:6px 10px;font-size:.65rem;font-weight:700;color:#32CCFE;white-space:nowrap;">GPS --</div>
         </div>
+      </div>
 
-        <!-- Buttons -->
-        <div style="display:flex;gap:8px;">
-          <button id="wo-place-btn" onclick="confirmPlacement()" style="flex:2;padding:13px;background:var(--green);color:#000;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;text-transform:uppercase;cursor:pointer;opacity:.5;" disabled>
-            &#10003; Placed
-          </button>
-          <button onclick="skipPlacement()" style="flex:1;padding:13px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;">Skip</button>
+      <!-- Bottom navigation card -->
+      <div style="position:absolute;bottom:0;left:0;right:0;z-index:20;">
+        <div style="background:rgba(13,31,53,.97);backdrop-filter:blur(16px);border-radius:24px 24px 0 0;padding:16px 20px 0;border-top:2px solid rgba(50,204,254,.25);">
+          <!-- Direction + distance -->
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+            <div id="wo-dir-arrow" style="width:52px;height:52px;background:#32CCFE;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;box-shadow:0 4px 12px rgba(50,204,254,.4);">&#11014;&#65039;</div>
+            <div style="flex:1;">
+              <div style="font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:2px;">Walk</div>
+              <div style="display:flex;align-items:baseline;gap:5px;">
+                <div id="wo-remaining" style="font-family:Barlow Condensed,sans-serif;font-size:3rem;font-weight:900;color:#fff;line-height:1;">--</div>
+                <div style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:700;color:rgba(255,255,255,.4);">m</div>
+              </div>
+            </div>
+          </div>
+          <!-- Item card -->
+          <div style="background:rgba(255,255,255,.05);border-radius:14px;padding:11px 13px;margin-bottom:12px;">
+            <div id="wo-phase-label" style="font-size:.6rem;color:#32CCFE;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;font-weight:700;"></div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div id="wo-item-icon-sm" style="font-size:1.5rem;flex-shrink:0;"></div>
+              <div style="flex:1;min-width:0;">
+                <div id="wo-item-name" style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;text-transform:uppercase;color:#fff;line-height:1.2;"></div>
+                <div id="wo-item-detail" style="font-size:.67rem;color:rgba(255,255,255,.45);line-height:1.4;margin-top:2px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Buttons -->
+          <div style="display:flex;gap:10px;padding-bottom:24px;">
+            <button id="wo-place-btn" onclick="confirmPlacement()" disabled style="flex:3;padding:16px;background:#32CCFE;color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;opacity:.3;transition:opacity .3s;box-shadow:0 4px 16px rgba(50,204,254,.2);">&#10003; &nbsp;Placed</button>
+            <button onclick="skipPlacement()" style="flex:1;padding:16px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.1);border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;">Skip</button>
+          </div>
         </div>
       </div>
     </div>
-    <div id="wo-complete-panel" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:14px;">
-      <div style="font-size:4rem;">&#9989;</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;text-transform:uppercase;color:var(--green);">Setup Complete</div>
-      <div id="wo-summary" style="background:var(--dark2);border:1px solid var(--green);border-radius:8px;padding:14px;width:100%;font-size:.78rem;color:#ccc;line-height:1.8;text-align:left;"></div>
-      <button class="wo-btn" onclick="resetWalkout()" style="background:var(--orange);color:#000;width:100%;">Start Again</button>
+
+    <!-- COMPLETE PANEL -->
+    <div id="wo-complete-panel" style="display:none;flex:1;flex-direction:column;background:#1a2233;overflow-y:auto;">
+      <div style="background:linear-gradient(180deg,#0d3320 0%,#1a2233 100%);padding:40px 24px 28px;text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:#00C853;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px rgba(0,200,83,.18),0 0 0 20px rgba(0,200,83,.07);">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M8 18L15 25L28 11" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:1.8rem;font-weight:900;color:#fff;">Setup Complete</div>
+        <div style="font-size:.8rem;color:rgba(255,255,255,.4);margin-top:6px;">All items placed — carry out final walk-through</div>
+      </div>
+      <div style="margin:16px;background:#243044;border-radius:16px;padding:16px;">
+        <div id="wo-summary" style="font-size:.78rem;color:rgba(255,255,255,.65);line-height:1.9;"></div>
+      </div>
+      <div style="padding:4px 16px 32px;">
+        <button onclick="resetWalkout()" style="width:100%;padding:18px;background:#32CCFE;color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(50,204,254,.3);">Start Again</button>
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -998,186 +1021,289 @@ function setupTab(tab){
 function renderDiagram(){
   var cont=document.getElementById("tab-diagram-content");
   if(!S.speed||!S.trade){
-    cont.innerHTML="<div style='text-align:center;padding:40px 20px;color:var(--muted);'><div style='font-size:3rem;margin-bottom:12px;'>&#128208;</div><div style='font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:800;text-transform:uppercase;color:var(--orange);'>Select Trade and Speed First</div><div style='font-size:.82rem;margin-top:8px;'>Go to Home, fill in all fields and tap Generate Setup Plan.</div></div>";
+    cont.innerHTML="<div style='text-align:center;padding:48px 24px;'>"
+      +"<div style='width:56px;height:56px;border-radius:50%;background:rgba(50,204,254,.12);border:2px solid rgba(50,204,254,.3);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 16px;'>&#128208;</div>"
+      +"<div style='font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;color:#32CCFE;'>Select Trade and Speed First</div>"
+      +"<div style='font-size:.78rem;margin-top:8px;color:rgba(255,255,255,.4);'>Go to Home, fill in all fields and tap Generate Setup Plan.</div>"
+      +"</div>";
     return;
   }
-  var d=DIST[S.speed];
-  var spd=S.speed;
+  var d=DIST[S.speed]; var spd=S.speed;
   var tradeName=TRADES[S.trade]?TRADES[S.trade].name:"";
   var width=S.width||"dual";
-  var isNarrow=(width==="narrow");
-  var isSingle=(width==="single");
+  var isNarrow=(width==="narrow"); var isSingle=(width==="single");
   var rot=diagramRotation||0;
   var landscape=(rot===90||rot===270);
   var flip=(rot===180||rot===270);
-
   if(isNarrow){renderDiagramClosure(cont,d,spd,tradeName,rot,landscape,flip);return;}
   if(isSingle){renderDiagramLights(cont,d,spd,tradeName,rot,landscape,flip);return;}
 
-  var advM=d.advance, tapM=d.taper, wzM=25, dnM=25;
+  var advM=d.advance,tapM=d.taper,wzM=25,dnM=25;
   var totalM=advM+tapM+wzM+dnM;
 
+  // ── WAZE-STYLE HELPERS ──
+
+  // Traffic cone — red/white/black
   function cone(cx,cy,r){
     r=r||10;
-    return '<polygon points="'+cx+','+(cy-r*1.6)+' '+(cx+r)+','+(cy+r*.7)+' '+(cx-r)+','+(cy+r*.7)+'" fill="#CC0000"/>'
+    return '<g>'
+      +'<polygon points="'+cx+','+(cy-r*1.6)+' '+(cx+r)+','+(cy+r*.7)+' '+(cx-r)+','+(cy+r*.7)+'" fill="#CC0000"/>'
       +'<polygon points="'+(cx-r*.55)+','+(cy-r*.05)+' '+(cx+r*.55)+','+(cy-r*.05)+' '+(cx+r*.72)+','+(cy+r*.35)+' '+(cx-r*.72)+','+(cy+r*.35)+'" fill="white" opacity=".95"/>'
-      +'<rect x="'+(cx-r*1.1)+'" y="'+(cy+r*.7)+'" width="'+(r*2.2)+'" height="'+(r*.45)+'" rx="2" fill="#111"/>';
+      +'<rect x="'+(cx-r*1.1)+'" y="'+(cy+r*.7)+'" width="'+(r*2.2)+'" height="'+(r*.45)+'" rx="2" fill="#222"/>'
+      +'</g>';
   }
+
+  // Waze-style amber beacon — orange circle with glow ring
   function beacon(cx,cy){
     return '<circle cx="'+cx+'" cy="'+cy+'" r="7" fill="#FF6B00"/>'
-      +'<circle cx="'+cx+'" cy="'+cy+'" r="11" fill="none" stroke="#FF6B00" stroke-width="2" opacity=".4"/>';
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="11" fill="none" stroke="#FF6B00" stroke-width="2" opacity=".4"/>'
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="5" fill="#FFD600" opacity=".6"/>';
   }
+
+  // Waze-style vehicle marker — blue rounded rect with arrow
   function vehicle(cx,cy,lnd){
     if(lnd){
-      return '<rect x="'+(cx-28)+'" y="'+(cy-14)+'" width="56" height="28" rx="5" fill="#0a1a3a" stroke="#2979FF" stroke-width="2.5"/>'
-        +'<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" fill="#2979FF" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS VEHICLE</text>';
+      return '<rect x="'+(cx-30)+'" y="'+(cy-16)+'" width="60" height="32" rx="8" fill="#0d1f35" stroke="#32CCFE" stroke-width="2.5"/>'
+        +'<text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" fill="#32CCFE" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS VEHICLE</text>';
     }
-    return '<rect x="'+(cx-20)+'" y="'+(cy-14)+'" width="40" height="28" rx="5" fill="#0a1a3a" stroke="#2979FF" stroke-width="2.5"/>'
-      +'<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" fill="#2979FF" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS</text>'
-      +'<text x="'+cx+'" y="'+(cy+10)+'" text-anchor="middle" fill="#2979FF" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">VEHICLE</text>';
+    return '<rect x="'+(cx-22)+'" y="'+(cy-15)+'" width="44" height="30" rx="8" fill="#0d1f35" stroke="#32CCFE" stroke-width="2.5"/>'
+      +'<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" fill="#32CCFE" font-size="9.5" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS</text>'
+      +'<text x="'+cx+'" y="'+(cy+9)+'" text-anchor="middle" fill="#32CCFE" font-size="9.5" font-weight="bold" font-family="Barlow Condensed,sans-serif">VEHICLE</text>';
   }
-  function sign(x,y,lines,col,lnd){
-    var bh=lines.length*14+8;
-    var bw=lnd?lines.reduce(function(a,l){return Math.max(a,l.length*7+10);},40):56;
-    var s='<rect x="'+(x-bw/2)+'" y="'+(y-bh/2)+'" width="'+bw+'" height="'+bh+'" rx="4" fill="#0d0d00" stroke="'+col+'" stroke-width="2"/>';
-    lines.forEach(function(l,i){s+='<text x="'+x+'" y="'+(y-bh/2+16+i*14)+'" text-anchor="middle" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+l+'</text>';});
-    return s;
+
+  // Waze-style road sign — yellow diamond (Road Works) or rectangular
+  function sign(x,y,lines,col,lnd,type){
+    type=type||"rect";
+    var bh=lines.length*13+10; var bw=lnd?Math.max(70,lines[0].length*7+12):58;
+    if(type==="diamond"){
+      // UK Road Works diamond — yellow background
+      var s=bw/2;
+      return '<polygon points="'+x+','+(y-s)+' '+(x+s)+','+y+' '+x+','+(y+s)+' '+(x-s)+','+y+'" fill="#FFD600" stroke="#111" stroke-width="2"/>'
+        +lines.map(function(l,i){return '<text x="'+x+'" y="'+(y+(-lines.length/2+i+.7)*13)+'" text-anchor="middle" fill="#111" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+l+'</text>';}).join('');
+    }
+    // Road Closed — red rect with white text
+    return '<rect x="'+(x-bw/2)+'" y="'+(y-bh/2)+'" width="'+bw+'" height="'+bh+'" rx="6" fill="'+col+'" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>'
+      +lines.map(function(l,i){return '<text x="'+x+'" y="'+(y-bh/2+15+i*13)+'" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+l+'</text>';}).join('');
   }
+
+  // Arrow board — orange with arrow symbol
   function arrowBoard(x,y,lnd){
-    var bw=lnd?80:48;
-    return '<rect x="'+(x-bw/2)+'" y="'+(y-14)+'" width="'+bw+'" height="28" rx="4" fill="#0d0800" stroke="#FF6B00" stroke-width="2"/>'
-      +'<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" fill="#FF6B00" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ARROW BOARD</text>';
+    var bw=lnd?82:50; var bh=26;
+    return '<rect x="'+(x-bw/2)+'" y="'+(y-bh/2)+'" width="'+bw+'" height="'+bh+'" rx="6" fill="#0d0800" stroke="#FF6B00" stroke-width="2"/>'
+      +'<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" fill="#FF6B00" font-size="'+(lnd?10:9)+'" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+(lnd?"ARROW BOARD":"ARROW")+'</text>';
   }
-  function distLabel(ax,ay1,ay2,txt,col,lnd){
-    var mx=(ay1+ay2)/2; col=col||"#666";
+
+  // Waze-style distance label — pill badge
+  function distBadge(x,y,txt,col){
+    var bw=txt.length*7+14;
+    return '<rect x="'+(x-bw/2)+'" y="'+(y-10)+'" width="'+bw+'" height="20" rx="10" fill="'+col+'" opacity=".18"/>'
+      +'<rect x="'+(x-bw/2)+'" y="'+(y-10)+'" width="'+bw+'" height="20" rx="10" fill="none" stroke="'+col+'" stroke-width="1" opacity=".5"/>'
+      +'<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" fill="'+col+'" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+txt+'</text>';
+  }
+
+  // Distance brace
+  function brace(ax,ay1,ay2,txt,col,lnd){
+    var mx=(ay1+ay2)/2; col=col||"#888";
     if(lnd){
-      return '<line x1="'+(ay1+2)+'" y1="'+ax+'" x2="'+(ay2-2)+'" y2="'+ax+'" stroke="'+col+'" stroke-width="1" stroke-dasharray="3,3"/>'
-        +'<line x1="'+(ay1+2)+'" y1="'+(ax-4)+'" x2="'+(ay1+2)+'" y2="'+(ax+4)+'" stroke="'+col+'" stroke-width="1.5"/>'
-        +'<line x1="'+(ay2-2)+'" y1="'+(ax-4)+'" x2="'+(ay2-2)+'" y2="'+(ax+4)+'" stroke="'+col+'" stroke-width="1.5"/>'
-        +'<text x="'+mx+'" y="'+(ax-6)+'" text-anchor="middle" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+txt+'</text>';
+      return '<line x1="'+(ay1+2)+'" y1="'+ax+'" x2="'+(ay2-2)+'" y2="'+ax+'" stroke="'+col+'" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>'
+        +distBadge(mx,ax-14,txt,col);
     }
-    return '<line x1="'+ax+'" y1="'+(ay1+2)+'" x2="'+ax+'" y2="'+(ay2-2)+'" stroke="'+col+'" stroke-width="1" stroke-dasharray="3,3"/>'
-      +'<line x1="'+(ax-4)+'" y1="'+(ay1+2)+'" x2="'+(ax+4)+'" y2="'+(ay1+2)+'" stroke="'+col+'" stroke-width="1.5"/>'
-      +'<line x1="'+(ax-4)+'" y1="'+(ay2-2)+'" x2="'+(ax+4)+'" y2="'+(ay2-2)+'" stroke="'+col+'" stroke-width="1.5"/>'
-      +'<text x="'+(ax-6)+'" y="'+(mx+4)+'" text-anchor="end" fill="'+col+'" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+txt+'</text>';
+    return '<line x1="'+ax+'" y1="'+(ay1+2)+'" x2="'+ax+'" y2="'+(ay2-2)+'" stroke="'+col+'" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>'
+      +distBadge(ax-32,mx,txt,col);
   }
-  function tArrow(cx,cy,dir,col){
-    if(dir==="down") return '<polygon points="'+cx+','+(cy+10)+' '+(cx-7)+','+(cy-6)+' '+(cx+7)+','+(cy-6)+'" fill="'+col+'" opacity=".6"/>';
-    if(dir==="up")   return '<polygon points="'+cx+','+(cy-10)+' '+(cx-7)+','+(cy+6)+' '+(cx+7)+','+(cy+6)+'" fill="'+col+'" opacity=".6"/>';
-    if(dir==="right")return '<polygon points="'+(cx+10)+','+cy+' '+(cx-6)+','+(cy-7)+' '+(cx-6)+','+(cy+7)+'" fill="'+col+'" opacity=".6"/>';
-    return '<polygon points="'+(cx-10)+','+cy+' '+(cx+6)+','+(cy-7)+' '+(cx+6)+','+(cy+7)+'" fill="'+col+'" opacity=".6"/>';
+
+  // Waze-style traffic arrow — chevron style
+  function tArrow(cx,cy,dir,col,sz){
+    sz=sz||7;
+    if(dir==="down") return '<polygon points="'+cx+','+(cy+sz)+' '+(cx-sz)+','+(cy-sz)+' '+(cx+sz)+','+(cy-sz)+'" fill="'+col+'" opacity=".55"/>';
+    if(dir==="up")   return '<polygon points="'+cx+','+(cy-sz)+' '+(cx-sz)+','+(cy+sz)+' '+(cx+sz)+','+(cy+sz)+'" fill="'+col+'" opacity=".55"/>';
+    if(dir==="right")return '<polygon points="'+(cx+sz)+','+cy+' '+(cx-sz)+','+(cy-sz)+' '+(cx-sz)+','+(cy+sz)+'" fill="'+col+'" opacity=".55"/>';
+    return '<polygon points="'+(cx-sz)+','+cy+' '+(cx+sz)+','+(cy-sz)+' '+(cx+sz)+','+(cy+sz)+'" fill="'+col+'" opacity=".55"/>';
+  }
+
+  // Connector line from sign to road edge
+  function connector(x1,y1,x2,y2,col){
+    return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="1" stroke-dasharray="3,3" opacity=".4"/>';
   }
 
   var svg;
 
   if(!landscape){
-    var W=360,pad=30,roadX=100,roadW=140,laneW=70;
-    var H=Math.max(700,totalM*4+pad*2);
+    // ── PORTRAIT ──
+    var W=360,pad=28,roadX=96,roadW=144,laneW=72;
+    var H=Math.max(720,totalM*4.2+pad*2);
     var scale=(H-pad*2)/totalM;
     function yP(m){return flip?(H-pad-m*scale):(pad+m*scale);}
-    var rightEdge=roadX+roadW,cx2=roadX+laneW;
-    var yAdv=yP(0),yTaperStart=yP(advM),yTaperEnd=yP(advM+tapM),yWZEnd=yP(advM+tapM+wzM),yDnEnd=yP(totalM);
-    var yAdv2=spd>=40?yP(advM*0.55):null,ySpeed=spd>=40?yP(advM*0.75):null,yArrow=spd>=50?yP(advM):null;
+    var re=roadX+roadW,cx2=roadX+laneW;
+    var yAdv=yP(0),yTapS=yP(advM),yTapE=yP(advM+tapM),yWZE=yP(advM+tapM+wzM),yDnE=yP(totalM);
+    var yAdv2=spd>=40?yP(advM*.55):null,ySpd=spd>=40?yP(advM*.75):null,yArrow=spd>=50?yP(advM):null;
     var tDir=flip?"up":"down",tDirOpp=flip?"down":"up";
 
-    svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111;display:block;">';
-    svg+='<rect x="0" y="0" width="'+roadX+'" height="'+H+'" fill="#1a2a1a"/>';
-    svg+='<rect x="'+rightEdge+'" y="0" width="'+(W-rightEdge)+'" height="'+H+'" fill="#1a2a1a"/>';
-    svg+='<rect x="'+roadX+'" y="0" width="'+roadW+'" height="'+H+'" fill="#2d2d2d"/>';
-    svg+='<line x1="'+roadX+'" y1="0" x2="'+roadX+'" y2="'+H+'" stroke="#aaa" stroke-width="3"/>';
-    svg+='<line x1="'+rightEdge+'" y1="0" x2="'+rightEdge+'" y2="'+H+'" stroke="#aaa" stroke-width="3"/>';
-    var dashH=14*scale,gapH=7*scale;
-    svg+='<line x1="'+cx2+'" y1="0" x2="'+cx2+'" y2="'+H+'" stroke="#FFD600" stroke-width="2" stroke-dasharray="'+dashH+','+gapH+'"/>';
-    svg+='<text x="'+(roadX+laneW/2)+'" y="18" text-anchor="middle" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ONCOMING</text>';
-    svg+='<text x="'+(roadX+laneW*1.5)+'" y="18" text-anchor="middle" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">TRAVEL</text>';
-    [0.15,0.35,0.55,0.75].forEach(function(f){svg+=tArrow(roadX+laneW/2,pad+f*(H-pad*2),tDirOpp,"#4a7a4a");});
-    [0.1,0.3].forEach(function(f){var fy=pad+f*(H-pad*2);if(fy<Math.min(yTaperStart,yAdv)-10)svg+=tArrow(roadX+laneW*1.5,fy,tDir,"#2a5a8a");});
-    svg+=tArrow(roadX+laneW*1.5,yWZEnd+(flip?-25:25),tDir,"#2a5a8a");
+    svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111827;display:block;">';
+
+    // Waze-style verge — green with subtle texture
+    svg+='<rect x="0" y="0" width="'+roadX+'" height="'+H+'" fill="#1a2e1a"/>';
+    svg+='<rect x="'+re+'" y="0" width="'+(W-re)+'" height="'+H+'" fill="#1a2e1a"/>';
+
+    // Road surface — Waze asphalt dark grey
+    svg+='<rect x="'+roadX+'" y="0" width="'+roadW+'" height="'+H+'" fill="#2c3144"/>';
+
+    // Road edges — bright white kerb lines (Waze style)
+    svg+='<rect x="'+roadX+'" y="0" width="4" height="'+H+'" fill="rgba(255,255,255,.75)"/>';
+    svg+='<rect x="'+(re-4)+'" y="0" width="4" height="'+H+'" fill="rgba(255,255,255,.75)"/>';
+
+    // Centre lane line — dashed yellow (UK standard)
+    var dashH=Math.max(16,14*scale),gapH=Math.max(10,8*scale);
+    svg+='<line x1="'+cx2+'" y1="0" x2="'+cx2+'" y2="'+H+'" stroke="#FFD600" stroke-width="2.5" stroke-dasharray="'+dashH+','+gapH+'"/>';
+
+    // Lane labels — Waze style small caps
+    svg+='<text x="'+(roadX+laneW/2)+'" y="18" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="9" font-weight="bold" font-family="Barlow Condensed,sans-serif" letter-spacing="1">ONCOMING</text>';
+    svg+='<text x="'+(roadX+laneW*1.5)+'" y="18" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="9" font-weight="bold" font-family="Barlow Condensed,sans-serif" letter-spacing="1">TRAVEL</text>';
+
+    // Traffic flow arrows — Waze chevron style
+    [.15,.32,.52,.70].forEach(function(f){svg+=tArrow(roadX+laneW/2,pad+f*(H-pad*2),tDirOpp,"#4CAF50");});
+    [.12,.30].forEach(function(f){var fy=pad+f*(H-pad*2);if(fy<Math.min(yTapS,yAdv)-12)svg+=tArrow(roadX+laneW*1.5,fy,tDir,"#32CCFE");});
+    svg+=tArrow(roadX+laneW*1.5,yWZE+(flip?-28:28),tDir,"#32CCFE");
+
+    // ── TAPER CONES — angled across nearside lane ──
     var nCones=Math.max(4,Math.floor(tapM/d.coneGap));
-    for(var ci=0;ci<=nCones;ci++){var t=ci/nCones;svg+=cone(rightEdge-t*laneW,yTaperStart+t*(yTaperEnd-yTaperStart),8);}
-    var wzH2=Math.abs(yWZEnd-yTaperEnd),wzTop=Math.min(yTaperEnd,yWZEnd);
-    svg+='<rect x="'+cx2+'" y="'+wzTop+'" width="'+laneW+'" height="'+wzH2+'" fill="rgba(180,0,0,0.22)" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,4"/>';
+    for(var ci=0;ci<=nCones;ci++){
+      var t=ci/nCones;
+      svg+=cone(re-t*laneW, yTapS+t*(yTapE-yTapS), 8);
+    }
+
+    // ── WORK ZONE ──
+    var wzH2=Math.abs(yWZE-yTapE),wzTop=Math.min(yTapE,yWZE);
+    // Orange diagonal hatch fill (Waze road works style)
+    var patId="hatch_p";
+    svg+='<defs><pattern id="'+patId+'" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">';
+    svg+='<line x1="0" y1="0" x2="0" y2="12" stroke="rgba(255,107,0,.25)" stroke-width="5"/></pattern></defs>';
+    svg+='<rect x="'+cx2+'" y="'+wzTop+'" width="'+laneW+'" height="'+wzH2+'" fill="url(#'+patId+')" />';
+    svg+='<rect x="'+cx2+'" y="'+wzTop+'" width="'+laneW+'" height="'+wzH2+'" fill="none" stroke="#FF6B00" stroke-width="2" stroke-dasharray="6,4"/>';
     var wzMid=wzTop+wzH2/2;
-    svg+='<text x="'+(cx2+laneW/2)+'" y="'+(wzMid-6)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORK</text>';
-    svg+='<text x="'+(cx2+laneW/2)+'" y="'+(wzMid+8)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">ZONE</text>';
-    svg+='<line x1="'+cx2+'" y1="'+wzTop+'" x2="'+rightEdge+'" y2="'+wzTop+'" stroke="#FFD600" stroke-width="4"/>';
-    svg+='<line x1="'+cx2+'" y1="'+(wzTop+wzH2)+'" x2="'+rightEdge+'" y2="'+(wzTop+wzH2)+'" stroke="#FFD600" stroke-width="4"/>';
-    svg+=beacon(cx2+8,wzTop);svg+=beacon(cx2+8,wzTop+wzH2);
-    for(var di=0;di<3;di++){var t2=(di+1)/4;svg+=cone(rightEdge-laneW*(1-t2*0.7),yWZEnd+t2*(yDnEnd-yWZEnd),8);}
-    svg+=vehicle(cx2+laneW/2,Math.min(yWZEnd+(flip?-35:35),yDnEnd-(flip?-20:20)),false);
-    var signX=rightEdge+44;
-    svg+=sign(signX,yAdv,["ROAD","WORKS","AHEAD"],"#FFD600",false);
-    svg+='<line x1="'+(signX-28)+'" y1="'+yAdv+'" x2="'+rightEdge+'" y2="'+yAdv+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';
-    if(yAdv2){svg+=sign(signX,yAdv2,["ROAD","WORKS"],"#FFD600",false);svg+='<line x1="'+(signX-28)+'" y1="'+yAdv2+'" x2="'+rightEdge+'" y2="'+yAdv2+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    if(ySpeed){svg+=sign(signX,ySpeed,[(spd-20)+"mph","LIMIT"],"#FF4444",false);svg+='<line x1="'+(signX-28)+'" y1="'+ySpeed+'" x2="'+rightEdge+'" y2="'+ySpeed+'" stroke="#FF4444" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    if(yArrow){svg+=arrowBoard(signX,yArrow,false);svg+='<line x1="'+(signX-24)+'" y1="'+yArrow+'" x2="'+rightEdge+'" y2="'+yArrow+'" stroke="#FF6B00" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    svg+=distLabel(roadX-14,yAdv,yTaperStart,advM+"m","#FFD600",false);
-    svg+=distLabel(roadX-42,yTaperStart,yTaperEnd,tapM+"m taper","#FF6B00",false);
+    // Work zone label — Waze style pill
+    svg+='<rect x="'+(cx2+laneW/2-28)+'" y="'+(wzMid-12)+'" width="56" height="24" rx="12" fill="rgba(255,107,0,.2)" stroke="rgba(255,107,0,.5)" stroke-width="1"/>';
+    svg+='<text x="'+(cx2+laneW/2)+'" y="'+(wzMid+4)+'" text-anchor="middle" fill="#FF6B00" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS</text>';
+    // Yellow barrier lines — thick
+    svg+='<line x1="'+cx2+'" y1="'+wzTop+'" x2="'+re+'" y2="'+wzTop+'" stroke="#FFD600" stroke-width="4"/>';
+    svg+='<line x1="'+cx2+'" y1="'+(wzTop+wzH2)+'" x2="'+re+'" y2="'+(wzTop+wzH2)+'" stroke="#FFD600" stroke-width="4"/>';
+    svg+=beacon(cx2+10,wzTop+8);svg+=beacon(cx2+10,wzTop+wzH2-8);
+
+    // ── DOWNSTREAM CONES ──
+    for(var di=0;di<3;di++){var t2=(di+1)/4;svg+=cone(re-laneW*(1-t2*.7),yWZE+t2*(yDnE-yWZE),8);}
+
+    // ── VEHICLE ──
+    svg+=vehicle(cx2+laneW/2,Math.min(yWZE+(flip?-38:38),yDnE-(flip?-22:22)),false);
+
+    // ── SIGNS on nearside (right verge) ──
+    // Waze-style: yellow diamond for Road Works Ahead
+    var signX=re+44;
+    svg+=sign(signX,yAdv,["ROAD","WORKS"],"#FFD600",false,"diamond");
+    svg+=connector(signX-22,yAdv,re,yAdv,"#FFD600");
+    if(yAdv2){svg+=sign(signX,yAdv2,["ROAD","WORKS"],"#FFD600",false,"diamond");svg+=connector(signX-22,yAdv2,re,yAdv2,"#FFD600");}
+    if(ySpd){
+      // Speed roundel — white circle with red border
+      var sr=18;
+      svg+='<circle cx="'+signX+'" cy="'+ySpd+'" r="'+sr+'" fill="white" stroke="#CC0000" stroke-width="3"/>';
+      svg+='<text x="'+signX+'" y="'+(ySpd-1)+'" text-anchor="middle" fill="#111" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+(spd-20)+'</text>';
+      svg+='<text x="'+signX+'" y="'+(ySpd+9)+'" text-anchor="middle" fill="#111" font-size="7" font-family="Barlow Condensed,sans-serif">mph</text>';
+      svg+=connector(signX-sr,ySpd,re,ySpd,"#CC0000");
+    }
+    if(yArrow){svg+=arrowBoard(signX,yArrow,false);svg+=connector(signX-25,yArrow,re,yArrow,"#FF6B00");}
+
+    // ── DISTANCE BRACES (left side) ──
+    svg+=brace(roadX-16,yAdv,yTapS,advM+"m","#FFD600",false);
+    svg+=brace(roadX-40,yTapS,yTapE,tapM+"m taper","#FF6B00",false);
+
     svg+='</svg>';
 
   } else {
-    var H2=320,padL=30,roadY=H2/2-70,roadH2=140,laneH=70;
-    var W2=Math.max(900,totalM*4+padL*2);
+    // ── LANDSCAPE ──
+    var H2=300,padL=28,roadY=H2/2-66,roadH2=132,laneH2=66;
+    var W2=Math.max(900,totalM*4.2+padL*2);
     var scaleL=(W2-padL*2)/totalM;
     function xP(m){return flip?(W2-padL-m*scaleL):(padL+m*scaleL);}
-    var bottomEdge=roadY+roadH2,cy4=roadY+laneH;
-    var xAdv=xP(0),xTaperStart=xP(advM),xTaperEnd=xP(advM+tapM),xWZEnd=xP(advM+tapM+wzM),xDnEnd=xP(totalM);
-    var xAdv2=spd>=40?xP(advM*0.55):null,xSpeed=spd>=40?xP(advM*0.75):null,xArrow=spd>=50?xP(advM):null;
-    var tDirL=flip?"left":"right",tDirLOpp=flip?"right":"left";
-    var tDirLOpp2=tDirLOpp;
+    var bE=roadY+roadH2,cy4=roadY+laneH2;
+    var xAdv=xP(0),xTapS=xP(advM),xTapE=xP(advM+tapM),xWZE=xP(advM+tapM+wzM),xDnE=xP(totalM);
+    var xAdv2=spd>=40?xP(advM*.55):null,xSpd=spd>=40?xP(advM*.75):null,xArr=spd>=50?xP(advM):null;
+    var tDL=flip?"left":"right",tDLO=flip?"right":"left";
 
-    svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W2+'" height="'+H2+'" viewBox="0 0 '+W2+' '+H2+'" style="background:#111;display:block;">';
-    svg+='<rect x="0" y="0" width="'+W2+'" height="'+roadY+'" fill="#1a2a1a"/>';
-    svg+='<rect x="0" y="'+bottomEdge+'" width="'+W2+'" height="'+(H2-bottomEdge)+'" fill="#1a2a1a"/>';
-    svg+='<rect x="0" y="'+roadY+'" width="'+W2+'" height="'+roadH2+'" fill="#2d2d2d"/>';
-    svg+='<line x1="0" y1="'+roadY+'" x2="'+W2+'" y2="'+roadY+'" stroke="#aaa" stroke-width="3"/>';
-    svg+='<line x1="0" y1="'+bottomEdge+'" x2="'+W2+'" y2="'+bottomEdge+'" stroke="#aaa" stroke-width="3"/>';
-    var dashL=14*scaleL,gapL=7*scaleL;
-    svg+='<line x1="0" y1="'+cy4+'" x2="'+W2+'" y2="'+cy4+'" stroke="#FFD600" stroke-width="2" stroke-dasharray="'+dashL+','+gapL+'"/>';
-    svg+='<text x="20" y="'+(roadY+laneH/2+4)+'" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">ONCOMING</text>';
-    svg+='<text x="20" y="'+(cy4+laneH/2+4)+'" fill="#888" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">TRAVEL</text>';
-    [0.15,0.35,0.55,0.75].forEach(function(f){svg+=tArrow(padL+f*(W2-padL*2),roadY+laneH/2,tDirLOpp2,"#4a7a4a");});
-    [0.1,0.3].forEach(function(f){var fx=padL+f*(W2-padL*2);if((flip&&fx>Math.max(xTaperStart,xAdv)+10)||(!flip&&fx<Math.min(xTaperStart,xAdv)-10))svg+=tArrow(fx,cy4+laneH/2,tDirL,"#2a5a8a");});
-    svg+=tArrow(xWZEnd+(flip?-30:30),cy4+laneH/2,tDirL,"#2a5a8a");
-    var nConesL=Math.max(4,Math.floor(tapM/d.coneGap));
-    for(var ci2=0;ci2<=nConesL;ci2++){var t4=ci2/nConesL;svg+=cone(xTaperStart+t4*(xTaperEnd-xTaperStart),bottomEdge-t4*laneH,8);}
-    var wzW=Math.abs(xWZEnd-xTaperEnd),wzLeft=Math.min(xTaperEnd,xWZEnd);
-    svg+='<rect x="'+wzLeft+'" y="'+cy4+'" width="'+wzW+'" height="'+laneH+'" fill="rgba(180,0,0,0.22)" stroke="#CC0000" stroke-width="2" stroke-dasharray="6,4"/>';
-    var wzMidX=wzLeft+wzW/2;
-    svg+='<text x="'+wzMidX+'" y="'+(cy4+laneH/2+5)+'" text-anchor="middle" fill="#FF4444" font-size="13" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORK ZONE</text>';
-    svg+='<line x1="'+wzLeft+'" y1="'+cy4+'" x2="'+wzLeft+'" y2="'+bottomEdge+'" stroke="#FFD600" stroke-width="4"/>';
-    svg+='<line x1="'+(wzLeft+wzW)+'" y1="'+cy4+'" x2="'+(wzLeft+wzW)+'" y2="'+bottomEdge+'" stroke="#FFD600" stroke-width="4"/>';
-    svg+=beacon(wzLeft,cy4+8);svg+=beacon(wzLeft+wzW,cy4+8);
-    for(var di2=0;di2<3;di2++){var t5=(di2+1)/4;svg+=cone(xWZEnd+t5*(xDnEnd-xWZEnd),bottomEdge-laneH*(1-t5*0.7),8);}
-    svg+=vehicle(xWZEnd+(flip?-40:40),cy4+laneH/2,true);
-    var signY=bottomEdge+22;
-    svg+=sign(xAdv,signY,["ROAD WORKS AHEAD"],"#FFD600",true);
-    svg+='<line x1="'+xAdv+'" y1="'+bottomEdge+'" x2="'+xAdv+'" y2="'+(signY-8)+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';
-    if(xAdv2){svg+=sign(xAdv2,signY,["ROAD WORKS"],"#FFD600",true);svg+='<line x1="'+xAdv2+'" y1="'+bottomEdge+'" x2="'+xAdv2+'" y2="'+(signY-8)+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    if(xSpeed){svg+=sign(xSpeed,signY,[(spd-20)+"mph LIMIT"],"#FF4444",true);svg+='<line x1="'+xSpeed+'" y1="'+bottomEdge+'" x2="'+xSpeed+'" y2="'+(signY-8)+'" stroke="#FF4444" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    if(xArrow){svg+=arrowBoard(xArrow,signY,true);svg+='<line x1="'+xArrow+'" y1="'+bottomEdge+'" x2="'+xArrow+'" y2="'+(signY-14)+'" stroke="#FF6B00" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';}
-    svg+=distLabel(roadY-18,xAdv,xTaperStart,advM+"m","#FFD600",true);
-    svg+=distLabel(roadY-40,xTaperStart,xTaperEnd,tapM+"m","#FF6B00",true);
+    svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W2+'" height="'+H2+'" viewBox="0 0 '+W2+' '+H2+'" style="background:#111827;display:block;">';
+    svg+='<rect x="0" y="0" width="'+W2+'" height="'+roadY+'" fill="#1a2e1a"/>';
+    svg+='<rect x="0" y="'+bE+'" width="'+W2+'" height="'+(H2-bE)+'" fill="#1a2e1a"/>';
+    svg+='<rect x="0" y="'+roadY+'" width="'+W2+'" height="'+roadH2+'" fill="#2c3144"/>';
+    svg+='<rect x="0" y="'+roadY+'" width="'+W2+'" height="4" fill="rgba(255,255,255,.75)"/>';
+    svg+='<rect x="0" y="'+(bE-4)+'" width="'+W2+'" height="4" fill="rgba(255,255,255,.75)"/>';
+    var dL=Math.max(16,14*scaleL),gL=Math.max(10,8*scaleL);
+    svg+='<line x1="0" y1="'+cy4+'" x2="'+W2+'" y2="'+cy4+'" stroke="#FFD600" stroke-width="2.5" stroke-dasharray="'+dL+','+gL+'"/>';
+    svg+='<text x="28" y="'+(roadY+laneH2/2+4)+'" fill="rgba(255,255,255,.3)" font-size="9" font-weight="bold" font-family="Barlow Condensed,sans-serif" letter-spacing="1">ONCOMING</text>';
+    svg+='<text x="28" y="'+(cy4+laneH2/2+4)+'" fill="rgba(255,255,255,.3)" font-size="9" font-weight="bold" font-family="Barlow Condensed,sans-serif" letter-spacing="1">TRAVEL</text>';
+
+    // Traffic arrows
+    [.15,.32,.52,.70].forEach(function(f){svg+=tArrow(padL+f*(W2-padL*2),roadY+laneH2/2,tDLO,"#4CAF50");});
+    [.12,.30].forEach(function(f){var fx=padL+f*(W2-padL*2);if((flip&&fx>Math.max(xTapS,xAdv)+12)||(!flip&&fx<Math.min(xTapS,xAdv)-12))svg+=tArrow(fx,cy4+laneH2/2,tDL,"#32CCFE");});
+    svg+=tArrow(xWZE+(flip?-32:32),cy4+laneH2/2,tDL,"#32CCFE");
+
+    // Taper cones
+    var nCL=Math.max(4,Math.floor(tapM/d.coneGap));
+    for(var ci2=0;ci2<=nCL;ci2++){var t4=ci2/nCL;svg+=cone(xTapS+t4*(xTapE-xTapS),bE-t4*laneH2,8);}
+
+    // Work zone
+    var wzWL=Math.abs(xWZE-xTapE),wzL2=Math.min(xTapE,xWZE);
+    svg+='<defs><pattern id="hatch_l" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="12" stroke="rgba(255,107,0,.25)" stroke-width="5"/></pattern></defs>';
+    svg+='<rect x="'+wzL2+'" y="'+cy4+'" width="'+wzWL+'" height="'+laneH2+'" fill="url(#hatch_l)"/>';
+    svg+='<rect x="'+wzL2+'" y="'+cy4+'" width="'+wzWL+'" height="'+laneH2+'" fill="none" stroke="#FF6B00" stroke-width="2" stroke-dasharray="6,4"/>';
+    var wzMX=wzL2+wzWL/2;
+    svg+='<rect x="'+(wzMX-34)+'" y="'+(cy4+laneH2/2-12)+'" width="68" height="24" rx="12" fill="rgba(255,107,0,.2)" stroke="rgba(255,107,0,.5)" stroke-width="1"/>';
+    svg+='<text x="'+wzMX+'" y="'+(cy4+laneH2/2+4)+'" text-anchor="middle" fill="#FF6B00" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORK ZONE</text>';
+    svg+='<line x1="'+wzL2+'" y1="'+cy4+'" x2="'+wzL2+'" y2="'+bE+'" stroke="#FFD600" stroke-width="4"/>';
+    svg+='<line x1="'+(wzL2+wzWL)+'" y1="'+cy4+'" x2="'+(wzL2+wzWL)+'" y2="'+bE+'" stroke="#FFD600" stroke-width="4"/>';
+    svg+=beacon(wzL2+8,cy4+8);svg+=beacon(wzL2+wzWL-8,cy4+8);
+
+    // Downstream cones
+    for(var di2=0;di2<3;di2++){var t5=(di2+1)/4;svg+=cone(xWZE+t5*(xDnE-xWZE),bE-laneH2*(1-t5*.7),8);}
+    svg+=vehicle(xWZE+(flip?-44:44),cy4+laneH2/2,true);
+
+    // Signs on bottom verge (nearside)
+    var sgnY=bE+26;
+    svg+=sign(xAdv,sgnY,["ROAD","WORKS"],"#FFD600",true,"diamond");
+    svg+=connector(xAdv,bE+4,xAdv,sgnY-20,"#FFD600");
+    if(xAdv2){svg+=sign(xAdv2,sgnY,["ROAD","WORKS"],"#FFD600",true,"diamond");svg+=connector(xAdv2,bE+4,xAdv2,sgnY-20,"#FFD600");}
+    if(xSpd){
+      var sr2=18;
+      svg+='<circle cx="'+xSpd+'" cy="'+sgnY+'" r="'+sr2+'" fill="white" stroke="#CC0000" stroke-width="3"/>';
+      svg+='<text x="'+xSpd+'" y="'+(sgnY-1)+'" text-anchor="middle" fill="#111" font-size="11" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+(spd-20)+'</text>';
+      svg+='<text x="'+xSpd+'" y="'+(sgnY+9)+'" text-anchor="middle" fill="#111" font-size="7" font-family="Barlow Condensed,sans-serif">mph</text>';
+      svg+=connector(xSpd,bE+4,xSpd,sgnY-sr2,"#CC0000");
+    }
+    if(xArr){svg+=arrowBoard(xArr,sgnY,true);svg+=connector(xArr,bE+4,xArr,sgnY-13,"#FF6B00");}
+
+    // Distance braces — above road
+    svg+=brace(roadY-14,xAdv,xTapS,advM+"m","#FFD600",true);
+    svg+=brace(roadY-36,xTapS,xTapE,tapM+"m","#FF6B00",true);
     svg+='</svg>';
   }
 
   var scrollStyle=landscape?"overflow-x:auto;overflow-y:hidden;":"overflow:hidden;";
   cont.innerHTML=
-    '<div style="background:var(--dark2);border-bottom:1px solid var(--orange);padding:10px 16px;font-size:.78rem;color:#ffcc80;line-height:1.5;">'
-    +'<strong>Plan View — '+spd+'mph '+S.road+' — '+tradeName+'</strong>'
-    +' &nbsp;<span style="color:var(--muted);">'+rot+'° rotation</span><br>'
-    +'Advance: '+advM+'m &nbsp;|&nbsp; Taper: '+tapM+'m &nbsp;|&nbsp; Gap: '+d.coneGap+'m'
+    // Waze-style info pill header
+    '<div style="background:#1e2d45;border-bottom:1px solid rgba(50,204,254,.18);padding:10px 16px;display:flex;align-items:center;gap:12px;">'
+    +'<div style="width:8px;height:8px;border-radius:50%;background:#32CCFE;flex-shrink:0;"></div>'
+    +'<div style="font-size:.75rem;color:rgba(255,255,255,.7);">'
+    +'<strong style="color:#fff;">'+spd+'mph &nbsp;·&nbsp; '+S.road+'</strong> &nbsp;·&nbsp; '+tradeName+'<br>'
+    +'<span style="color:rgba(50,204,254,.8);">Advance '+advM+'m &nbsp;·&nbsp; Taper '+tapM+'m &nbsp;·&nbsp; Cone gap '+d.coneGap+'m</span>'
     +'</div>'
-    +'<div id="diagram-svg-wrap" style="'+scrollStyle+'">'+svg+'</div>'
-    +'<div style="background:var(--dark2);border-top:1px solid var(--mid);padding:10px 16px;font-size:.72rem;color:var(--muted);line-height:1.8;margin-bottom:120px;">'
-    +'<span style="color:#FFD600;">&#9646;</span> Advance signs &nbsp;'
-    +'<span style="color:#CC0000;">&#9650;</span> Cones &nbsp;'
-    +'<span style="color:#FF6B00;">&#9679;</span> Beacon &nbsp;'
-    +'<span style="color:#2979FF;">&#9646;</span> Vehicle &nbsp;'
-    +'<span style="color:#FF4444;">&#9646;</span> Work zone'
+    +'</div>'
+    +'<div id="diagram-svg-wrap" style="'+scrollStyle+'">'+ svg +'</div>'
+    // Waze-style legend bar
+    +'<div style="background:#1e2d45;border-top:1px solid rgba(50,204,254,.12);padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;font-size:.7rem;color:rgba(255,255,255,.45);margin-bottom:80px;">'
+    +'<span><span style="color:#FFD600;">&#9670;</span> Road Works sign</span>'
+    +'<span><span style="color:#CC0000;">&#9650;</span> Traffic cone</span>'
+    +'<span><span style="color:#FF6B00;">&#9679;</span> Amber beacon</span>'
+    +'<span><span style="color:#32CCFE;">&#9646;</span> Works vehicle</span>'
+    +'<span><span style="color:#FF6B00;">&#9646;</span> Work zone</span>'
     +'</div>';
 }
-
 
 function renderDiagramClosure(cont,d,spd,tradeName,rot,landscape,flip){
   var advM=d.advance, closureM=15, wzM=20;
@@ -1775,9 +1901,11 @@ function initWalkoutGPS(){
     WO.currentLat=smooth.lat;WO.currentLng=smooth.lng;
     WO.currentAcc=Math.round(pos.coords.accuracy);
     var acc=WO.currentAcc;
-    status.textContent=acc<=10?"GPS Excellent — "+acc+"m":acc<=20?"GPS Ready — "+acc+"m":"GPS weak ("+acc+"m) — move to open area";
-    status.style.color=acc<=20?"var(--green)":"var(--yellow)";
-    btn.disabled=false;btn.style.background="var(--orange)";btn.style.color="#000";
+    var dot=document.getElementById("gps-dot");
+    status.textContent=acc<=10?"GPS Excellent — "+acc+"m accuracy":acc<=20?"GPS Ready — "+acc+"m accuracy":"GPS weak ("+acc+"m) — move to open area";
+    status.style.color=acc<=20?"#32CCFE":"var(--yellow)";
+    if(dot)dot.style.background=acc<=20?"#32CCFE":"var(--yellow)";
+    btn.disabled=false;btn.style.opacity="1";btn.style.background="#32CCFE";btn.style.color="#0d1f35";
   },function(){
     status.textContent="GPS permission denied — use Manual Mode";
     status.style.color="var(--red)";
@@ -1875,7 +2003,7 @@ function onGPSUpdate(pos){
     WO.targetReached=true;
     triggerPlacementAlert();
     var btn=document.getElementById("wo-place-btn");
-    if(btn){btn.disabled=false;btn.style.opacity="1";}
+    if(btn){btn.disabled=false;btn.style.opacity="1";btn.style.boxShadow="0 4px 20px rgba(50,204,254,.5)";}
     var flash=document.getElementById("wo-place-flash");
     if(flash){flash.style.display="block";setTimeout(function(){if(flash)flash.style.display="none";},2000);}
   }
@@ -1909,11 +2037,11 @@ function drawARFrame(){
   var remaining=Math.max(0,target-walked);
   var progress=Math.min(1,walked/target);
 
-  // Horizon guide
+  // Horizon guide — Waze style
   var horizon=h*0.42;
-  ctx.strokeStyle="rgba(255,214,0,0.35)";ctx.lineWidth=1;
+  ctx.strokeStyle="rgba(50,204,254,0.25)";ctx.lineWidth=1;
   ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(0,horizon);ctx.lineTo(w,horizon);ctx.stroke();ctx.setLineDash([]);
-  ctx.strokeStyle="rgba(255,255,255,0.15)";ctx.lineWidth=2;
+  ctx.strokeStyle="rgba(255,255,255,0.1)";ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(w/2,h);ctx.lineTo(w/2,horizon);ctx.stroke();
 
   // Cone — eased approach animation
@@ -1922,35 +2050,35 @@ function drawARFrame(){
   var scale=0.2+0.8*easedProgress;
   drawCanvasCone(ctx,w/2,markerY,scale,remaining<=2);
 
-  // Distance
+  // Distance — Waze style
   if(!WO.manualMode&&target>0){
     ctx.font="bold "+(14+8*scale)+"px sans-serif";
-    ctx.fillStyle=remaining<=2?"rgba(0,200,83,1)":remaining<=10?"rgba(255,214,0,1)":"rgba(255,255,255,0.9)";
+    ctx.fillStyle=remaining<=2?"#00C853":remaining<=10?"#32CCFE":"rgba(255,255,255,0.95)";
     ctx.textAlign="center";
     ctx.fillText(Math.round(remaining)+"m",w/2,markerY-52*scale-8);
   }
 
-  // Item name
+  // Item label
   ctx.font="bold 13px sans-serif";
-  ctx.fillStyle="rgba(255,255,255,0.85)";
+  ctx.fillStyle="rgba(255,255,255,0.9)";
   ctx.textAlign="center";
   ctx.fillText(item.name.toUpperCase(),w/2,markerY+55*scale+14);
 
-  // Pulsing walk guide dots
+  // Pulsing walk guide dots — Waze cyan
   if(remaining>5&&!WO.manualMode){
     var pulse=0.5+0.5*Math.sin(now/300);
     for(var i=0;i<4;i++){
-      ctx.fillStyle="rgba(255,107,0,"+((0.8-i*0.15)*pulse)+")";
+      ctx.fillStyle="rgba(50,204,254,"+((0.7-i*0.12)*pulse)+")";
       ctx.beginPath();ctx.arc(w/2,h*0.72-i*(h*0.1),5-i,0,Math.PI*2);ctx.fill();
     }
   }
 
-  // GPS quality indicator (top right)
+  // GPS quality indicator — Waze style dot
   if(!WO.manualMode){
-    var qa=WO.currentAcc<=5?0.8:WO.currentAcc<=15?0.5:0.2;
-    ctx.strokeStyle="rgba(0,200,83,"+qa+")";ctx.lineWidth=2;
+    var qa=WO.currentAcc<=5?0.9:WO.currentAcc<=15?0.6:0.25;
+    ctx.strokeStyle="rgba(50,204,254,"+qa+")";ctx.lineWidth=2;
     ctx.beginPath();ctx.arc(w-20,20,8,0,Math.PI*2);ctx.stroke();
-    ctx.fillStyle="rgba(0,200,83,"+(qa+0.1)+")";
+    ctx.fillStyle="rgba(50,204,254,"+(qa+0.1)+")";
     ctx.beginPath();ctx.arc(w-20,20,3,0,Math.PI*2);ctx.fill();
   }
 
@@ -1989,7 +2117,7 @@ function showWOItem(){
   var arrows={upstream:"&#11014;&#65039;",downstream:"&#11015;&#65039;",works:"&#128205;"};
   document.getElementById("wo-dir-arrow").innerHTML=arrows[item.dir]||"&#128205;";
   var btn=document.getElementById("wo-place-btn");
-  if(btn){btn.disabled=!WO.manualMode;btn.style.opacity=WO.manualMode?"1":".5";}
+  if(btn){btn.disabled=!WO.manualMode;btn.style.opacity=WO.manualMode?"1":".3";}
   WO.targetReached=false;
   triggerPlacementAlert();
 }
@@ -2283,5 +2411,3 @@ renderChecklist();
 </script>
 </body>
 </html>
-conesout.html
-Displaying conesout.html.
