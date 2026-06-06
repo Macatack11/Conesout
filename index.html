@@ -439,74 +439,144 @@ body{font-family:"Barlow",sans-serif;background:var(--waze-dark);color:var(--waz
       </div>
     </div>
 
-    <!-- ACTIVE WALKOUT -->
-    <div id="wo-active-panel" style="display:none;flex:1;flex-direction:column;position:relative;background:#000;">
-      <video id="wo-camera" autoplay playsinline muted style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></video>
-      <canvas id="wo-ar-canvas" style="position:absolute;top:72px;left:0;right:0;bottom:220px;width:100%;pointer-events:none;"></canvas>
-      <div id="wo-place-flash" style="display:none;position:absolute;inset:0;background:rgba(50,204,254,.12);border:3px solid #32CCFE;z-index:15;pointer-events:none;"></div>
+    <!-- ACTIVE WALKOUT — GPS only, no camera -->
+    <div id="wo-active-panel" style="display:none;flex:1;flex-direction:column;background:#111827;">
 
-      <!-- Top bar -->
-      <div style="position:absolute;top:0;left:0;right:0;z-index:20;padding:10px 12px 8px;background:linear-gradient(to bottom,rgba(0,0,0,.8) 0%,transparent 100%);">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <button onclick="stopWalkout()" style="width:36px;height:36px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border:none;border-radius:50%;color:#fff;font-size:.85rem;font-weight:900;cursor:pointer;flex-shrink:0;">✕</button>
-          <div style="flex:1;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-radius:100px;padding:8px 14px;display:flex;align-items:center;gap:10px;">
-            <div id="wo-prog-bar-wrap" style="flex:1;background:rgba(255,255,255,.15);border-radius:100px;height:5px;overflow:hidden;">
+      <!-- Flash overlay at placement -->
+      <div id="wo-place-flash" style="display:none;position:fixed;inset:0;background:rgba(50,204,254,.15);border:3px solid #32CCFE;z-index:15;pointer-events:none;"></div>
+
+      <!-- Top bar — progress + GPS + close -->
+      <div style="background:#0d1f35;border-bottom:1px solid rgba(50,204,254,.18);padding:12px 14px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button onclick="stopWalkout()" style="width:34px;height:34px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:50%;color:#fff;font-size:.85rem;font-weight:900;cursor:pointer;flex-shrink:0;">✕</button>
+          <div style="flex:1;background:rgba(255,255,255,.08);border-radius:100px;padding:7px 14px;display:flex;align-items:center;gap:10px;">
+            <div id="wo-prog-bar-wrap" style="flex:1;background:rgba(255,255,255,.12);border-radius:100px;height:5px;overflow:hidden;">
               <div id="wo-prog-bar" style="height:100%;background:#32CCFE;border-radius:100px;width:0%;transition:width .5s ease;"></div>
             </div>
             <span id="wo-prog-label" style="font-family:Barlow Condensed,sans-serif;font-size:.78rem;font-weight:700;color:#fff;white-space:nowrap;">1/8</span>
           </div>
-          <div id="wo-gps-acc" style="background:rgba(0,0,0,.5);backdrop-filter:blur(8px);border-radius:100px;padding:6px 10px;font-size:.65rem;font-weight:700;color:#32CCFE;white-space:nowrap;">GPS --</div>
+          <div id="wo-gps-acc" style="background:rgba(50,204,254,.1);border:1px solid rgba(50,204,254,.3);border-radius:100px;padding:6px 10px;font-size:.65rem;font-weight:700;color:#32CCFE;white-space:nowrap;">GPS --</div>
         </div>
       </div>
 
-      <!-- Bottom navigation card -->
-      <div style="position:absolute;bottom:0;left:0;right:0;z-index:20;">
-        <div style="background:rgba(13,31,53,.97);backdrop-filter:blur(16px);border-radius:24px 24px 0 0;padding:16px 20px 0;border-top:2px solid rgba(50,204,254,.25);">
-          <!-- Direction + distance -->
-          <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
-            <div id="wo-dir-arrow" style="width:52px;height:52px;background:#32CCFE;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;box-shadow:0 4px 12px rgba(50,204,254,.4);">&#11014;&#65039;</div>
-            <div style="flex:1;">
-              <div style="font-size:.6rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:2px;">Walk</div>
+      <!-- Main content — scrollable -->
+      <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:16px;gap:14px;">
+
+        <!-- Waze-style distance card — big and clear -->
+        <div style="background:#1e2d45;border-radius:20px;padding:24px 20px;text-align:center;border:1px solid rgba(50,204,254,.18);">
+          <div style="font-size:.65rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Distance to walk</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
+            <div id="wo-dir-arrow" style="width:44px;height:44px;background:#32CCFE;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 12px rgba(50,204,254,.35);">&#11014;&#65039;</div>
+            <div>
               <div style="display:flex;align-items:baseline;gap:5px;">
-                <div id="wo-remaining" style="font-family:Barlow Condensed,sans-serif;font-size:3rem;font-weight:900;color:#fff;line-height:1;">--</div>
-                <div style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:700;color:rgba(255,255,255,.4);">m</div>
+                <div id="wo-remaining" style="font-family:Barlow Condensed,sans-serif;font-size:4.5rem;font-weight:900;color:#fff;line-height:1;">--</div>
+                <div style="font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:700;color:rgba(255,255,255,.35);">m</div>
               </div>
             </div>
           </div>
-          <!-- Item card -->
-          <div style="background:rgba(255,255,255,.05);border-radius:14px;padding:11px 13px;margin-bottom:12px;">
-            <div id="wo-phase-label" style="font-size:.6rem;color:#32CCFE;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;font-weight:700;"></div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <div id="wo-item-icon-sm" style="font-size:1.5rem;flex-shrink:0;"></div>
-              <div style="flex:1;min-width:0;">
-                <div id="wo-item-name" style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;text-transform:uppercase;color:#fff;line-height:1.2;"></div>
-                <div id="wo-item-detail" style="font-size:.67rem;color:rgba(255,255,255,.45);line-height:1.4;margin-top:2px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;"></div>
-              </div>
+          <!-- Progress arc bar -->
+          <div style="background:rgba(255,255,255,.08);border-radius:100px;height:6px;overflow:hidden;">
+            <div id="wo-item-prog" style="height:100%;background:linear-gradient(90deg,#32CCFE,#00C853);border-radius:100px;width:0%;transition:width .3s ease;"></div>
+          </div>
+        </div>
+
+        <!-- Item card — Waze instruction card style -->
+        <div style="background:#1e2d45;border-radius:20px;padding:16px;border:1px solid rgba(50,204,254,.18);">
+          <div id="wo-phase-label" style="font-size:.6rem;color:#32CCFE;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:700;"></div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div id="wo-item-icon-sm" style="font-size:2rem;flex-shrink:0;margin-top:2px;"></div>
+            <div style="flex:1;">
+              <div id="wo-item-name" style="font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:900;text-transform:uppercase;color:#fff;line-height:1.2;margin-bottom:4px;"></div>
+              <div id="wo-item-detail" style="font-size:.72rem;color:rgba(255,255,255,.5);line-height:1.5;"></div>
             </div>
           </div>
-          <!-- Buttons -->
-          <div style="display:flex;gap:10px;padding-bottom:24px;">
-            <button id="wo-place-btn" onclick="confirmPlacement()" disabled style="flex:3;padding:16px;background:#32CCFE;color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;opacity:.3;transition:opacity .3s;box-shadow:0 4px 16px rgba(50,204,254,.2);">&#10003; &nbsp;Placed</button>
-            <button onclick="skipPlacement()" style="flex:1;padding:16px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.1);border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;">Skip</button>
-          </div>
+        </div>
+
+        <!-- Regulation reference pill -->
+        <div id="wo-item-reg-pill" style="background:rgba(50,204,254,.06);border:1px solid rgba(50,204,254,.15);border-radius:100px;padding:8px 16px;text-align:center;font-size:.65rem;color:rgba(50,204,254,.7);"></div>
+
+      </div>
+
+      <!-- Bottom action buttons — always visible -->
+      <div style="background:#0d1f35;border-top:1px solid rgba(50,204,254,.18);padding:14px 16px 28px;flex-shrink:0;">
+        <div style="display:flex;gap:10px;">
+          <button id="wo-place-btn" onclick="confirmPlacement()" disabled
+            style="flex:3;padding:16px;background:#32CCFE;color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;opacity:.3;transition:opacity .3s,box-shadow .3s;box-shadow:0 4px 16px rgba(50,204,254,.15);">
+            ✓ &nbsp;Placed
+          </button>
+          <button onclick="skipPlacement()"
+            style="flex:1;padding:16px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.1);border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;">
+            Skip
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- COMPLETE PANEL -->
-    <div id="wo-complete-panel" style="display:none;flex:1;flex-direction:column;background:#1a2233;overflow-y:auto;">
-      <div style="background:linear-gradient(180deg,#0d3320 0%,#1a2233 100%);padding:40px 24px 28px;text-align:center;">
-        <div style="width:72px;height:72px;border-radius:50%;background:#00C853;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px rgba(0,200,83,.18),0 0 0 20px rgba(0,200,83,.07);">
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M8 18L15 25L28 11" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <!-- COMPLETE PANEL — with photo capture + permit record -->
+    <div id="wo-complete-panel" style="display:none;flex:1;flex-direction:column;background:#111827;overflow-y:auto;">
+
+      <!-- Success header -->
+      <div style="background:linear-gradient(180deg,#0d3320 0%,#111827 100%);padding:32px 24px 24px;text-align:center;flex-shrink:0;">
+        <div style="width:64px;height:64px;border-radius:50%;background:#00C853;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px rgba(0,200,83,.15),0 0 0 20px rgba(0,200,83,.06);">
+          <svg width="32" height="32" viewBox="0 0 36 36" fill="none"><path d="M8 18L15 25L28 11" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <div style="font-family:Barlow Condensed,sans-serif;font-size:1.8rem;font-weight:900;color:#fff;">Setup Complete</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.4);margin-top:6px;">All items placed — carry out final walk-through</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:1.7rem;font-weight:900;color:#fff;">Setup Complete</div>
+        <div style="font-size:.78rem;color:rgba(255,255,255,.4);margin-top:4px;">Carry out final walk-through before works begin</div>
       </div>
-      <div style="margin:16px;background:#243044;border-radius:16px;padding:16px;">
-        <div id="wo-summary" style="font-size:.78rem;color:rgba(255,255,255,.65);line-height:1.9;"></div>
+
+      <!-- Placement summary -->
+      <div style="margin:0 16px 12px;background:#1e2d45;border-radius:16px;padding:14px;">
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;color:#32CCFE;letter-spacing:1px;margin-bottom:8px;">Placement Summary</div>
+        <div id="wo-summary" style="font-size:.75rem;color:rgba(255,255,255,.6);line-height:1.9;"></div>
       </div>
-      <div style="padding:4px 16px 32px;">
-        <button onclick="resetWalkout()" style="width:100%;padding:18px;background:#32CCFE;color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(50,204,254,.3);">Start Again</button>
+
+      <!-- Site Record section -->
+      <div style="margin:0 16px 12px;background:#1e2d45;border-radius:16px;padding:14px;">
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;color:#32CCFE;letter-spacing:1px;margin-bottom:12px;">&#128247; Site Record</div>
+
+        <!-- Permit number input -->
+        <div style="margin-bottom:12px;">
+          <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-bottom:5px;">Permit / Licence Number</div>
+          <input id="wo-permit-input" type="text" placeholder="e.g. TMA-2024-00123"
+            style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(50,204,254,.25);border-radius:10px;padding:11px 14px;font-family:Barlow,sans-serif;font-size:.88rem;color:#fff;outline:none;"
+            oninput="updateSiteRecord()"/>
+        </div>
+
+        <!-- Photo thumbnails grid -->
+        <div style="margin-bottom:10px;">
+          <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-bottom:8px;">Site Photos <span style="opacity:.5;">(tap to add)</span></div>
+          <div id="wo-photo-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+            <!-- Add photo button -->
+            <div onclick="addSitePhoto()" style="aspect-ratio:1;background:rgba(50,204,254,.06);border:1.5px dashed rgba(50,204,254,.3);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;">
+              <div style="font-size:1.4rem;">&#128247;</div>
+              <div style="font-size:.6rem;color:rgba(50,204,254,.6);font-weight:700;">ADD PHOTO</div>
+            </div>
+          </div>
+          <!-- Hidden file input -->
+          <input id="wo-photo-input" type="file" accept="image/*" capture="environment" multiple style="display:none;" onchange="handlePhotoCapture(event)"/>
+        </div>
+
+        <!-- Notes -->
+        <div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-bottom:5px;">Notes <span style="opacity:.5;">(optional)</span></div>
+          <textarea id="wo-notes-input" placeholder="Site conditions, issues, deviations from standard setup..."
+            style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(50,204,254,.25);border-radius:10px;padding:11px 14px;font-family:Barlow,sans-serif;font-size:.82rem;color:#fff;outline:none;resize:none;min-height:70px;line-height:1.5;"
+            oninput="updateSiteRecord()"></textarea>
+        </div>
+      </div>
+
+      <!-- Save record button -->
+      <div style="margin:0 16px 12px;">
+        <button onclick="saveSiteRecord()" id="wo-save-btn"
+          style="width:100%;padding:16px;background:#32CCFE;color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;box-shadow:0 4px 16px rgba(50,204,254,.25);">
+          &#128190; Save Site Record
+        </button>
+      </div>
+      <div style="padding:0 16px 28px;">
+        <button onclick="resetWalkout()"
+          style="width:100%;padding:14px;background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1);border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;">
+          Start New Walk-Out
+        </button>
       </div>
     </div>
 
@@ -1968,7 +2038,7 @@ async function startWalkout(){
   WO.startLat=WO.currentLat;WO.startLng=WO.currentLng;
   WO.smoothWalked=0;WO.displayWalked=0;WO.lastGPSWalked=0;WO.lastGPST=Date.now();
   WO.targetBearing=null;
-  await launchWalkoutCamera();
+  launchWalkout();
 }
 
 function startWalkoutNoGPS(){
@@ -1976,7 +2046,31 @@ function startWalkoutNoGPS(){
   WO.seq=getPlacementSeq();WO.current=0;WO.placed=[];
   WO.manualMode=true;WO.startLat=null;WO.startLng=null;WO.targetReached=false;
   WO.smoothWalked=0;WO.displayWalked=0;
-  launchWalkoutCamera();
+  launchWalkout();
+}
+
+function launchWalkout(){
+  if(!WO.manualMode&&navigator.geolocation){
+    if(WO._initWatchId){navigator.geolocation.clearWatch(WO._initWatchId);WO._initWatchId=null;}
+    var _startWatch=function(){
+      WO.watchId=navigator.geolocation.watchPosition(
+        function(pos){onGPSUpdate(pos);},
+        function(){
+          var el=document.getElementById("wo-gps-acc");if(el)el.textContent="GPS lost";
+          if(WO.watchId){navigator.geolocation.clearWatch(WO.watchId);WO.watchId=null;}
+          setTimeout(function(){if(WO.current<WO.seq.length)_startWatch();},1000);
+        },
+        {enableHighAccuracy:true,maximumAge:0,timeout:4000}
+      );
+    };
+    _startWatch();
+  }
+  _accel.steps=0;
+  document.getElementById("wo-start-panel").style.display="none";
+  document.getElementById("wo-active-panel").style.display="flex";
+  document.getElementById("wo-complete-panel").style.display="none";
+  WO.arFrame=requestAnimationFrame(drawARFrame);
+  showWOItem();
 }
 
 async function launchWalkoutCamera(){
@@ -2019,53 +2113,59 @@ function onGPSUpdate(pos){
   var now=pos.timestamp||Date.now();
   var acc=pos.coords.accuracy;
 
-  // Kalman-smoothed position
-  var smooth=kalmanUpdate(pos);
-  WO.currentLat=smooth.lat;WO.currentLng=smooth.lng;WO.currentAcc=Math.round(acc);
-
-  // Speed and heading from GPS
-  if(pos.coords.speed!=null&&pos.coords.speed>=0)WO.currentSpd=pos.coords.speed;
-  if(pos.coords.heading!=null&&!isNaN(pos.coords.heading))WO.currentHdg=pos.coords.heading;
-
-  // Auto-detect target bearing from first movement
-  if(WO.currentSpd>0.3&&WO.targetBearing===null&&WO.startLat){
-    WO.targetBearing=WO.currentHdg;
+  // Reject very poor fixes — more than 30m accuracy is too noisy
+  if(acc>30){
+    var el=document.getElementById("wo-gps-acc");
+    if(el){el.textContent="GPS: "+Math.round(acc)+"m △";el.style.color="var(--red)";}
+    return;
   }
 
-  // Update accuracy display
+  var smooth=kalmanUpdate(pos);
+  WO.currentLat=smooth.lat;WO.currentLng=smooth.lng;WO.currentAcc=Math.round(acc);
+  if(pos.coords.speed!=null&&pos.coords.speed>=0)WO.currentSpd=pos.coords.speed;
+  if(pos.coords.heading!=null&&!isNaN(pos.coords.heading))WO.currentHdg=pos.coords.heading;
+  if(WO.currentSpd>0.5&&WO.targetBearing===null&&WO.startLat)WO.targetBearing=WO.currentHdg;
+
   var accEl=document.getElementById("wo-gps-acc");
   if(accEl){
     accEl.textContent=acc<=5?"GPS: "+Math.round(acc)+"m ●":acc<=15?"GPS: "+Math.round(acc)+"m ○":"GPS: "+Math.round(acc)+"m △";
-    accEl.style.color=acc<=5?"#00C853":acc<=15?"var(--yellow)":"var(--red)";
+    accEl.style.color=acc<=5?"#32CCFE":acc<=15?"#FFD600":"var(--red)";
   }
 
   if(!WO.startLat||WO.current>=WO.seq.length)return;
   var item=WO.seq[WO.current];
   var target=item.dist;
 
-  // Line-snapped distance or straight Haversine
   var rawWalked=(WO.targetBearing!==null)?
     projectOntoLine(WO.startLat,WO.startLng,WO.targetBearing,target,WO.currentLat,WO.currentLng):
     gpsDistance(WO.startLat,WO.startLng,WO.currentLat,WO.currentLng);
 
-  // Weighted smoothing — poor accuracy = less influence
+  // JITTER FIX: minimum 1m movement before updating — prevents drift when standing still
+  var delta=rawWalked-WO.smoothWalked;
+  if(Math.abs(delta)<1.0&&WO.smoothWalked>0)return;
+
+  // Weighted smoothing
   var w=Math.min(1,8/Math.max(acc,1));
   WO.smoothWalked=WO.smoothWalked*(1-w*0.35)+rawWalked*(w*0.35)+WO.smoothWalked*0.65;
   WO.lastGPSWalked=WO.smoothWalked;
   WO.lastGPST=now;
 
   var remaining=Math.max(0,target-WO.smoothWalked);
+
   var remEl=document.getElementById("wo-remaining");
   if(remEl){
     remEl.textContent=Math.round(remaining);
-    remEl.style.color=remaining<=2?"var(--green)":remaining<=10?"var(--yellow)":"#ffffff";
+    remEl.style.color=remaining<=2?"#00C853":remaining<=10?"#FFD600":"#ffffff";
   }
+
+  var progEl=document.getElementById("wo-item-prog");
+  if(progEl)progEl.style.width=Math.round(Math.min(100,(WO.smoothWalked/Math.max(target,1))*100))+"%";
 
   if(remaining<=2&&!WO.targetReached){
     WO.targetReached=true;
     triggerPlacementAlert();
     var btn=document.getElementById("wo-place-btn");
-    if(btn){btn.disabled=false;btn.style.opacity="1";btn.style.boxShadow="0 4px 20px rgba(50,204,254,.5)";}
+    if(btn){btn.disabled=false;btn.style.opacity="1";btn.style.boxShadow="0 4px 20px rgba(50,204,254,.6)";}
     var flash=document.getElementById("wo-place-flash");
     if(flash){flash.style.display="block";setTimeout(function(){if(flash)flash.style.display="none";},2000);}
   }
@@ -2166,23 +2266,108 @@ function showWOItem(){
   var item=WO.seq[WO.current];
   if(!item){completeWO();return;}
   var total=WO.seq.length;
-  document.getElementById("wo-prog-label").textContent="Item "+(WO.current+1)+" of "+total;
+  document.getElementById("wo-prog-label").textContent=(WO.current+1)+"/"+total;
   document.getElementById("wo-prog-bar").style.width=Math.round((WO.current/total)*100)+"%";
   var remEl=document.getElementById("wo-remaining");
-  if(remEl){remEl.textContent=item.dist;remEl.style.color="#ffffff";}
+  if(remEl){remEl.textContent=item.dist||"--";remEl.style.color="#ffffff";}
+  var progEl=document.getElementById("wo-item-prog");
+  if(progEl)progEl.style.width="0%";
   document.getElementById("wo-item-icon-sm").innerHTML=item.icon==="CONE"?coneIcon("md"):item.icon;
   document.getElementById("wo-item-name").textContent=item.name;
-  document.getElementById("wo-item-name").style.color=item.color;
+  var phEl=document.getElementById("wo-phase-label");if(phEl)phEl.textContent=item.phase||"";
   document.getElementById("wo-item-detail").textContent=item.detail;
-  var phaseEl=document.getElementById("wo-phase-label");
-  if(phaseEl)phaseEl.textContent=item.phase||"";
-  var arrows={upstream:"&#11014;&#65039;",downstream:"&#11015;&#65039;",works:"&#128205;"};
-  document.getElementById("wo-dir-arrow").innerHTML=arrows[item.dir]||"&#128205;";
+  var regEl=document.getElementById("wo-item-reg-pill");
+  if(regEl)regEl.textContent="\u{1F4D6} "+item.reg;
+  var arrows={upstream:"\u2B06\uFE0F",downstream:"\u2B07\uFE0F",works:"\uD83D\uDCCD"};
+  document.getElementById("wo-dir-arrow").innerHTML=arrows[item.dir]||"\uD83D\uDCCD";
   var btn=document.getElementById("wo-place-btn");
-  if(btn){btn.disabled=!WO.manualMode;btn.style.opacity=WO.manualMode?"1":".3";}
+  if(btn){
+    var autoUnlock=(WO.manualMode||item.dist===0);
+    btn.disabled=!autoUnlock;btn.style.opacity=autoUnlock?"1":".3";
+    btn.style.boxShadow=autoUnlock?"0 4px 20px rgba(50,204,254,.6)":"0 4px 16px rgba(50,204,254,.15)";
+  }
   WO.targetReached=false;
-  triggerPlacementAlert();
+  if(item.dist===0||WO.manualMode)triggerPlacementAlert();
 }
+
+function cleanupWalkout(){
+  if(WO.watchId){navigator.geolocation.clearWatch(WO.watchId);WO.watchId=null;}
+  if(WO._initWatchId){navigator.geolocation.clearWatch(WO._initWatchId);WO._initWatchId=null;}
+  if(WO.camStream){WO.camStream.getTracks().forEach(function(t){t.stop();});WO.camStream=null;}
+  if(WO.arFrame){cancelAnimationFrame(WO.arFrame);WO.arFrame=null;}
+}
+
+// ── SITE RECORD — photos + permit ──
+var SR={photos:[],permit:"",notes:""};
+function addSitePhoto(){document.getElementById("wo-photo-input").click();}
+function handlePhotoCapture(e){
+  Array.from(e.target.files).forEach(function(file){
+    var r=new FileReader();
+    r.onload=function(ev){SR.photos.push({data:ev.target.result,time:new Date().toLocaleTimeString()});renderPhotoGrid();};
+    r.readAsDataURL(file);
+  });
+  e.target.value="";
+}
+function renderPhotoGrid(){
+  var grid=document.getElementById("wo-photo-grid");if(!grid)return;
+  var html="";
+  SR.photos.forEach(function(p,i){
+    html+="<div style='position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;'>"
+      +"<img src='"+p.data+"' style='width:100%;height:100%;object-fit:cover;'/>"
+      +"<div style='position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);padding:3px 6px;font-size:.55rem;color:rgba(255,255,255,.7);'>"+p.time+"</div>"
+      +"<button onclick='removePhoto("+i+")' style='position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(0,0,0,.7);border:none;border-radius:50%;color:#fff;font-size:.6rem;cursor:pointer;'>✕</button>"
+      +"</div>";
+  });
+  html+="<div onclick='addSitePhoto()' style='aspect-ratio:1;background:rgba(50,204,254,.06);border:1.5px dashed rgba(50,204,254,.3);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;'>"
+    +"<div style='font-size:1.4rem;'>&#128247;</div>"
+    +"<div style='font-size:.6rem;color:rgba(50,204,254,.6);font-weight:700;'>ADD PHOTO</div></div>";
+  grid.innerHTML=html;
+}
+function removePhoto(i){SR.photos.splice(i,1);renderPhotoGrid();}
+function updateSiteRecord(){
+  var pi=document.getElementById("wo-permit-input"),ni=document.getElementById("wo-notes-input");
+  if(pi)SR.permit=pi.value;if(ni)SR.notes=ni.value;
+}
+function saveSiteRecord(){
+  updateSiteRecord();
+  var record={date:new Date().toLocaleDateString("en-GB"),time:new Date().toLocaleTimeString("en-GB"),
+    permit:SR.permit,trade:S.trade?(TRADES[S.trade]?TRADES[S.trade].name:S.trade):"",
+    road:S.road||"",speed:(S.speed||"")+"mph",width:S.width||"",
+    placed:WO.placed.filter(function(i){return i.confirmed;}).length,total:WO.placed.length,
+    notes:SR.notes,photos:SR.photos.length};
+  try{var rs=JSON.parse(sessionStorage.getItem("co-records")||"[]");rs.push(record);sessionStorage.setItem("co-records",JSON.stringify(rs));}catch(e){}
+  var btn=document.getElementById("wo-save-btn");
+  if(btn){btn.textContent="✓ Record Saved";btn.style.background="#00C853";btn.style.color="#000";}
+  showToast("Site record saved");
+  if(SR.photos.length>0){
+    setTimeout(function(){if(confirm("Download site record with "+SR.photos.length+" photo(s)?"))downloadSiteRecord(record);},500);
+  }
+}
+function downloadSiteRecord(record){
+  var html="<!DOCTYPE html><html><head><meta charset='UTF-8'><title>ConesOut Site Record</title>"
+    +"<style>body{font-family:sans-serif;max-width:600px;margin:20px auto;padding:20px;}h1{color:#0d1f35;}"
+    +"table{width:100%;border-collapse:collapse;}td{padding:8px;border-bottom:1px solid #eee;}"
+    +"td:first-child{font-weight:bold;width:40%;}.photos{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px;}"
+    +".photos img{width:100%;border-radius:8px;}</style></head><body>"
+    +"<h1>&#128679; ConesOut Site Record</h1>"
+    +"<table><tr><td>Date</td><td>"+record.date+" "+record.time+"</td></tr>"
+    +"<tr><td>Permit / Licence</td><td>"+(record.permit||"Not recorded")+"</td></tr>"
+    +"<tr><td>Trade</td><td>"+record.trade+"</td></tr>"
+    +"<tr><td>Road Type</td><td>"+record.road+" — "+record.speed+"</td></tr>"
+    +"<tr><td>Road Width</td><td>"+record.width+"</td></tr>"
+    +"<tr><td>Items Placed</td><td>"+record.placed+" of "+record.total+"</td></tr>"
+    +"<tr><td>Notes</td><td>"+(record.notes||"None")+"</td></tr></table>";
+  if(SR.photos.length>0){
+    html+="<h2>Site Photos</h2><div class='photos'>";
+    SR.photos.forEach(function(p){html+="<img src='"+p.data+"'/>";});
+    html+="</div>";
+  }
+  html+="<p style='margin-top:20px;font-size:.75rem;color:#999;'>Generated by ConesOut &copy; Courseway Ltd</p></body></html>";
+  var blob=new Blob([html],{type:"text/html"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="ConesOut-"+record.date.replace(/\//g,"-")+".html";a.click();
+}
+
 
 function triggerPlacementAlert(){
   try{if(navigator.vibrate)navigator.vibrate([200,100,200,100,400]);}catch(e){}
@@ -2252,9 +2437,16 @@ function completeWO(){
   var placed=WO.placed.filter(function(i){return i.confirmed;}).length;
   var skipped=WO.placed.filter(function(i){return !i.confirmed;}).length;
   document.getElementById("wo-summary").innerHTML=
-    "<strong style='color:var(--green);'>"+placed+" items placed</strong>"
-    +(skipped>0?"<br><span style='color:var(--yellow);'>"+skipped+" items skipped</span>":"")
-    +"<br><br>"+WO.placed.map(function(i){return (i.confirmed?"&#9989;":"&#9197;&#65039;")+" "+i.name+" - "+i.dist+"m";}).join("<br>");
+    "<strong style='color:#00C853;'>"+placed+" items placed</strong>"
+    +(skipped>0?"<br><span style='color:#FFD600;'>"+skipped+" items skipped</span>":"")
+    +"<br><br>"+WO.placed.map(function(i){return (i.confirmed?"&#9989;":"&#9197;&#65039;")+" "+i.name+" — "+i.dist+"m";}).join("<br>");
+  // Reset site record for this job
+  SR={photos:[],permit:"",notes:""};
+  var pi=document.getElementById("wo-permit-input"),ni=document.getElementById("wo-notes-input");
+  if(pi)pi.value="";if(ni)ni.value="";
+  var btn=document.getElementById("wo-save-btn");
+  if(btn){btn.textContent="💾 Save Site Record";btn.style.background="#32CCFE";btn.style.color="#0d1f35";}
+  renderPhotoGrid();
 }
 
 function resetWalkout(){
