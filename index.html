@@ -387,9 +387,11 @@ body{font-family:"Barlow",sans-serif;background:var(--waze-dark);color:var(--waz
   </div>
   <div class="setup-tabs">
     <button class="setup-tab-btn active" id="tab-diagram-btn" onclick="setupTab('diagram')">Visual Layout</button>
-    <button class="setup-tab-btn inactive" id="tab-walkout-btn" onclick="setupTab('walkout')">Walk-Out Mode</button>
+    <button class="setup-tab-btn inactive" id="tab-redbook-btn" onclick="setupTab('redbook')">Red Book</button>
+    <button class="setup-tab-btn inactive" id="tab-walkout-btn" onclick="setupTab('walkout')">Walk-Out</button>
   </div>
   <div id="tab-diagram-content"></div>
+  <div id="tab-redbook-content" style="flex:1;overflow-y:auto;display:none;"></div>
   <!-- Rotation controls — shown only when diagram is active -->
   <div id="diagram-rotate-bar" style="display:none;position:fixed;bottom:60px;right:0;left:0;background:rgba(0,0,0,0.85);border-top:1px solid var(--mid);padding:8px 16px;z-index:150;display:none;justify-content:center;gap:12px;align-items:center;">
     <span style="font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;color:var(--muted);">Rotate:</span>
@@ -402,40 +404,78 @@ body{font-family:"Barlow",sans-serif;background:var(--waze-dark);color:var(--waz
 
     <!-- START PANEL — Waze style -->
     <div id="wo-start-panel" style="flex:1;display:flex;flex-direction:column;background:#1a2233;overflow-y:auto;">
-      <div style="background:linear-gradient(180deg,#1e3a5f 0%,#1a2233 100%);padding:32px 24px 24px;text-align:center;position:relative;overflow:hidden;">
+
+      <!-- Header -->
+      <div style="background:linear-gradient(180deg,#1e3a5f 0%,#1a2233 100%);padding:28px 24px 20px;text-align:center;position:relative;overflow:hidden;">
         <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60px;height:100%;opacity:.08;">
           <div style="position:absolute;left:20px;top:0;bottom:0;width:4px;background:repeating-linear-gradient(180deg,#fff 0,#fff 20px,transparent 20px,transparent 36px);"></div>
           <div style="position:absolute;right:20px;top:0;bottom:0;width:4px;background:repeating-linear-gradient(180deg,#fff 0,#fff 20px,transparent 20px,transparent 36px);"></div>
         </div>
-        <div style="width:64px;height:64px;border-radius:50%;background:#32CCFE;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(50,204,254,0.2),0 0 0 16px rgba(50,204,254,0.08);">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 4C11.6 4 8 7.6 8 12C8 18 16 28 16 28C16 28 24 18 24 12C24 7.6 20.4 4 16 4Z" fill="white"/><circle cx="16" cy="12" r="4" fill="#32CCFE"/></svg>
+        <div style="width:56px;height:56px;border-radius:50%;background:#32CCFE;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(50,204,254,.2);">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><path d="M16 4C11.6 4 8 7.6 8 12C8 18 16 28 16 28C16 28 24 18 24 12C24 7.6 20.4 4 16 4Z" fill="white"/><circle cx="16" cy="12" r="4" fill="#32CCFE"/></svg>
         </div>
-        <div style="font-family:Barlow Condensed,sans-serif;font-size:1.6rem;font-weight:900;color:#fff;">Walk-Out Mode</div>
-        <div style="font-size:.8rem;color:rgba(255,255,255,.55);margin-top:6px;">GPS-guided Chapter 8 placement</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:1.5rem;font-weight:900;color:#fff;">Walk-Out Mode</div>
+        <div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-top:4px;">GPS-guided placement with vibration alerts</div>
       </div>
-      <div style="margin:16px 16px 0;background:#243044;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+
+      <!-- GPS status -->
+      <div style="margin:14px 16px 0;background:#243044;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:12px;">
         <div id="gps-dot" style="width:12px;height:12px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;"></div>
-        <div id="gps-ready-status" style="font-size:.82rem;color:rgba(255,255,255,.7);flex:1;">Checking GPS signal...</div>
+        <div id="gps-ready-status" style="font-size:.8rem;color:rgba(255,255,255,.7);flex:1;">Checking GPS signal...</div>
       </div>
-      <div style="margin:12px 16px 0;display:flex;flex-direction:column;gap:8px;">
-        <div style="background:#243044;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
-          <div style="width:36px;height:36px;border-radius:50%;background:rgba(50,204,254,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">&#128205;</div>
-          <div><div style="font-size:.82rem;font-weight:700;color:#fff;">Stand at works centre</div><div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:1px;">GPS records your start point when you tap Begin</div></div>
-        </div>
-        <div style="background:#243044;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
-          <div style="width:36px;height:36px;border-radius:50%;background:rgba(50,204,254,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">&#128263;</div>
-          <div><div style="font-size:.82rem;font-weight:700;color:#fff;">Vibrate and beep at each point</div><div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:1px;">Green flash confirms placement point reached</div></div>
-        </div>
-        <div style="background:#243044;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
-          <div style="width:36px;height:36px;border-radius:50%;background:rgba(50,204,254,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">&#128247;</div>
-          <div><div style="font-size:.82rem;font-weight:700;color:#fff;">Camera shows placement guide</div><div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:1px;">Cone appears on live road view as you approach</div></div>
+
+      <!-- Mode selector -->
+      <div style="margin:12px 16px 0;">
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Select Setup Mode</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+
+          <!-- Mode 1 — Chapter 8 -->
+          <div id="wo-mode-ch8" onclick="selectWOMode('ch8')"
+            style="background:#243044;border:2px solid #32CCFE;border-radius:16px;padding:14px 16px;cursor:pointer;transition:all .2s;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:40px;height:40px;border-radius:12px;background:#32CCFE;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">&#128218;</div>
+              <div style="flex:1;">
+                <div style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;color:#fff;">Chapter 8 Order</div>
+                <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:2px;">Regulatory compliance sequence — furthest sign first, walk back placing each item in legal order</div>
+              </div>
+              <div id="wo-mode-ch8-check" style="width:20px;height:20px;border-radius:50%;background:#32CCFE;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#0d1f35;flex-shrink:0;">✓</div>
+            </div>
+            <div style="margin-top:8px;background:rgba(50,204,254,.06);border-radius:8px;padding:7px 10px;font-size:.67rem;color:rgba(50,204,254,.7);line-height:1.6;">
+              Walk out → place advance sign → walk back placing signs and cones in Chapter 8 sequence → set up works → downstream cones
+            </div>
+          </div>
+
+          <!-- Mode 2 — Progressive -->
+          <div id="wo-mode-prog" onclick="selectWOMode('prog')"
+            style="background:#1e2d45;border:2px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 16px;cursor:pointer;transition:all .2s;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:40px;height:40px;border-radius:12px;background:rgba(255,214,0,.15);border:1.5px solid rgba(255,214,0,.4);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">&#9889;</div>
+              <div style="flex:1;">
+                <div style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;color:#fff;">Progressive Setup</div>
+                <div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:2px;">Lean working order — vehicle and guarding first, then walk out placing signs as you go. One continuous trip.</div>
+              </div>
+              <div id="wo-mode-prog-check" style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:transparent;flex-shrink:0;">✓</div>
+            </div>
+            <div style="margin-top:8px;background:rgba(255,214,0,.04);border-radius:8px;padding:7px 10px;font-size:.67rem;color:rgba(255,214,0,.6);line-height:1.6;">
+              Park vehicle → set up guarding → walk upstream placing cones then signs → complete → downstream signs on return
+            </div>
+          </div>
+
         </div>
       </div>
-      <div style="padding:20px 16px 8px;">
-        <button id="wo-start-btn" onclick="startWalkout()" disabled style="width:100%;padding:18px;background:#32CCFE;color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;cursor:pointer;opacity:.35;transition:opacity .3s;box-shadow:0 4px 20px rgba(50,204,254,.3);">Start Walk-Out</button>
+
+      <!-- Action buttons -->
+      <div style="padding:16px 16px 6px;">
+        <button id="wo-start-btn" onclick="startWalkout()" disabled
+          style="width:100%;padding:16px;background:#32CCFE;color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:900;cursor:pointer;opacity:.35;transition:opacity .3s;box-shadow:0 4px 20px rgba(50,204,254,.3);">
+          Begin Walk-Out
+        </button>
       </div>
       <div style="padding:0 16px 24px;">
-        <button onclick="startWalkoutNoGPS()" style="width:100%;padding:14px;background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.12);border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;">Manual Mode (no GPS)</button>
+        <button onclick="startWalkoutNoGPS()"
+          style="width:100%;padding:12px;background:transparent;color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.1);border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;">
+          Manual Mode (no GPS)
+        </button>
       </div>
     </div>
 
@@ -454,6 +494,7 @@ body{font-family:"Barlow",sans-serif;background:var(--waze-dark);color:var(--waz
               <div id="wo-prog-bar" style="height:100%;background:#32CCFE;border-radius:100px;width:0%;transition:width .5s ease;"></div>
             </div>
             <span id="wo-prog-label" style="font-family:Barlow Condensed,sans-serif;font-size:.78rem;font-weight:700;color:#fff;white-space:nowrap;">1/8</span>
+            <span id="wo-mode-badge" style="font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:100px;background:rgba(50,204,254,.15);color:#32CCFE;white-space:nowrap;">CH8</span>
           </div>
           <div id="wo-gps-acc" style="background:rgba(50,204,254,.1);border:1px solid rgba(50,204,254,.3);border-radius:100px;padding:6px 10px;font-size:.65rem;font-weight:700;color:#32CCFE;white-space:nowrap;">GPS --</div>
         </div>
@@ -467,6 +508,7 @@ body{font-family:"Barlow",sans-serif;background:var(--waze-dark);color:var(--waz
           <div style="font-size:.65rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Distance to walk</div>
           <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
             <div id="wo-dir-arrow" style="width:44px;height:44px;background:#32CCFE;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 12px rgba(50,204,254,.35);">&#11014;&#65039;</div>
+          <div id="wo-turn-banner" style="display:none;background:rgba(255,214,0,.15);border:1px solid rgba(255,214,0,.4);border-radius:8px;padding:4px 10px;font-size:.65rem;font-weight:700;color:#FFD600;white-space:nowrap;">↩ TURN AROUND</div>
             <div>
               <div style="display:flex;align-items:baseline;gap:5px;">
                 <div id="wo-remaining" style="font-family:Barlow Condensed,sans-serif;font-size:4.5rem;font-weight:900;color:#fff;line-height:1;">--</div>
@@ -969,14 +1011,40 @@ function markDone(i,e){if(e)e.stopPropagation();} // retained for compatibility
 
 
 // ════ SETUP / LAYOUT ════
+// ── MODE SELECTOR ──
+function selectWOMode(mode){
+  WO.setupMode=mode;
+  var modes=["ch8","prog"];
+  modes.forEach(function(m){
+    var card=document.getElementById("wo-mode-"+m);
+    var check=document.getElementById("wo-mode-"+m+"-check");
+    var active=(m===mode);
+    if(card){
+      card.style.border="2px solid "+(active?"#32CCFE":"rgba(255,255,255,.1)");
+      card.style.background=active?"#243044":"#1e2d45";
+    }
+    if(check){
+      check.style.background=active?"#32CCFE":"rgba(255,255,255,.1)";
+      check.style.border=active?"none":"1.5px solid rgba(255,255,255,.2)";
+      check.style.color=active?"#0d1f35":"transparent";
+    }
+  });
+}
+
+
 function getPlacementSeq(){
   const d=DIST[S.speed]||DIST[30];
   const spd=S.speed||30;
   const width=S.width||"dual";
   const isNarrow=(width==="narrow");
   const isSingle=(width==="single");
-  const useLights=(isNarrow||isSingle);
+  const mode=WO.setupMode||"ch8";
 
+  // Progressive mode uses a different sequence regardless of road width
+  if(mode==="prog"){
+    return getPlacementSeqProgressive(d,spd,width);
+  }
+  // Chapter 8 mode — regulatory order
   if(isNarrow){
     return getPlacementSeqClosure(d,spd);
   }else if(isSingle){
@@ -986,8 +1054,159 @@ function getPlacementSeq(){
   }
 }
 
-// ── FULL ROAD CLOSURE sequence (narrow roads under 5.5m) ──
-// Chapter 8 s.6.5 — full closure, both ends signed and barriered
+// ── PROGRESSIVE LEAN SETUP SEQUENCE ──
+// Lean working order — minimises walking trips, starts at works and works outward.
+// Operative arrives, parks vehicle, sets guarding, then does ONE walk upstream
+// placing cones then signs as they go, then walks back and handles downstream.
+function getPlacementSeqProgressive(d,spd,width){
+  var seq=[];
+  var isNarrow=(width==="narrow");
+  var isSingle=(width==="single");
+  var bufDist=spd>=50?25:spd>=40?10:5;
+  var tmIcon=spd<=30?"&#128721;":"&#128678;";
+  var tmLabel=spd<=30?"Stop/Go Board":"Temp Traffic Light";
+
+  // ── PHASE 1: At works — vehicle and guarding first ──
+  seq.push({id:"p_vehicle",icon:"&#128666;",
+    name:"Park Works Vehicle",
+    detail:"Position vehicle on nearside at works. Hazard lights and amber beacon on. Keys in ignition. Road Works sign displayed. Vehicle protects the site while you set up.",
+    dist:0,dir:"works",phase:"Phase 1 — At works",
+    reg:"Chapter 8 s.5.4 - Red Book Part 3",color:"var(--blue)"});
+
+  seq.push({id:"p_barriers",icon:"&#128679;",
+    name:"Set Up Work Zone Guarding",
+    detail:"Place Chapter 8 barriers around full work area. Min 0.5m clearance from excavation. Amber beacon each end. Site is now protected — you can walk out.",
+    dist:0,dir:"works",phase:"Phase 1 — At works",
+    reg:"Chapter 8 CoP s.7 - CDM 2015",color:"var(--red)"});
+
+  // ── PHASE 2: Walk upstream continuously placing items as you go ──
+  if(isNarrow){
+    // Full closure — walk to closure point and place barriers + diversion
+    seq.push({id:"p_close_up",icon:"&#128721;",
+      name:"Upstream Road Closed + Barriers",
+      detail:"Walk upstream to closure point. Place Road Closed sign and Chapter 8 barriers across full carriageway width. Place pedestrian diversion signs.",
+      dist:Math.round(d.advance*0.5),dir:"upstream",phase:"Phase 2 — Walk upstream",
+      reg:"Chapter 8 s.6.5 - TSRGD 2016 Diagram 619",color:"var(--red)"});
+
+    seq.push({id:"p_adv_up",icon:"&#9888;&#65039;",
+      name:"Upstream Advance Sign",
+      detail:"Continue upstream to "+d.advance+"m. Place Road Works Ahead sign facing oncoming traffic.",
+      dist:Math.round(d.advance*0.5),dir:"upstream",phase:"Phase 2 — Walk upstream",
+      reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+    // Walk back through works and continue downstream
+    seq.push({id:"p_close_dn",icon:"&#128721;",
+      name:"Downstream Road Closed + Barriers",
+      detail:"Walk back through works and continue "+Math.round(d.advance*0.5)+"m downstream. Place Road Closed sign and barriers. Place pedestrian diversion signs.",
+      dist:d.advance+Math.round(d.advance*0.5),dir:"downstream",phase:"Phase 3 — Walk downstream",
+      reg:"Chapter 8 s.6.5",color:"var(--red)"});
+
+    seq.push({id:"p_adv_dn",icon:"&#9888;&#65039;",
+      name:"Downstream Advance Sign",
+      detail:"Continue "+Math.round(d.advance*0.5)+"m downstream. Place Road Works Ahead sign facing approaching traffic.",
+      dist:Math.round(d.advance*0.5),dir:"downstream",phase:"Phase 3 — Walk downstream",
+      reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+  } else if(isSingle){
+    // Single lane — walk to upstream TM point, place it, continue to advance sign
+    seq.push({id:"p_tm_up",icon:tmIcon,
+      name:"Upstream "+tmLabel,
+      detail:"Walk upstream "+d.taper+"m to TM point. Position "+tmLabel+" on nearside. Hold on STOP/RED — do not release traffic until downstream TM is in place.",
+      dist:d.taper,dir:"upstream",phase:"Phase 2 — Walk upstream",
+      reg:"Chapter 8 s.6.3",color:"var(--orange)"});
+
+    seq.push({id:"p_adv_up",icon:"&#9888;&#65039;",
+      name:"Upstream Advance Sign",
+      detail:"Continue "+Math.round(d.advance*0.5)+"m. Place Road Works Ahead sign facing oncoming traffic.",
+      dist:Math.round(d.advance*0.5),dir:"upstream",phase:"Phase 2 — Continue upstream",
+      reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+    // Walk back through works, continue downstream
+    seq.push({id:"p_tm_dn",icon:tmIcon,
+      name:"Downstream "+tmLabel,
+      detail:"Walk back through works and continue "+d.taper+"m downstream. Position "+tmLabel+". Coordinate with upstream operative — release alternate traffic in turns.",
+      dist:d.taper+d.advance*0.5+d.taper,dir:"downstream",phase:"Phase 3 — Walk downstream",
+      reg:"Chapter 8 s.6.3",color:"var(--orange)"});
+
+    seq.push({id:"p_adv_dn",icon:"&#9888;&#65039;",
+      name:"Downstream Advance Sign",
+      detail:"Continue "+Math.round(d.advance*0.5)+"m downstream. Place Road Works Ahead sign facing approaching traffic from this direction.",
+      dist:Math.round(d.advance*0.5),dir:"downstream",phase:"Phase 3 — Continue downstream",
+      reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+  } else {
+    // Dual / two-lane — full taper sequence walkout
+    // Walk upstream to taper start, place first cone
+    seq.push({id:"p_taper_start",icon:"CONE",
+      name:"First Taper Cone",
+      detail:"Walk "+d.taper+"m upstream from works. Place first cone at taper start — angled 45° into nearside lane. This marks the start of the lead-in taper.",
+      dist:d.taper,dir:"upstream",phase:"Phase 2 — Walk upstream to taper start",
+      reg:"Chapter 8 Table 8-4",color:"var(--orange)"});
+
+    // Walk back placing cones continuously
+    var nc=Math.max(2,Math.floor(d.taper/d.coneGap)-1);
+    seq.push({id:"p_taper_back",icon:"CONE",
+      name:"Taper Cones x "+nc+" — walk back",
+      detail:"Walk back toward works placing "+nc+" cones every "+d.coneGap+"m. Each cone angles further across the lane — complete the taper as you walk.",
+      dist:d.coneGap,dir:"downstream",phase:"Phase 2 — Walk back placing taper",transition:true,
+      reg:"Chapter 8 Table 8-4",color:"var(--orange)"});
+
+    // Continue upstream past taper for signs
+    if(spd>=40){
+      seq.push({id:"p_spd",icon:"&#128308;",
+        name:"Speed Restriction Sign",
+        detail:"Walk upstream to sign position. Place temporary speed restriction sign on nearside verge facing oncoming traffic.",
+        dist:Math.round(d.advance*0.25),dir:"upstream",phase:"Phase 2 — Continue upstream for signs",
+        reg:"TSRGD 2016",color:"var(--red)"});
+    }
+
+    if(spd>=40){
+      seq.push({id:"p_adv2",icon:"&#9888;&#65039;",
+        name:"Second Advance Sign",
+        detail:"Continue upstream "+Math.round(d.advance*0.35)+"m. Place follow-on Road Works Ahead sign.",
+        dist:Math.round(d.advance*0.35),dir:"upstream",phase:"Phase 2 — Continue upstream",
+        reg:"Chapter 8 s.4.2",color:"var(--yellow)"});
+    }
+
+    seq.push({id:"p_adv1",icon:"&#9888;&#65039;",
+      name:"Advance Warning Sign",
+      detail:"Continue upstream to "+d.advance+"m from works. Place Road Works Ahead sign on nearside. This is the furthest point of your walk-out.",
+      dist:spd>=40?Math.round(d.advance*0.4):d.advance,dir:"upstream",phase:"Phase 2 — Furthest point ↩ turn around here",transition:true,
+      reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+    if(spd>=50){
+      seq.push({id:"p_arrow",icon:"&#8599;&#65039;",
+        name:"Arrow Board — back at taper",
+        detail:"Walk back "+d.advance+"m to taper start. Position arrow board pointing away from works. Mandatory at 50mph+.",
+        dist:d.advance,dir:"downstream",phase:"Phase 3 — Walk back",
+        reg:"Chapter 8 Table 8-4",color:"var(--orange)"});
+
+      // Shadow vehicle before downstream cones
+      seq.push({id:"p_shadow",icon:"&#128737;&#65039;",
+        name:"Shadow Vehicle",
+        detail:"Walk back past works. Position shadow vehicle upstream of works vehicle. Arrow board active. Driver in cab seatbelt on.",
+        dist:d.taper+(spd>=60?30:20),dir:"downstream",phase:"Phase 3 — Position shadow vehicle",
+        reg:"Chapter 8 s.5.5 - BD 52",color:"var(--blue)"});
+
+      seq.push({id:"p_dn_cones",icon:"CONE",
+        name:"Downstream Clearance Cones",
+        detail:"Walk "+bufDist+"m downstream past works. Place 3-5 cones guiding traffic back to normal running.",
+        dist:bufDist+(spd>=60?30:20),dir:"downstream",phase:"Phase 3 — Downstream",
+        reg:"Chapter 8 Diagram 1",color:"var(--orange)"});
+    } else {
+      // Walk back to works then downstream cones — one continuous move
+      seq.push({id:"p_dn_cones",icon:"CONE",
+        name:"Downstream Clearance Cones",
+        detail:"Walk back to works then continue "+bufDist+"m downstream. Place 3-5 cones guiding traffic back to normal running.",
+        dist:d.advance+bufDist,dir:"downstream",phase:"Phase 3 — Walk back and downstream",
+        reg:"Chapter 8 Diagram 1",color:"var(--orange)"});
+    }
+  }
+
+  return seq;
+}
+
+
 function getPlacementSeqClosure(d,spd){
   var seq=[];
 
@@ -1077,14 +1296,16 @@ function rotateDiagram(deg){
 
 function setupTab(tab){
   document.getElementById("tab-diagram-content").style.display=tab==="diagram"?"block":"none";
+  document.getElementById("tab-redbook-content").style.display=tab==="redbook"?"block":"none";
   document.getElementById("tab-walkout-content").style.display=tab==="walkout"?"flex":"none";
-  document.getElementById("tab-diagram-btn").classList.toggle("active",tab==="diagram");
-  document.getElementById("tab-diagram-btn").classList.toggle("inactive",tab!=="diagram");
-  document.getElementById("tab-walkout-btn").classList.toggle("active",tab==="walkout");
-  document.getElementById("tab-walkout-btn").classList.toggle("inactive",tab!=="walkout");
+  ["diagram","redbook","walkout"].forEach(function(t){
+    var b=document.getElementById("tab-"+t+"-btn");
+    if(b){b.classList.toggle("active",t===tab);b.classList.toggle("inactive",t!==tab);}
+  });
   var rotBar=document.getElementById("diagram-rotate-bar");
   if(rotBar)rotBar.style.display=tab==="diagram"?"flex":"none";
-  if(tab==="diagram"){renderDiagram();}
+  if(tab==="diagram")renderDiagram();
+  if(tab==="redbook")renderRedBook();
   if(tab==="walkout")initWalkoutGPS();
 }
 
@@ -1897,6 +2118,410 @@ function renderDiagramLights(cont,d,spd,tradeName,rot,landscape,flip){
 }
 
 
+// ════ RED BOOK DIAGRAMS ════
+// "Safety at Street Works and Road Works — A Code of Practice" (October 2013)
+// Crown Copyright, Open Government Licence v2.0
+// Diagrams redrawn as SVG from the published standard layouts
+
+function renderRedBook(){
+  var cont=document.getElementById("tab-redbook-content");
+  if(!cont)return;
+
+  if(!S.speed||!S.trade){
+    cont.innerHTML="<div style='text-align:center;padding:40px 20px;'>"
+      +"<div style='font-size:3rem;margin-bottom:12px;'>&#128214;</div>"
+      +"<div style='font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:800;text-transform:uppercase;color:#32CCFE;'>Select Trade and Speed First</div>"
+      +"<div style='font-size:.78rem;margin-top:8px;color:rgba(255,255,255,.4);'>Complete the Home screen to see the relevant Red Book diagram.</div>"
+      +"</div>";
+    return;
+  }
+
+  var d=DIST[S.speed];
+  var spd=S.speed;
+  var width=S.width||"dual";
+  var isNarrow=(width==="narrow");
+  var isSingle=(width==="single");
+
+  // Red Book Table dimensions (inside back cover)
+  // T = taper length, L = longways clearance, C = coned area, S = sideways clearance
+  var dims={
+    20:{D:25,  T:25, L:2,  C:1,  S:0.5, coneSize:500, coneGap:1  },
+    30:{D:50,  T:35, L:2,  C:1,  S:0.5, coneSize:500, coneGap:1  },
+    40:{D:80,  T:50, L:4,  C:1,  S:1.0, coneSize:750, coneGap:1.5},
+    50:{D:100, T:65, L:4,  C:1,  S:1.0, coneSize:750, coneGap:2  },
+    60:{D:160, T:85, L:8,  C:1,  S:1.5, coneSize:750, coneGap:2  },
+    70:{D:200, T:100,L:8,  C:1,  S:1.5, coneSize:750, coneGap:2  }
+  };
+  var dim=dims[spd]||dims[30];
+
+  // Choose which diagram to show
+  var diagramFn=isNarrow?rbClosure:isSingle?rbSingleCarriageway:rbBasicLayout;
+  var svgHtml=diagramFn(dim,spd);
+
+  // Build the page
+  var html=
+    // OGL attribution header
+    '<div style="background:#1e2d45;border-bottom:1px solid rgba(50,204,254,.18);padding:12px 16px;">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">'
+    +'<div style="font-size:1rem;">&#128214;</div>'
+    +'<div style="font-family:Barlow Condensed,sans-serif;font-size:.95rem;font-weight:800;text-transform:uppercase;color:#32CCFE;">Safety at Street Works and Road Works</div>'
+    +'</div>'
+    +'<div style="font-size:.68rem;color:rgba(255,255,255,.4);line-height:1.5;">'
+    +'A Code of Practice (October 2013) &nbsp;·&nbsp; Department for Transport &nbsp;·&nbsp; '
+    +'Crown Copyright, reproduced under Open Government Licence v2.0'
+    +'</div>'
+    +'</div>'
+    // Dimensions table — Red Book back cover
+    +'<div style="padding:12px 16px;background:#111827;">'
+    +'<div style="font-family:Barlow Condensed,sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.7);letter-spacing:1px;margin-bottom:8px;">Dimensions for '+spd+'mph — Red Book Table (inside back cover)</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px;">'
+    +rbDimCell("D","Advance Sign Distance",dim.D+"m","#FFD600")
+    +rbDimCell("T","Lead-in Taper Length",dim.T+"m","#32CCFE")
+    +rbDimCell("L","Longways Clearance",dim.L+"m","#00C853")
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">'
+    +rbDimCell("S","Sideways Clearance",dim.S+"m","#FF6B00")
+    +rbDimCell("C","Coned Area Min",dim.C+"m","#888")
+    +rbDimCell("","Cone Size",dim.coneSize+"mm","#CC0000")
+    +'</div>'
+    +'</div>'
+    // The diagram
+    +'<div style="padding:0 0 80px;">'
+    +svgHtml
+    +'</div>';
+
+  cont.innerHTML=html;
+}
+
+function rbDimCell(letter,label,value,col){
+  return "<div style='background:#1e2d45;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 10px;'>"
+    +"<div style='display:flex;align-items:baseline;gap:4px;margin-bottom:2px;'>"
+    +(letter?"<div style='font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:900;color:"+col+";'>"+letter+"</div>":"")
+    +"<div style='font-size:.62rem;color:rgba(255,255,255,.4);'>"+label+"</div>"
+    +"</div>"
+    +"<div style='font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;color:#fff;'>"+value+"</div>"
+    +"</div>";
+}
+
+// ── RED BOOK DIAGRAM 1 — Basic Layout (single carriageway with works vehicle) ──
+// Red Book page 21
+function rbBasicLayout(dim,spd){
+  var W=340, H=820;
+  var rX=90, rW=130, lW=65; // road, lane width
+  var re=rX+rW, cx=rX+lW;
+  var pad=24;
+
+  // Scale: totalM = D + T + L + C + L + exitT
+  var exitT=Math.round(dim.T*0.5);
+  var totalM=dim.D+dim.T+dim.L+20+dim.L+exitT+dim.D*0.3;
+  var scale=(H-pad*2)/totalM;
+  function y(m){return pad+m*scale;}
+
+  // Key positions
+  var yD1=y(0);                           // first advance sign (D from taper start)
+  var yTapS=y(dim.D);                     // taper start
+  var yTapE=y(dim.D+dim.T);              // taper end
+  var yBarrier=y(dim.D+dim.T+dim.L);     // traffic barrier (start of longways clearance)
+  var yWZ=y(dim.D+dim.T+dim.L+20);       // works area centre
+  var yBarrierE=y(dim.D+dim.T+dim.L+20+dim.L); // end barrier
+  var yExitE=y(dim.D+dim.T+dim.L+20+dim.L+exitT); // exit taper end
+  var yD2=y(totalM);                      // end advance sign
+
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111827;display:block;">';
+
+  // ── Background ──
+  svg+='<rect x="0" y="0" width="'+rX+'" height="'+H+'" fill="#1a2e1a"/>';
+  svg+='<rect x="'+re+'" y="0" width="'+(W-re)+'" height="'+H+'" fill="#1a2e1a"/>';
+
+  // ── Road surface ──
+  svg+='<rect x="'+rX+'" y="0" width="'+rW+'" height="'+H+'" fill="#2c3144"/>';
+  svg+='<rect x="'+rX+'" y="0" width="3" height="'+H+'" fill="rgba(255,255,255,.7)"/>'; // left kerb
+  svg+='<rect x="'+(re-3)+'" y="0" width="3" height="'+H+'" fill="rgba(255,255,255,.7)"/>'; // right kerb
+
+  // Centre dashes
+  var dashH=Math.max(14,12*scale), gapH=Math.max(8,6*scale);
+  svg+='<line x1="'+cx+'" y1="0" x2="'+cx+'" y2="'+H+'" stroke="#FFD600" stroke-width="2" stroke-dasharray="'+dashH+','+gapH+'"/>';
+
+  // Traffic flow arrows
+  var aCol1="#2a4a2a", aCol2="#1a3a5a";
+  [.1,.28,.48,.68,.88].forEach(function(f){
+    svg+='<polygon points="'+(rX+lW/2)+','+(pad+f*(H-pad*2)+8)+' '+(rX+lW/2-6)+','+(pad+f*(H-pad*2)-6)+' '+(rX+lW/2+6)+','+(pad+f*(H-pad*2)-6)+'" fill="'+aCol1+'"/>';
+  });
+
+  // ── LEAD-IN TAPER cones ──
+  var nT=Math.max(3,Math.floor(dim.T/dim.coneGap));
+  for(var i=0;i<=nT;i++){
+    var t=i/nT;
+    var cy2=yTapS+t*(yTapE-yTapS);
+    var cx2=re-t*lW;
+    svg+=rbCone(cx2,cy2,7);
+  }
+
+  // ── SAFETY ZONE (longways clearance) — yellow hatching ──
+  svg+='<rect x="'+cx+'" y="'+yTapE+'" width="'+lW+'" height="'+(yBarrier-yTapE)+'" fill="rgba(255,214,0,.08)" stroke="#FFD600" stroke-width="1" stroke-dasharray="4,3"/>';
+  // L label
+  svg+=rbDimArrow(re+8,yTapE,yBarrier,"L","#00C853",W);
+
+  // ── TRAFFIC BARRIER across lane ──
+  svg+=rbBarrier(cx,yBarrier,re,"#CC0000");
+
+  // ── WORKS AREA ──
+  var wzH=(yBarrierE-yBarrier);
+  svg+='<rect x="'+cx+'" y="'+yBarrier+'" width="'+lW+'" height="'+wzH+'" fill="rgba(255,107,0,.15)" stroke="rgba(255,107,0,.5)" stroke-width="1.5" stroke-dasharray="5,3"/>';
+  svg+='<text x="'+(cx+lW/2)+'" y="'+(yWZ-6)+'" text-anchor="middle" fill="#FF6B00" font-size="9" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKING</text>';
+  svg+='<text x="'+(cx+lW/2)+'" y="'+(yWZ+6)+'" text-anchor="middle" fill="#FF6B00" font-size="9" font-weight="bold" font-family="Barlow Condensed,sans-serif">SPACE</text>';
+
+  // ── WORKS VEHICLE ──
+  svg+=rbVehicle(cx+lW/2, yWZ+16, false);
+
+  // ── END BARRIER ──
+  svg+=rbBarrier(cx,yBarrierE,re,"#CC0000");
+
+  // ── EXIT TAPER ──
+  var nE=Math.max(2,Math.floor(exitT/dim.coneGap));
+  for(var i2=0;i2<=nE;i2++){
+    var t2=i2/nE;
+    var cy3=yBarrierE+t2*(yExitE-yBarrierE);
+    var cx3=cx+t2*lW;
+    svg+=rbCone(re-lW+t2*lW,cy3,7);
+  }
+
+  // ── ADVANCE SIGNS both ends ──
+  svg+=rbSign(rX-12,yD1,"ROAD\nWORKS\nAHEAD","#FFD600",true);
+  svg+='<line x1="'+(rX-24)+'" y1="'+yD1+'" x2="'+rX+'" y2="'+yD1+'" stroke="#FFD600" stroke-width="1" stroke-dasharray="3,3" opacity=".5"/>';
+  svg+=rbSign(rX-12,yD2,"END\nROAD\nWORKS","#FFD600",true);
+
+  // ── DIMENSION ANNOTATIONS ──
+  // D arrow (left side)
+  svg+=rbDimArrow(rX-52,yD1,yTapS,"D","#FFD600",W,true);
+  // T arrow
+  svg+=rbDimArrow(rX-52,yTapS,yTapE,"T","#32CCFE",W,true);
+  // L arrow (both)
+  svg+=rbDimArrow(rX-52,yTapE,yBarrier,"L","#00C853",W,true);
+  svg+=rbDimArrow(rX-52,yBarrierE,yExitE,"Exit Taper","#888",W,true);
+
+  // S sideways clearance (horizontal)
+  svg+=rbHorizArrow(yTapE+12,cx,re,"S","#FF6B00");
+
+  // ── LABELS ──
+  // Traffic flow label
+  svg+='<text x="'+(rX+lW/2)+'" y="16" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8" font-family="Barlow Condensed,sans-serif" letter-spacing="1">ONCOMING</text>';
+  svg+='<text x="'+(cx+lW/2)+'" y="16" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8" font-family="Barlow Condensed,sans-serif" letter-spacing="1">TRAVEL</text>';
+
+  // Speed note
+  svg+='<text x="'+(W/2)+'" y="'+(H-8)+'" text-anchor="middle" fill="rgba(255,255,255,.25)" font-size="8" font-family="Barlow Condensed,sans-serif">Red Book Table — '+spd+'mph &nbsp;·&nbsp; D='+dim.D+'m T='+dim.T+'m L='+dim.L+'m S='+dim.S+'m</text>';
+
+  svg+='</svg>';
+
+  return '<div style="background:#111827;">'
+    +'<div style="padding:10px 16px;border-bottom:1px solid rgba(50,204,254,.12);">'
+    +'<div style="font-family:Barlow Condensed,sans-serif;font-size:.85rem;font-weight:800;text-transform:uppercase;color:#32CCFE;">Red Book — Basic Layout</div>'
+    +'<div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:2px;">Single carriageway with works vehicle present (Red Book p.21)</div>'
+    +'</div>'
+    +svg
+    +'</div>';
+}
+
+// ── RED BOOK DIAGRAM 2 — Single carriageway Stop/Go or portable signals ──
+function rbSingleCarriageway(dim,spd){
+  var useLights=spd>=40;
+  var W=340, H=900;
+  var rX=100, rW=110;
+  var pad=24;
+  var totalM=dim.D+20+30+20+dim.D;
+  var scale=(H-pad*2)/totalM;
+  function y(m){return pad+m*scale;}
+
+  var yD1=y(0), yTM1=y(dim.D), yWZS=y(dim.D+20), yWZE=y(dim.D+50), yTM2=y(dim.D+70), yD2=y(totalM);
+  var cx=rX+rW/2, re=rX+rW;
+
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111827;display:block;">';
+  svg+='<rect x="0" y="0" width="'+rX+'" height="'+H+'" fill="#1a2e1a"/>';
+  svg+='<rect x="'+re+'" y="0" width="'+(W-re)+'" height="'+H+'" fill="#1a2e1a"/>';
+  svg+='<rect x="'+rX+'" y="0" width="'+rW+'" height="'+H+'" fill="#2c3144"/>';
+  svg+='<rect x="'+rX+'" y="0" width="3" height="'+H+'" fill="rgba(255,255,255,.7)"/>';
+  svg+='<rect x="'+(re-3)+'" y="0" width="3" height="'+H+'" fill="rgba(255,255,255,.7)"/>';
+  svg+='<text x="'+cx+'" y="16" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="8" font-family="Barlow Condensed,sans-serif" letter-spacing="1">ONE LANE ROAD</text>';
+
+  // Works area — full width blocked
+  svg+='<rect x="'+rX+'" y="'+yWZS+'" width="'+rW+'" height="'+(yWZE-yWZS)+'" fill="rgba(255,107,0,.15)" stroke="rgba(255,107,0,.5)" stroke-width="1.5" stroke-dasharray="5,3"/>';
+  svg+='<text x="'+cx+'" y="'+(yWZS+(yWZE-yWZS)/2)+'" text-anchor="middle" fill="#FF6B00" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS AREA</text>';
+  svg+=rbVehicle(cx, yWZS+(yWZE-yWZS)/2+20, false);
+  // Barriers at each end
+  svg+=rbBarrier(rX,yWZS,re,"#FFD600");
+  svg+=rbBarrier(rX,yWZE,re,"#FFD600");
+
+  // TM units
+  if(useLights){
+    svg+=rbTrafficLight(rX-20,yTM1);
+    svg+=rbTrafficLight(rX-20,yTM2);
+  }else{
+    svg+=rbStopGo(rX-20,yTM1,"STOP");
+    svg+=rbStopGo(rX-20,yTM2,"GO");
+    svg+=rbWorker(re+14,yTM1);
+    svg+=rbWorker(re+14,yTM2);
+  }
+
+  // Signs
+  svg+=rbSign(re+12,yD1,"ROAD\nWORKS","#FFD600",false);
+  svg+=rbSign(re+12,yD2,"ROAD\nWORKS","#FFD600",false);
+
+  // D arrows
+  svg+=rbDimArrow(rX-52,yD1,yTM1,"D","#FFD600",W,true);
+  svg+=rbDimArrow(rX-52,yTM2,yD2,"D","#FFD600",W,true);
+
+  // Labels
+  var tmLabel=useLights?"TEMP LIGHTS":"STOP/GO";
+  svg+='<text x="'+(rX-22)+'" y="'+(yTM1-16)+'" text-anchor="middle" fill="#32CCFE" font-size="8" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+tmLabel+'</text>';
+  svg+='<text x="'+(rX-22)+'" y="'+(yTM2+28)+'" text-anchor="middle" fill="#32CCFE" font-size="8" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+tmLabel+'</text>';
+
+  svg+='<text x="'+(W/2)+'" y="'+(H-8)+'" text-anchor="middle" fill="rgba(255,255,255,.25)" font-size="8" font-family="Barlow Condensed,sans-serif">Red Book — '+spd+'mph single carriageway</text>';
+  svg+='</svg>';
+
+  return '<div style="background:#111827;">'
+    +'<div style="padding:10px 16px;border-bottom:1px solid rgba(50,204,254,.12);">'
+    +'<div style="font-family:Barlow Condensed,sans-serif;font-size:.85rem;font-weight:800;text-transform:uppercase;color:#32CCFE;">Red Book — '+(useLights?"Portable Traffic Signals":"Stop/Go Boards")+'</div>'
+    +'<div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:2px;">Single carriageway '+spd+'mph — '+(useLights?"Red Book p.62":"Red Book p.60")+'</div>'
+    +'</div>'
+    +svg+'</div>';
+}
+
+// ── RED BOOK DIAGRAM 3 — Full Road Closure ──
+function rbClosure(dim,spd){
+  var W=340, H=840;
+  var rX=100, rW=110, cx=rX+rW/2, re=rX+rW;
+  var pad=24;
+  var totalM=dim.D+15+30+15+dim.D;
+  var scale=(H-pad*2)/totalM;
+  function y(m){return pad+m*scale;}
+
+  var yD1=y(0), yCl1=y(dim.D), yWZS=y(dim.D+15), yWZE=y(dim.D+45), yCl2=y(dim.D+60), yD2=y(totalM);
+
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 '+W+' '+H+'" style="background:#111827;display:block;">';
+  svg+='<rect x="0" y="0" width="'+rX+'" height="'+H+'" fill="#1a2e1a"/>';
+  svg+='<rect x="'+re+'" y="0" width="'+(W-re)+'" height="'+H+'" fill="#1a2e1a"/>';
+  svg+='<rect x="'+rX+'" y="0" width="'+rW+'" height="'+H+'" fill="#2c3144"/>';
+  svg+='<rect x="'+rX+'" y="0" width="3" height="'+H+'" fill="rgba(255,255,255,.7)"/>';
+  svg+='<rect x="'+(re-3)+'" y="0" width="3" height="'+H+'" fill="rgba(255,255,255,.7)"/>';
+
+  // Works area full closure
+  svg+='<rect x="'+rX+'" y="'+yWZS+'" width="'+rW+'" height="'+(yWZE-yWZS)+'" fill="rgba(200,0,0,.18)" stroke="rgba(200,0,0,.5)" stroke-width="1.5" stroke-dasharray="5,3"/>';
+  svg+='<text x="'+cx+'" y="'+(yWZS+(yWZE-yWZS)/2+4)+'" text-anchor="middle" fill="#FF4444" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">WORKS ZONE</text>';
+  svg+=rbVehicle(cx, yWZE-20, false);
+  // Amber beacons at closure barriers
+  svg+=rbBeacon(rX+10,yCl1);svg+=rbBeacon(re-10,yCl1);
+  svg+=rbBeacon(rX+10,yCl2);svg+=rbBeacon(re-10,yCl2);
+  // Closure barriers
+  svg+=rbBarrier(rX,yCl1,re,"#CC0000");
+  svg+=rbBarrier(rX,yCl2,re,"#CC0000");
+  // Road Closed signs
+  svg+=rbRoadClosedSign(re+12,yCl1);
+  svg+=rbRoadClosedSign(re+12,yCl2);
+  // Ped diversion arrows
+  svg+='<text x="'+(rX-16)+'" y="'+(yCl1+4)+'" text-anchor="middle" fill="#00C853" font-size="16">&#128694;</text>';
+  svg+='<text x="'+(rX-16)+'" y="'+(yCl2+4)+'" text-anchor="middle" fill="#00C853" font-size="16">&#128694;</text>';
+  // Advance signs
+  svg+=rbSign(re+12,yD1,"ROAD\nWORKS","#FFD600",false);
+  svg+=rbSign(re+12,yD2,"ROAD\nWORKS","#FFD600",false);
+  // Diversion signs
+  svg+=rbDiversionSign(rX-18,(yD1+yCl1)/2,"left");
+  svg+=rbDiversionSign(rX-18,(yCl2+yD2)/2,"right");
+  // D arrows
+  svg+=rbDimArrow(rX-50,yD1,yCl1,"D","#FFD600",W,true);
+  svg+=rbDimArrow(rX-50,yCl2,yD2,"D","#FFD600",W,true);
+
+  svg+='<text x="'+(W/2)+'" y="'+(H-8)+'" text-anchor="middle" fill="rgba(255,255,255,.25)" font-size="8" font-family="Barlow Condensed,sans-serif">Red Book — Full road closure — D='+dim.D+'m</text>';
+  svg+='</svg>';
+
+  return '<div style="background:#111827;">'
+    +'<div style="padding:10px 16px;border-bottom:1px solid rgba(50,204,254,.12);">'
+    +'<div style="font-family:Barlow Condensed,sans-serif;font-size:.85rem;font-weight:800;text-transform:uppercase;color:#32CCFE;">Red Book — Full Road Closure</div>'
+    +'<div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:2px;">Road closure with diversion (Red Book p.70)</div>'
+    +'</div>'
+    +svg+'</div>';
+}
+
+// ── SVG COMPONENT HELPERS ──
+function rbCone(cx,cy,r){
+  return '<polygon points="'+cx+','+(cy-r*1.5)+' '+(cx+r*.9)+','+(cy+r*.6)+' '+(cx-r*.9)+','+(cy+r*.6)+'" fill="#CC0000"/>'
+    +'<polygon points="'+(cx-r*.5)+','+(cy-r*.1)+' '+(cx+r*.5)+','+(cy-r*.1)+' '+(cx+r*.65)+','+(cy+r*.25)+' '+(cx-r*.65)+','+(cy+r*.25)+'" fill="white" opacity=".9"/>'
+    +'<rect x="'+(cx-r)+'" y="'+(cy+r*.6)+'" width="'+(r*2)+'" height="'+(r*.4)+'" rx="1" fill="#222"/>';
+}
+function rbBeacon(cx,cy){
+  return '<circle cx="'+cx+'" cy="'+cy+'" r="5" fill="#FF6B00"/>'
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="8" fill="none" stroke="#FF6B00" stroke-width="1.5" opacity=".4"/>';
+}
+function rbVehicle(cx,cy,wide){
+  var w=wide?52:36, h=22;
+  return '<rect x="'+(cx-w/2)+'" y="'+(cy-h/2)+'" width="'+w+'" height="'+h+'" rx="5" fill="#0d1f35" stroke="#32CCFE" stroke-width="1.5"/>'
+    +'<text x="'+cx+'" y="'+(cy+3)+'" text-anchor="middle" fill="#32CCFE" font-size="8" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+(wide?"WORKS VEHICLE":"VEHICLE")+'</text>';
+}
+function rbBarrier(x1,y,x2,col){
+  col=col||"#CC0000";
+  var html='<line x1="'+x1+'" y1="'+y+'" x2="'+x2+'" y2="'+y+'" stroke="'+col+'" stroke-width="3.5"/>';
+  var step=(x2-x1)/5;
+  for(var i=0;i<5;i++){
+    html+='<line x1="'+(x1+i*step+2)+'" y1="'+y+'" x2="'+(x1+i*step+step/2)+'" y2="'+(y+6)+'" stroke="'+col+'" stroke-width="1.5" opacity=".7"/>';
+  }
+  return html;
+}
+function rbSign(x,y,text,col,left){
+  var lines=text.split("\n");
+  var bh=lines.length*12+8, bw=38;
+  var bx=left?(x-bw-2):(x+2);
+  var html='<rect x="'+bx+'" y="'+(y-bh/2)+'" width="'+bw+'" height="'+bh+'" rx="4" fill="#0d0d00" stroke="'+col+'" stroke-width="1.5"/>';
+  lines.forEach(function(l,i){
+    html+='<text x="'+(bx+bw/2)+'" y="'+(y-bh/2+12+i*12)+'" text-anchor="middle" fill="'+col+'" font-size="8.5" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+l+'</text>';
+  });
+  return html;
+}
+function rbRoadClosedSign(x,y){
+  return '<rect x="'+x+'" y="'+(y-14)+'" width="44" height="28" rx="4" fill="#CC0000" stroke="rgba(255,255,255,.3)" stroke-width="1"/>'
+    +'<text x="'+(x+22)+'" y="'+(y-3)+'" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="Barlow Condensed,sans-serif">ROAD</text>'
+    +'<text x="'+(x+22)+'" y="'+(y+8)+'" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="Barlow Condensed,sans-serif">CLOSED</text>';
+}
+function rbDiversionSign(x,y,dir){
+  var arr=dir==="left"?"←":dir==="right"?"→":"↓";
+  return '<rect x="'+(x-22)+'" y="'+(y-12)+'" width="44" height="24" rx="4" fill="#003399" stroke="rgba(255,255,255,.3)" stroke-width="1"/>'
+    +'<text x="'+x+'" y="'+(y-2)+'" text-anchor="middle" fill="white" font-size="7" font-weight="bold" font-family="Barlow Condensed,sans-serif">DIVERSION</text>'
+    +'<text x="'+x+'" y="'+(y+8)+'" text-anchor="middle" fill="white" font-size="11">'+arr+'</text>';
+}
+function rbTrafficLight(x,y){
+  return '<rect x="'+(x-7)+'" y="'+(y-18)+'" width="14" height="30" rx="3" fill="#111" stroke="#32CCFE" stroke-width="1.5"/>'
+    +'<circle cx="'+x+'" cy="'+(y-10)+'" r="4" fill="#CC0000"/>'
+    +'<circle cx="'+x+'" cy="'+y+'" r="4" fill="#FF6B00" opacity=".4"/>'
+    +'<circle cx="'+x+'" cy="'+(y+10)+'" r="4" fill="#00C853" opacity=".4"/>';
+}
+function rbStopGo(x,y,showing){
+  var col=showing==="STOP"?"#CC0000":"#00C853";
+  return '<rect x="'+(x-14)+'" y="'+(y-18)+'" width="28" height="36" rx="4" fill="#111" stroke="'+col+'" stroke-width="1.5"/>'
+    +'<text x="'+x+'" y="'+(y+5)+'" text-anchor="middle" fill="'+col+'" font-size="9" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+showing+'</text>';
+}
+function rbWorker(x,y){
+  return '<circle cx="'+x+'" cy="'+(y-16)+'" r="6" fill="#32CCFE" opacity=".8"/>'
+    +'<rect x="'+(x-6)+'" y="'+(y-10)+'" width="12" height="16" rx="2" fill="#32CCFE" opacity=".7"/>'
+    +'<text x="'+x+'" y="'+(y+14)+'" text-anchor="middle" fill="#32CCFE" font-size="7" font-family="Barlow Condensed,sans-serif">OP</text>';
+}
+function rbDimArrow(x,y1,y2,label,col,W,leftSide){
+  var mid=(y1+y2)/2;
+  col=col||"#888";
+  return '<line x1="'+x+'" y1="'+(y1+2)+'" x2="'+x+'" y2="'+(y2-2)+'" stroke="'+col+'" stroke-width="1" opacity=".6"/>'
+    +'<line x1="'+(x-4)+'" y1="'+(y1+2)+'" x2="'+(x+4)+'" y2="'+(y1+2)+'" stroke="'+col+'" stroke-width="1.5" opacity=".6"/>'
+    +'<line x1="'+(x-4)+'" y1="'+(y2-2)+'" x2="'+(x+4)+'" y2="'+(y2-2)+'" stroke="'+col+'" stroke-width="1.5" opacity=".6"/>'
+    +'<rect x="'+(x-14)+'" y="'+(mid-8)+'" width="28" height="16" rx="8" fill="'+col+'" opacity=".18"/>'
+    +'<text x="'+x+'" y="'+(mid+4)+'" text-anchor="middle" fill="'+col+'" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+label+'</text>';
+}
+function rbHorizArrow(y,x1,x2,label,col){
+  var mid=(x1+x2)/2;
+  col=col||"#888";
+  return '<line x1="'+(x1+2)+'" y1="'+y+'" x2="'+(x2-2)+'" y2="'+y+'" stroke="'+col+'" stroke-width="1" opacity=".6"/>'
+    +'<line x1="'+(x1+2)+'" y1="'+(y-4)+'" x2="'+(x1+2)+'" y2="'+(y+4)+'" stroke="'+col+'" stroke-width="1.5" opacity=".6"/>'
+    +'<line x1="'+(x2-2)+'" y1="'+(y-4)+'" x2="'+(x2-2)+'" y2="'+(y+4)+'" stroke="'+col+'" stroke-width="1.5" opacity=".6"/>'
+    +'<rect x="'+(mid-10)+'" y="'+(y-8)+'" width="20" height="16" rx="8" fill="'+col+'" opacity=".18"/>'
+    +'<text x="'+mid+'" y="'+(y+4)+'" text-anchor="middle" fill="'+col+'" font-size="10" font-weight="bold" font-family="Barlow Condensed,sans-serif">'+label+'</text>';
+}
+
+
 // ════ GPS + CAMERA AR WALK-OUT — Waze-style engine ════
 var WO={
   _initWatchId:null,
@@ -1907,8 +2532,117 @@ var WO={
   currentLat:null,currentLng:null,currentAcc:999,currentSpd:0,currentHdg:0,
   kLat:null,kLng:null,kVLat:0,kVLng:0,kP:1,kLastT:0,
   smoothWalked:0,displayWalked:0,lastGPSWalked:0,lastGPST:0,
-  targetBearing:null
+  targetBearing:null,
+  // Road snap fields
+  roadName:"",roadRef:"",snapAccuracy:null,
+  rawStartLat:null,rawStartLng:null,
+  setupMode:"ch8"  // "ch8"=Chapter 8 order, "prog"=progressive lean setup
 };
+
+// ── ROAD SNAP — OpenStreetMap Overpass API ──
+// Snaps GPS position to nearest road node in OSM data
+// Returns {lat, lng, name, ref, bearing, snapDist} or null
+async function snapToRoad(lat,lng){
+  // Store raw GPS position for reference
+  WO.rawStartLat=lat; WO.rawStartLng=lng;
+
+  // Overpass query: get all highway ways within 60m of position
+  var radius=60;
+  var query='[out:json][timeout:8];'
+    +'way(around:'+radius+','+lat.toFixed(6)+','+lng.toFixed(6)+')[highway];'
+    +'(._;>;);out body;';
+
+  var url='https://overpass-api.de/api/interpreter?data='+encodeURIComponent(query);
+
+  var resp=await fetch(url,{signal:AbortSignal.timeout(8000)});
+  if(!resp.ok)return null;
+  var data=await resp.json();
+  if(!data.elements||data.elements.length===0)return null;
+
+  // Build node lookup
+  var nodes={};
+  data.elements.forEach(function(el){
+    if(el.type==="node")nodes[el.id]={lat:el.lat,lng:el.lon};
+  });
+
+  // Find nearest point on any road segment
+  var bestDist=Infinity,bestLat=lat,bestLng=lng,bestName="",bestRef="",bestBearing=null;
+
+  data.elements.forEach(function(el){
+    if(el.type!=="way"||!el.nodes)return;
+    // Skip footways, cycleways, private roads
+    var hw=el.tags&&el.tags.highway||"";
+    if(["footway","cycleway","path","steps","private","service"].indexOf(hw)!==-1)return;
+
+    var name=(el.tags&&el.tags.name)||"";
+    var ref=(el.tags&&el.tags.ref)||"";
+
+    // Project GPS point onto each segment of this way
+    for(var i=0;i<el.nodes.length-1;i++){
+      var n1=nodes[el.nodes[i]],n2=nodes[el.nodes[i+1]];
+      if(!n1||!n2)continue;
+
+      // Project point onto segment
+      var proj=projectPointOnSegment(lat,lng,n1.lat,n1.lng,n2.lat,n2.lng);
+      var dist=gpsDistance(lat,lng,proj.lat,proj.lng);
+
+      if(dist<bestDist){
+        bestDist=dist;
+        bestLat=proj.lat;
+        bestLng=proj.lng;
+        bestName=name;
+        bestRef=ref;
+        // Road bearing from segment direction
+        bestBearing=Math.atan2(
+          (n2.lng-n1.lng)*Math.cos(n1.lat*Math.PI/180),
+          n2.lat-n1.lat
+        )*180/Math.PI;
+        if(bestBearing<0)bestBearing+=360;
+      }
+    }
+  });
+
+  if(bestDist===Infinity||bestDist>50)return null;
+
+  return{lat:bestLat,lng:bestLng,name:bestName,ref:bestRef,bearing:bestBearing,snapDist:bestDist};
+}
+
+// Project point P onto line segment AB, return nearest point on segment
+function projectPointOnSegment(pLat,pLng,aLat,aLng,bLat,bLng){
+  // Convert to local metres
+  var R=6371000;
+  var cosLat=Math.cos(aLat*Math.PI/180);
+  var ax=0,ay=0;
+  var bx=(bLng-aLng)*Math.PI/180*R*cosLat;
+  var by=(bLat-aLat)*Math.PI/180*R;
+  var px=(pLng-aLng)*Math.PI/180*R*cosLat;
+  var py=(pLat-aLat)*Math.PI/180*R;
+
+  var len2=bx*bx+by*by;
+  if(len2===0)return{lat:aLat,lng:aLng};
+
+  var t=Math.max(0,Math.min(1,(px*bx+py*by)/len2));
+  var nx=ax+t*bx;
+  var ny=ay+t*by;
+
+  // Convert back to lat/lng
+  return{
+    lat:aLat+ny/R*180/Math.PI,
+    lng:aLng+nx/(R*cosLat)*180/Math.PI
+  };
+}
+
+// Also snap incoming GPS fixes to nearest road during walk
+// This improves continuous tracking accuracy
+async function snapGPSFix(lat,lng){
+  try{
+    var snapped=await snapToRoad(lat,lng);
+    if(snapped&&snapped.snapDist<15){
+      return{lat:snapped.lat,lng:snapped.lng,snapped:true};
+    }
+  }catch(e){}
+  return{lat:lat,lng:lng,snapped:false};
+}
 
 function gpsDistance(lat1,lng1,lat2,lng2){
   var R=6371000;
@@ -2035,9 +2769,43 @@ async function startWalkout(){
   if(!WO.currentLat){showToast("Waiting for GPS signal");return;}
   WO.seq=getPlacementSeq();WO.current=0;WO.placed=[];
   WO.manualMode=false;WO.targetReached=false;
-  WO.startLat=WO.currentLat;WO.startLng=WO.currentLng;
   WO.smoothWalked=0;WO.displayWalked=0;WO.lastGPSWalked=0;WO.lastGPST=Date.now();
   WO.targetBearing=null;
+
+  // Show snapping status
+  var status=document.getElementById("gps-ready-status");
+  var dot=document.getElementById("gps-dot");
+  if(status)status.textContent="Snapping to road network...";
+  if(dot)dot.style.background="#FFD600";
+
+  // Snap to nearest road before starting
+  try{
+    var snapped=await snapToRoad(WO.currentLat,WO.currentLng);
+    if(snapped){
+      WO.startLat=snapped.lat;
+      WO.startLng=snapped.lng;
+      WO.roadName=snapped.name||"";
+      WO.roadRef=snapped.ref||"";
+      WO.snapAccuracy=snapped.snapDist;
+      if(status){
+        status.textContent="Snapped to "+( snapped.name||"road")+" ("+Math.round(snapped.snapDist)+"m snap)";
+        status.style.color="#32CCFE";
+      }
+      if(dot)dot.style.background="#32CCFE";
+      // Use snapped bearing from road geometry
+      if(snapped.bearing!==null)WO.targetBearing=snapped.bearing;
+    }else{
+      // Fall back to raw GPS
+      WO.startLat=WO.currentLat;WO.startLng=WO.currentLng;
+      WO.roadName="";WO.roadRef="";WO.snapAccuracy=null;
+      if(status){status.textContent="Road snap unavailable — using GPS position";status.style.color="#FFD600";}
+    }
+  }catch(e){
+    WO.startLat=WO.currentLat;WO.startLng=WO.currentLng;
+    WO.roadName="";WO.roadRef="";WO.snapAccuracy=null;
+    if(status){status.textContent="Offline — using GPS position";status.style.color="#FFD600";}
+  }
+
   launchWalkout();
 }
 
@@ -2069,6 +2837,8 @@ function launchWalkout(){
   document.getElementById("wo-start-panel").style.display="none";
   document.getElementById("wo-active-panel").style.display="flex";
   document.getElementById("wo-complete-panel").style.display="none";
+  var mb=document.getElementById("wo-mode-badge");
+  if(mb){mb.textContent=WO.setupMode==="prog"?"PROGRESSIVE":"CHAPTER 8";mb.style.background=WO.setupMode==="prog"?"rgba(255,214,0,.15)":"rgba(50,204,254,.15)";mb.style.color=WO.setupMode==="prog"?"#FFD600":"#32CCFE";}
   WO.arFrame=requestAnimationFrame(drawARFrame);
   showWOItem();
 }
@@ -2105,6 +2875,8 @@ async function launchWalkoutCamera(){
   document.getElementById("wo-start-panel").style.display="none";
   document.getElementById("wo-active-panel").style.display="flex";
   document.getElementById("wo-complete-panel").style.display="none";
+  var mb=document.getElementById("wo-mode-badge");
+  if(mb){mb.textContent=WO.setupMode==="prog"?"PROGRESSIVE":"CHAPTER 8";mb.style.background=WO.setupMode==="prog"?"rgba(255,214,0,.15)":"rgba(50,204,254,.15)";mb.style.color=WO.setupMode==="prog"?"#FFD600":"#32CCFE";}
   WO.arFrame=requestAnimationFrame(drawARFrame);
   showWOItem();
 }
@@ -2121,6 +2893,7 @@ function onGPSUpdate(pos){
   }
 
   var smooth=kalmanUpdate(pos);
+  // Use snapped position if available and snap is fresh enough
   WO.currentLat=smooth.lat;WO.currentLng=smooth.lng;WO.currentAcc=Math.round(acc);
   if(pos.coords.speed!=null&&pos.coords.speed>=0)WO.currentSpd=pos.coords.speed;
   if(pos.coords.heading!=null&&!isNaN(pos.coords.heading))WO.currentHdg=pos.coords.heading;
@@ -2274,7 +3047,11 @@ function showWOItem(){
   if(progEl)progEl.style.width="0%";
   document.getElementById("wo-item-icon-sm").innerHTML=item.icon==="CONE"?coneIcon("md"):item.icon;
   document.getElementById("wo-item-name").textContent=item.name;
-  var phEl=document.getElementById("wo-phase-label");if(phEl)phEl.textContent=item.phase||"";
+  var phEl=document.getElementById("wo-phase-label");
+  if(phEl){
+    phEl.textContent=item.phase||"";
+    phEl.style.color=item.transition?"#FFD600":"#32CCFE";
+  }
   document.getElementById("wo-item-detail").textContent=item.detail;
   var regEl=document.getElementById("wo-item-reg-pill");
   if(regEl)regEl.textContent="\u{1F4D6} "+item.reg;
@@ -2330,11 +3107,27 @@ function updateSiteRecord(){
 }
 function saveSiteRecord(){
   updateSiteRecord();
-  var record={date:new Date().toLocaleDateString("en-GB"),time:new Date().toLocaleTimeString("en-GB"),
-    permit:SR.permit,trade:S.trade?(TRADES[S.trade]?TRADES[S.trade].name:S.trade):"",
-    road:S.road||"",speed:(S.speed||"")+"mph",width:S.width||"",
-    placed:WO.placed.filter(function(i){return i.confirmed;}).length,total:WO.placed.length,
-    notes:SR.notes,photos:SR.photos.length};
+  var record={
+    date:new Date().toLocaleDateString("en-GB"),
+    time:new Date().toLocaleTimeString("en-GB"),
+    permit:SR.permit,
+    trade:S.trade?(TRADES[S.trade]?TRADES[S.trade].name:S.trade):"",
+    road:S.road||"",
+    speed:(S.speed||"")+"mph",
+    width:S.width||"",
+    placed:WO.placed.filter(function(i){return i.confirmed;}).length,
+    total:WO.placed.length,
+    notes:SR.notes,
+    photos:SR.photos.length,
+    // GPS and road snap data
+    roadName:WO.roadName||"",
+    roadRef:WO.roadRef||"",
+    snapLat:WO.startLat?WO.startLat.toFixed(6):"",
+    snapLng:WO.startLng?WO.startLng.toFixed(6):"",
+    rawLat:WO.rawStartLat?WO.rawStartLat.toFixed(6):"",
+    rawLng:WO.rawStartLng?WO.rawStartLng.toFixed(6):"",
+    snapAccuracy:WO.snapAccuracy?Math.round(WO.snapAccuracy)+"m":""
+  };
   try{var rs=JSON.parse(sessionStorage.getItem("co-records")||"[]");rs.push(record);sessionStorage.setItem("co-records",JSON.stringify(rs));}catch(e){}
   var btn=document.getElementById("wo-save-btn");
   if(btn){btn.textContent="✓ Record Saved";btn.style.background="#00C853";btn.style.color="#000";}
@@ -2344,28 +3137,58 @@ function saveSiteRecord(){
   }
 }
 function downloadSiteRecord(record){
-  var html="<!DOCTYPE html><html><head><meta charset='UTF-8'><title>ConesOut Site Record</title>"
-    +"<style>body{font-family:sans-serif;max-width:600px;margin:20px auto;padding:20px;}h1{color:#0d1f35;}"
-    +"table{width:100%;border-collapse:collapse;}td{padding:8px;border-bottom:1px solid #eee;}"
-    +"td:first-child{font-weight:bold;width:40%;}.photos{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px;}"
-    +".photos img{width:100%;border-radius:8px;}</style></head><body>"
+  var mapLink=record.snapLat&&record.snapLng?
+    "https://www.openstreetmap.org/?mlat="+record.snapLat+"&mlon="+record.snapLng+"&zoom=18":"";
+  var gmapLink=record.snapLat&&record.snapLng?
+    "https://maps.google.com/maps?q="+record.snapLat+","+record.snapLng+"&t=k&z=18":"";
+  var q=(record.single_quote||"'");
+  var html="<!DOCTYPE html><html><head><meta charset="+q+"UTF-8"+q+">"
+    +"<title>ConesOut Site Record "+record.date+"</title>"
+    +"<style>*{box-sizing:border-box;}body{font-family:sans-serif;max-width:650px;margin:20px auto;padding:20px;color:#111;}"
+    +"h1{color:#0d1f35;font-size:1.4rem;margin-bottom:4px;}h2{font-size:1rem;color:#0d1f35;margin:20px 0 8px;border-bottom:2px solid #32CCFE;padding-bottom:4px;}"
+    +".badge{display:inline-block;background:#0d1f35;color:#32CCFE;font-size:.75rem;font-weight:bold;padding:3px 10px;border-radius:20px;margin-bottom:12px;}"
+    +"table{width:100%;border-collapse:collapse;margin-bottom:16px;}td{padding:9px 8px;border-bottom:1px solid #eee;font-size:.88rem;}"
+    +"td:first-child{font-weight:600;color:#555;width:40%;}"
+    +".maplinks a{display:inline-block;background:#0d1f35;color:#32CCFE;text-decoration:none;font-weight:bold;font-size:.82rem;padding:8px 16px;border-radius:20px;margin-right:8px;margin-bottom:8px;}"
+    +".coords{font-family:monospace;font-size:.8rem;color:#0d1f35;background:#f0f8ff;padding:6px 10px;border-radius:6px;border:1px solid #c8e8ff;margin-bottom:8px;}"
+    +".photos{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px;}"
+    +".photos img{width:100%;border-radius:8px;border:1px solid #ddd;}"
+    +".ptime{font-size:.65rem;color:#888;margin-top:3px;}"
+    +".ok{color:#00853a;font-weight:bold;}.sk{color:#cc6600;}"
+    +"footer{margin-top:24px;padding-top:12px;border-top:1px solid #eee;font-size:.72rem;color:#aaa;}"
+    +"</style></head><body>"
     +"<h1>&#128679; ConesOut Site Record</h1>"
-    +"<table><tr><td>Date</td><td>"+record.date+" "+record.time+"</td></tr>"
-    +"<tr><td>Permit / Licence</td><td>"+(record.permit||"Not recorded")+"</td></tr>"
+    +"<div class="+q+"badge"+q+">"+record.date+" &nbsp;&middot;&nbsp; "+record.time+"</div>"
+    +"<h2>Job Details</h2><table>"
+    +"<tr><td>Permit / Licence</td><td><strong>"+(record.permit||"Not recorded")+"</strong></td></tr>"
     +"<tr><td>Trade</td><td>"+record.trade+"</td></tr>"
-    +"<tr><td>Road Type</td><td>"+record.road+" — "+record.speed+"</td></tr>"
+    +"<tr><td>Road Type</td><td>"+record.road+"</td></tr>"
+    +"<tr><td>Speed Limit</td><td>"+record.speed+"</td></tr>"
     +"<tr><td>Road Width</td><td>"+record.width+"</td></tr>"
-    +"<tr><td>Items Placed</td><td>"+record.placed+" of "+record.total+"</td></tr>"
-    +"<tr><td>Notes</td><td>"+(record.notes||"None")+"</td></tr></table>";
+    +"</table>"
+    +"<h2>Location</h2>"
+    +(record.roadName?"<table><tr><td>Road Name</td><td><strong>"+record.roadName+"</strong>"+(record.roadRef?" ("+record.roadRef+")":"")+"</td></tr></table>":"")
+    +(record.snapLat?"<p class="+q+"coords"+q+">&#128205; "+record.snapLat+", "+record.snapLng
+      +(record.snapAccuracy?" &nbsp;&middot;&nbsp; snap: "+record.snapAccuracy:"")
+      +(record.rawLat?" &nbsp;&middot;&nbsp; raw GPS: "+record.rawLat+", "+record.rawLng:"")+"</p>":"")
+    +(mapLink?"<div class="+q+"maplinks"+q+"><a href="+q+gmapLink+q+" target="+q+"_blank"+q+">&#127758; Google Maps</a>"
+      +"<a href="+q+mapLink+q+" target="+q+"_blank"+q+">&#127758; OpenStreetMap</a></div>":"")
+    +"<h2>Setup Summary</h2><table>"
+    +"<tr><td>Items Placed</td><td class="+q+"ok"+q+">&#9989; "+record.placed+" of "+record.total+"</td></tr>"
+    +(record.total-record.placed>0?"<tr><td>Skipped</td><td class="+q+"sk"+q+">"+(record.total-record.placed)+" items</td></tr>":"")
+    +"</table>"
+    +(record.notes?"<table><tr><td>Notes</td><td>"+record.notes+"</td></tr></table>":"");
   if(SR.photos.length>0){
-    html+="<h2>Site Photos</h2><div class='photos'>";
-    SR.photos.forEach(function(p){html+="<img src='"+p.data+"'/>";});
+    html+="<h2>Site Photos ("+SR.photos.length+")</h2><div class="+q+"photos"+q+">";
+    SR.photos.forEach(function(p){html+="<div><img src="+q+p.data+q+"/><div class="+q+"ptime"+q+">"+p.time+"</div></div>";});
     html+="</div>";
   }
-  html+="<p style='margin-top:20px;font-size:.75rem;color:#999;'>Generated by ConesOut &copy; Courseway Ltd</p></body></html>";
+  html+="<footer>Generated by ConesOut &copy; Courseway Ltd &middot; conesout.app &middot; Chapter 8 CoP &middot; NRSWA 1991 &middot; TMA 2004</footer></body></html>";
   var blob=new Blob([html],{type:"text/html"});
-  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
-  a.download="ConesOut-"+record.date.replace(/\//g,"-")+".html";a.click();
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="ConesOut-"+record.date.replace(/\//g,"-")+"-"+(record.permit?record.permit.replace(/\s/g,"-"):"record")+".html";
+  a.click();
 }
 
 
@@ -2439,6 +3262,8 @@ function completeWO(){
   document.getElementById("wo-summary").innerHTML=
     "<strong style='color:#00C853;'>"+placed+" items placed</strong>"
     +(skipped>0?"<br><span style='color:#FFD600;'>"+skipped+" items skipped</span>":"")
+    +(WO.roadName?"<br><span style='color:#32CCFE;'>&#128205; "+WO.roadName+(WO.roadRef?" ("+WO.roadRef+")":"")+"</span>":"")
+    +(WO.startLat?"<br><span style='color:rgba(255,255,255,.4);font-size:.7rem;'>"+WO.startLat.toFixed(5)+", "+WO.startLng.toFixed(5)+(WO.snapAccuracy?" · snap "+Math.round(WO.snapAccuracy)+"m":"")+"</span>":"")
     +"<br><br>"+WO.placed.map(function(i){return (i.confirmed?"&#9989;":"&#9197;&#65039;")+" "+i.name+" — "+i.dist+"m";}).join("<br>");
   // Reset site record for this job
   SR={photos:[],permit:"",notes:""};
