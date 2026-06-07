@@ -158,65 +158,6 @@ a{color:var(--waze-cyan);}
             </div>
           </div>
 
-          <!-- Site Record fields -->
-          <div style="font-family:Barlow Condensed,sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.5);letter-spacing:1.2px;margin-bottom:8px;">Site Record</div>
-
-          <!-- Permit / Job number -->
-          <div style="margin-bottom:8px;">
-            <input id="permit-number" type="text" placeholder="Permit / Job / S50 reference"
-              oninput="S.permit=this.value"
-              onfocus="this.style.borderColor='var(--waze-cyan)'"
-              onblur="this.style.borderColor='rgba(255,255,255,.1)'"
-              style="width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;font-size:.83rem;color:#fff;outline:none;font-family:Barlow,sans-serif;"/>
-          </div>
-
-          <!-- Crew / Operative name -->
-          <div style="margin-bottom:8px;">
-            <input id="crew-name" type="text" placeholder="Operative / crew name"
-              oninput="S.crew=this.value"
-              onfocus="this.style.borderColor='var(--waze-cyan)'"
-              onblur="this.style.borderColor='rgba(255,255,255,.1)'"
-              style="width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;font-size:.83rem;color:#fff;outline:none;font-family:Barlow,sans-serif;"/>
-          </div>
-
-          <!-- GPS location capture -->
-          <div style="margin-bottom:8px;">
-            <button onclick="captureGPSLocation()"
-              style="width:100%;padding:10px 14px;background:rgba(50,204,254,.08);border:1.5px solid rgba(50,204,254,.2);border-radius:10px;color:var(--waze-cyan);font-family:Barlow Condensed,sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-              <span>📍</span><span id="gps-capture-label">Capture GPS Location</span>
-            </button>
-            <div id="gps-capture-result" style="display:none;margin-top:5px;font-size:.68rem;color:rgba(50,204,254,.7);text-align:center;"></div>
-          </div>
-
-          <!-- Photos — up to 3 -->
-          <div>
-            <div style="display:flex;gap:8px;">
-              <!-- Photo 1 -->
-              <label style="flex:1;aspect-ratio:1;background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.15);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;">
-                <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addSitePhoto(this,0)"/>
-                <div id="photo-slot-0" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-                  <span style="font-size:1.3rem;">📷</span>
-                  <span style="font-size:.6rem;color:var(--muted);margin-top:4px;">Before</span>
-                </div>
-              </label>
-              <!-- Photo 2 -->
-              <label style="flex:1;aspect-ratio:1;background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.15);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;">
-                <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addSitePhoto(this,1)"/>
-                <div id="photo-slot-1" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-                  <span style="font-size:1.3rem;">📷</span>
-                  <span style="font-size:.6rem;color:var(--muted);margin-top:4px;">During</span>
-                </div>
-              </label>
-              <!-- Photo 3 -->
-              <label style="flex:1;aspect-ratio:1;background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.15);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;">
-                <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addSitePhoto(this,2)"/>
-                <div id="photo-slot-2" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-                  <span style="font-size:1.3rem;">📷</span>
-                  <span style="font-size:.6rem;color:var(--muted);margin-top:4px;">After</span>
-                </div>
-              </label>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -313,6 +254,60 @@ a{color:var(--waze-cyan);}
           <button onclick="connectNMEA()" style="font-size:.62rem;font-weight:700;padding:4px 10px;background:rgba(50,204,254,.1);border:1px solid rgba(50,204,254,.25);border-radius:100px;color:var(--waze-cyan);cursor:pointer;">Connect</button>
         </div>
       </div>
+      <!-- Site Record — permit, crew, GPS, photos -->
+      <div style="background:var(--dark2);border-radius:16px;padding:14px 16px;border:1px solid var(--mid);">
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:10px;">Site Record</div>
+
+        <!-- Permit / Job number -->
+        <div style="margin-bottom:8px;">
+          <input id="permit-number" type="text" placeholder="Permit / Job / S50 reference"
+            oninput="S.permit=this.value"
+            onfocus="this.style.borderColor='var(--waze-cyan)'"
+            onblur="this.style.borderColor='rgba(255,255,255,.12)'"
+            style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 14px;font-size:.83rem;color:#fff;outline:none;font-family:Barlow,sans-serif;"/>
+        </div>
+
+        <!-- Crew / Operative name -->
+        <div style="margin-bottom:10px;">
+          <input id="crew-name" type="text" placeholder="Operative / crew name"
+            oninput="S.crew=this.value"
+            onfocus="this.style.borderColor='var(--waze-cyan)'"
+            onblur="this.style.borderColor='rgba(255,255,255,.12)'"
+            style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 14px;font-size:.83rem;color:#fff;outline:none;font-family:Barlow,sans-serif;"/>
+        </div>
+
+        <!-- GPS location capture -->
+        <div style="margin-bottom:10px;">
+          <button onclick="captureGPSLocation()"
+            style="width:100%;padding:10px 14px;background:rgba(50,204,254,.08);border:1px solid rgba(50,204,254,.2);border-radius:10px;color:var(--waze-cyan);font-family:Barlow Condensed,sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+            <span>📍</span><span id="gps-capture-label">Capture GPS Location</span>
+          </button>
+          <div id="gps-capture-result" style="display:none;margin-top:5px;font-size:.68rem;color:rgba(50,204,254,.7);text-align:center;"></div>
+        </div>
+
+        <!-- Photos — Before / During / After -->
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1;aspect-ratio:1;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.15);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;min-height:72px;">
+            <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addSitePhoto(this,0)"/>
+            <div id="photo-slot-0" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <span style="font-size:1.2rem;">📷</span><span style="font-size:.6rem;color:var(--muted);margin-top:3px;">Before</span>
+            </div>
+          </label>
+          <label style="flex:1;aspect-ratio:1;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.15);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;min-height:72px;">
+            <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addSitePhoto(this,1)"/>
+            <div id="photo-slot-1" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <span style="font-size:1.2rem;">📷</span><span style="font-size:.6rem;color:var(--muted);margin-top:3px;">During</span>
+            </div>
+          </label>
+          <label style="flex:1;aspect-ratio:1;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.15);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;min-height:72px;">
+            <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addSitePhoto(this,2)"/>
+            <div id="photo-slot-2" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <span style="font-size:1.2rem;">📷</span><span style="font-size:.6rem;color:var(--muted);margin-top:3px;">After</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
       <button id="wo-start-btn" onclick="startWalkout()" disabled
         style="padding:16px;background:var(--waze-cyan);color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;opacity:.35;">
         Begin Walk-Out
@@ -355,7 +350,7 @@ a{color:var(--waze-cyan);}
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;padding:10px 14px;gap:8px;min-height:0;">
         <!-- Sign image -->
         <div style="background:var(--dark2);border-radius:16px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;height:140px;border:1px solid var(--mid);position:relative;overflow:hidden;">
-          <div id="wo-sign-display" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:8px;"></div>
+          <div id="wo-sign-display" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:8px;overflow:hidden;box-sizing:border-box;"></div>
           <div id="wo-turn-banner" style="display:none;position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(255,214,0,.9);border-radius:8px;padding:4px 12px;font-size:.68rem;font-weight:800;color:#0d1f35;white-space:nowrap;">↩ TURN AROUND</div>
         </div>
         <!-- Step name + distance -->
@@ -673,13 +668,17 @@ function captureGPSLocation(){
 
 function addSitePhoto(input,slot){
   if(!input.files||!input.files[0])return;
+  var labels=['Before','During','After'];
   var reader=new FileReader();
   reader.onload=function(e){
     S.photos[slot]=e.target.result;
     var slotEl=document.getElementById('photo-slot-'+slot);
     if(slotEl){
-      slotEl.innerHTML='<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"/>'
-        +'<div onclick="clearSitePhoto('+slot+');event.stopPropagation();" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.65);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#fff;cursor:pointer;z-index:2;">✕</div>';
+      slotEl.innerHTML=
+        '<img src="'+e.target.result+'" style="width:100%;height:calc(100% - 18px);object-fit:cover;border-radius:8px 8px 0 0;display:block;"/>'
+        +'<div style="font-size:.58rem;color:var(--waze-cyan);text-align:center;padding:2px 0;line-height:1.2;">'+labels[slot]
+          +'<span onclick="clearSitePhoto('+slot+');event.stopPropagation();" style="margin-left:6px;color:rgba(255,100,100,.8);cursor:pointer;">✕</span>'
+        +'</div>';
     }
   };
   reader.readAsDataURL(input.files[0]);
@@ -690,7 +689,9 @@ function clearSitePhoto(slot){
   var slotEl=document.getElementById('photo-slot-'+slot);
   var labels=['Before','During','After'];
   if(slotEl){
-    slotEl.innerHTML='<span style="font-size:1.3rem;">📷</span><span style="font-size:.6rem;color:var(--muted);margin-top:4px;">'+labels[slot]+'</span>';
+    slotEl.innerHTML=
+      '<span style="font-size:1.2rem;">📷</span>'
+      +'<span style="font-size:.6rem;color:var(--muted);margin-top:3px;">'+labels[slot]+'</span>';
   }
 }
 
@@ -1369,37 +1370,54 @@ function getPlacementSeqClosure(d,spd){
 // ── WALK-OUT ITEM ICON ──
 function woItemIcon(item){
   var id=item.id||'', icon=item.icon||'';
+  // All icons use a standard 120x120 viewBox, drawn at centre (60,60)
+  // Container CSS handles actual display size — signs scale to fit
+  var S60='<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">';
+  var S120w='<svg width="120" height="80" viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">';
+  var S80h='<svg width="80" height="120" viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">';
   try{
     if(id==='adv1'||id==='adv2'||id==='adv_dn'||icon==='⚠️')
-      return '<svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">'+rbSignRoadWorks(28,28,50)+'</svg>';
-    if(id==='narrows'||icon==='🔶')
-      return '<svg width="60" height="52" viewBox="0 0 60 52" xmlns="http://www.w3.org/2000/svg">'+rbSignNarrows(30,26,46,'left')+'</svg>';
-    if(id==='single_file')
-      return '<svg width="60" height="52" viewBox="0 0 60 52" xmlns="http://www.w3.org/2000/svg">'+rbSignSingleFile(30,26,46)+'</svg>';
+      return S60+rbSignRoadWorks(60,60,100)+'</svg>';
+    if(id==='narrows_dn'||(id==='narrows'&&id!=='adv1'))
+      return S60+rbSignNarrows(60,60,100,'left')+'</svg>';
+    if(id==='narrows'||id==='narrows_up')
+      return S60+rbSignNarrows(60,60,100,'left')+'</svg>';
+    if(id==='single_file'||id==='single_file_dn')
+      return S60+rbSignSingleFile(60,60,100)+'</svg>';
     if(id==='speed_sign'||icon==='🔴')
-      return '<svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">'+rbSignSpeed(25,25,22,(S.speed||40)-20)+'</svg>';
-    if(id==='wait_here_up'||icon==='WH')
-      return '<svg width="80" height="46" viewBox="0 0 80 46" xmlns="http://www.w3.org/2000/svg">'+rbSignWaitHere(40,23,78,44)+'</svg>';
+      return S60+rbSignSpeed(60,60,50,(S.speed||40)-20)+'</svg>';
+    if(id==='wait_here_up'||id==='wait_here_dn')
+      return S120w+rbSignWaitHere(60,40,116,76)+'</svg>';
     if(id==='keepright'||icon==='KR')
-      return '<svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">'+rbSignKeepRight(28,28,52,52)+'</svg>';
+      return S60+rbSignKeepRight(60,60,110,110)+'</svg>';
     if(id==='keyleft'||id==='keepleft')
-      return '<svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">'+rbSignKeepLeft(28,28,52,52)+'</svg>';
-    if(id.indexOf('taper')!==-1||icon==='🔶')
-      return '<svg width="36" height="46" viewBox="0 0 36 46" xmlns="http://www.w3.org/2000/svg">'+rbCone(18,28,24)+'</svg>';
+      return S60+rbSignKeepLeft(60,60,110,110)+'</svg>';
+    if(id.indexOf('taper')!==-1)
+      return S80h+rbCone(40,70,44)+'</svg>';
     if(id==='barriers'||id.indexOf('barrier')!==-1||icon==='🚧')
-      return '<svg width="44" height="28" viewBox="0 0 44 28" xmlns="http://www.w3.org/2000/svg">'+rbBarrier_img(22,14,22)+'</svg>';
+      return S120w+rbBarrier_img(60,40,54)+'</svg>';
     if(id==='vehicle'||icon==='🚗')
-      return '<svg width="50" height="32" viewBox="0 0 50 32" xmlns="http://www.w3.org/2000/svg">'+rbVehicle(25,16,false)+'</svg>';
+      return S120w+rbVehicle(60,40,true)+'</svg>';
     if(id==='endworks'||id==='end'||icon==='🏁')
-      return '<svg width="'+(S.speed>=50?58:48)+'" height="52" viewBox="0 0 '+(S.speed>=50?58:48)+' 52" xmlns="http://www.w3.org/2000/svg">'+(S.speed>=50?rbSignEndNSL(29,26,46):rbSignEnd(24,26,46))+'</svg>';
+      return S60+(S.speed>=50?rbSignEndNSL(60,60,90):rbSignEnd(60,60,90))+'</svg>';
     if(id==='tm_up'||id==='tm_dn'||icon==='🚦')
-      return '<svg width="30" height="50" viewBox="0 0 30 50" xmlns="http://www.w3.org/2000/svg">'+rbTrafficLight(15,28)+'</svg>';
-    if(id.indexOf('stop')!==-1||icon==='🛑'||id==='road_closed_up'||id==='road_closed_dn')
-      return '<svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">'+rbSignStop(26,26,24)+'</svg>';
+      return S80h+rbTrafficLight(40,60)+'</svg>';
+    if(id==='road_closed_up'||id==='road_closed_dn')
+      return S120w+rbSignRoadClosed(60,40,116,76)+'</svg>';
+    if(id.indexOf('stop')!==-1||icon==='🛑')
+      return S60+rbSignStop(60,60,50)+'</svg>';
     if(id==='diversion_sign'||icon==='🔵')
-      return '<svg width="56" height="32" viewBox="0 0 56 32" xmlns="http://www.w3.org/2000/svg">'+rbDiversionSign(28,16,'right')+'</svg>';
+      return S120w+rbDiversionSign(60,40,'right')+'</svg>';
+    if(id==='gully_stop'||icon==='🕳️')
+      return S60+'<text x="60" y="75" text-anchor="middle" font-size="72">🕳️</text></svg>';
+    if(id==='grass_cut'||icon==='🌿')
+      return S60+'<text x="60" y="75" text-anchor="middle" font-size="72">🌿</text></svg>';
+    if(id==='risk'||id==='hv'||id==='ipv'||id==='info_board')
+      return S60+'<text x="60" y="75" text-anchor="middle" font-size="72">'+
+        (id==='risk'?'📋':id==='hv'?'🦺':id==='ipv'?'🚛':'📋')+'</text></svg>';
   }catch(e){}
-  return '<span style="font-size:2.5rem;">'+icon+'</span>';
+  return '<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">'
+    +'<text x="60" y="75" text-anchor="middle" font-size="72">'+icon+'</text></svg>';
 }
 
 // ── SIGN CHIP ──
@@ -1458,6 +1476,63 @@ function resetWalkout(){
   stopWalkout();
 }
 
+// Sign icon for the large walk-out display panel
+// Returns HTML (img or svg) that fits inside the 140px × full-width container
+function woItemIconLarge(item){
+  var id=item.id||'', icon=item.icon||'';
+  var css='style="max-width:100%;max-height:120px;display:block;margin:auto;"';
+  var svgWrap=function(content,vw,vh){
+    return '<svg '+css+' viewBox="0 0 '+vw+' '+vh+'" xmlns="http://www.w3.org/2000/svg">'+content+'</svg>';
+  };
+  try{
+    // PNG-based signs — use <img> with base64 data extracted from the sign function
+    // We call the sign function to get the SVG string, then wrap with CSS sizing
+    if(id==='adv1'||id==='adv2'||id==='adv_dn'||icon==='⚠️'){
+      // rbSignRoadWorks returns an <image> tag with b64 PNG
+      // Wrap in a sized SVG with preserveAspectRatio
+      return '<svg '+css+' viewBox="0 0 120 106" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">'+rbSignRoadWorks(60,53,106)+'</svg>';
+    }
+    if(id==='endworks'||id==='end'||icon==='🏁'){
+      if(S.speed>=50)
+        return '<svg '+css+' viewBox="0 0 120 106" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">'+rbSignEndNSL(60,53,90)+'</svg>';
+      return '<svg '+css+' viewBox="0 0 90 120" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">'+rbSignEnd(45,60,100)+'</svg>';
+    }
+    if(id==='keepright'||icon==='KR'){
+      return '<svg '+css+' viewBox="0 0 120 120" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">'+rbSignKeepRight(60,60,110,110)+'</svg>';
+    }
+    if(id==='keyleft'||id==='keepleft'){
+      return '<svg '+css+' viewBox="0 0 120 120" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">'+rbSignKeepLeft(60,60,110,110)+'</svg>';
+    }
+    if(id==='road_closed_up'||id==='road_closed_dn'||(id.indexOf('stop')!==-1&&id!=='speed_sign')||icon==='🛑'){
+      return svgWrap(rbSignStop(60,60,50),120,120);
+    }
+    // Vector-only signs — safe to size freely
+    if(id==='narrows'||id==='narrows_dn'||id==='narrows_up')
+      return svgWrap(rbSignNarrows(60,60,100,'left'),120,120);
+    if(id==='single_file'||id==='single_file_dn')
+      return svgWrap(rbSignSingleFile(60,60,100),120,120);
+    if(id==='speed_sign'||icon==='🔴')
+      return svgWrap(rbSignSpeed(60,60,52,(S.speed||40)-20),120,120);
+    if(id==='wait_here_up'||id==='wait_here_dn')
+      return svgWrap(rbSignWaitHere(60,40,116,76),120,80);
+    if(id.indexOf('taper')!==-1)
+      return svgWrap(rbCone(40,75,48),80,120);
+    if(id==='barriers'||id.indexOf('barrier')!==-1||icon==='🚧')
+      return svgWrap(rbBarrier_img(60,40,60),120,80);
+    if(id==='vehicle'||icon==='🚗')
+      return svgWrap(rbVehicle(60,40,true),120,80);
+    if(id==='tm_up'||id==='tm_dn'||icon==='🚦')
+      return svgWrap(rbTrafficLight(40,60),80,120);
+    if(id==='diversion_sign'||icon==='🔵')
+      return svgWrap(rbDiversionSign(60,40,'right'),120,80);
+    // Non-sign steps — emoji
+  }catch(e){}
+  var emojiMap={risk:'📋',hv:'🦺',ipv:'🚛',info_board:'📋',gully_stop:'🕳️',grass_cut:'🌿',
+    vehicle:'🚗',barriers:'🚧'};
+  var em=emojiMap[id]||icon||'📋';
+  return '<div style="font-size:5rem;text-align:center;line-height:120px;">'+em+'</div>';
+}
+
 function showWOItem(){
   var item=WO.seq[WO.current];
   if(!item){completeWO();return;}
@@ -1471,10 +1546,7 @@ function showWOItem(){
   // Large sign display
   var signDisp=document.getElementById('wo-sign-display');
   if(signDisp){
-    var iconH=woItemIcon(item);
-    signDisp.innerHTML=iconH
-      .replace(/width="(\d+)"/g,function(m,w){return 'width="'+Math.round(parseInt(w)*1.7)+'"';})
-      .replace(/height="(\d+)"/g,function(m,h){return 'height="'+Math.round(parseInt(h)*1.7)+'"';});
+    signDisp.innerHTML=woItemIconLarge(item);
   }
   document.getElementById('wo-item-name').textContent=item.name;
   var ph=document.getElementById('wo-phase-label');
