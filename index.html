@@ -638,12 +638,31 @@ function setupTab(tab){
     var panel=document.getElementById('tab-'+t+'-content');
     var active=(t===tab);
     if(btn){btn.className='setup-tab-btn '+(active?'active':'inactive');}
-    if(panel){panel.style.display=active?'':'none';}
+    if(panel){panel.style.display=active?(t==='walkout'?'flex':'block'):'none';}
   });
   var rc=document.getElementById('diagram-rotation-controls');
   if(rc) rc.style.display=(tab==='diagram')?'flex':'none';
   if(tab==='diagram') renderDiagram();
   if(tab==='redbook') renderRedBook();
+  if(tab==='walkout'){
+    // Start GPS scan so badge updates while on start panel
+    if(!WO.watchId && navigator.geolocation){
+      WO._initWatchId = navigator.geolocation.watchPosition(
+        function(pos){
+          var acc=pos.coords.accuracy;
+          updateGPSBadge(acc, GPS.fixType);
+          var status=document.getElementById('gps-ready-status');
+          if(status) status.textContent = acc<30 ? 'GPS ready ±'+Math.round(acc)+'m' : 'Weak signal ±'+Math.round(acc)+'m';
+          if(acc<30){
+            var btn=document.getElementById('wo-start-btn');
+            if(btn){btn.disabled=false;btn.style.opacity='1';}
+          }
+        },
+        function(){},
+        {enableHighAccuracy:true,maximumAge:0,timeout:15000}
+      );
+    }
+  }
 }
 
 function rotateDiagram(deg){
@@ -849,6 +868,7 @@ function renderDiagram(){
 function renderRedBook(){
   var cont=document.getElementById('tab-redbook-content');
   if(!cont)return;
+  cont.innerHTML=''; // always re-render with current speed
   if(!S.speed){cont.innerHTML='<div style="padding:20px;color:var(--muted);">Select speed on Home first</div>';return;}
   var d=DIST[S.speed]||DIST[30],spd=S.speed;
   cont.innerHTML='<div style="padding:16px;padding-bottom:80px;">'
@@ -1053,6 +1073,7 @@ function startWalkoutNoGPS(){
 
 async function startWalkout(){
   if(!S.speed||!S.trade){showToast('Set trade and speed on Home first');return;}
+  if(WO._initWatchId){navigator.geolocation.clearWatch(WO._initWatchId);WO._initWatchId=null;}
   WO.manualMode=false; WO.seq=getPlacementSeq(); WO.current=0; WO.placed=[]; WO.smoothWalked=0;
   document.getElementById('wo-start-panel').style.display='none';
   document.getElementById('wo-active-panel').style.display='flex';
@@ -1062,6 +1083,7 @@ async function startWalkout(){
 
 function stopWalkout(){
   if(WO.watchId){navigator.geolocation.clearWatch(WO.watchId);WO.watchId=null;}
+  if(WO._initWatchId){navigator.geolocation.clearWatch(WO._initWatchId);WO._initWatchId=null;}
   document.getElementById('wo-active-panel').style.display='none';
   document.getElementById('wo-complete-panel').style.display='none';
   document.getElementById('wo-start-panel').style.display='flex';
