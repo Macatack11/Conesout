@@ -65,118 +65,190 @@ a{color:var(--waze-cyan);}
 
 <!-- ── HOME SCREEN ── -->
 <div id="screen-home" class="screen active">
-  <div style="background:linear-gradient(180deg,#0d2a4a 0%,var(--waze-dark) 100%);padding:32px 20px 24px;text-align:center;">
-    <div style="width:72px;height:72px;border-radius:50%;background:var(--waze-cyan);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px rgba(50,204,254,.15);">
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><polygon points="18,4 32,30 4,30" fill="none" stroke="white" stroke-width="3"/><circle cx="18" cy="22" r="2.5" fill="white"/><rect x="16.5" y="12" width="3" height="7" rx="1.5" fill="white"/></svg>
+  <!-- Header -->
+  <div style="background:linear-gradient(180deg,#0d2a4a 0%,var(--waze-dark) 100%);padding:28px 20px 20px;text-align:center;flex-shrink:0;">
+    <div style="width:64px;height:64px;border-radius:50%;background:var(--waze-cyan);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px rgba(50,204,254,.12);">
+      <svg width="32" height="32" viewBox="0 0 36 36" fill="none"><polygon points="18,4 32,30 4,30" fill="none" stroke="white" stroke-width="3"/><circle cx="18" cy="22" r="2.5" fill="white"/><rect x="16.5" y="12" width="3" height="7" rx="1.5" fill="white"/></svg>
     </div>
-    <div style="font-family:Barlow Condensed,sans-serif;font-size:2rem;font-weight:900;color:#fff;letter-spacing:-1px;">ConesOut<span style="color:var(--waze-cyan);">®</span></div>
-    <div style="font-size:.78rem;color:rgba(255,255,255,.4);margin-top:4px;">UK Road Works Setup Guide · Chapter 8 CoP</div>
+    <div style="font-family:Barlow Condensed,sans-serif;font-size:1.9rem;font-weight:900;color:#fff;letter-spacing:-1px;">ConesOut<span style="color:var(--waze-cyan);">®</span></div>
+    <div style="font-size:.75rem;color:rgba(255,255,255,.35);margin-top:3px;">UK Road Works Setup Guide · Safety at Street Works CoP 2013</div>
   </div>
 
-  <!-- Trade selector -->
-  <div style="padding:0 16px;margin-bottom:14px;">
-    <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Your Trade</div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;" id="trade-grid">
-      <div class="trade-card" data-trade="telecom"><span style="font-size:1.4rem;">📡</span><div><div style="font-weight:800;font-size:.9rem;">Telecoms</div><div style="font-size:.7rem;color:var(--muted);">Fibre / Copper</div></div></div>
-      <div class="trade-card" data-trade="gas"><span style="font-size:1.4rem;">🔥</span><div><div style="font-weight:800;font-size:.9rem;">Gas</div><div style="font-size:.7rem;color:var(--muted);">Mains / Service</div></div></div>
-      <div class="trade-card" data-trade="electric"><span style="font-size:1.4rem;">⚡</span><div><div style="font-weight:800;font-size:.9rem;">Electric</div><div style="font-size:.7rem;color:var(--muted);">HV / LV</div></div></div>
-      <div class="trade-card" data-trade="water"><span style="font-size:1.4rem;">💧</span><div><div style="font-weight:800;font-size:.9rem;">Water</div><div style="font-size:.7rem;color:var(--muted);">Mains / Service</div></div></div>
-      <div class="trade-card" data-trade="highway"><span style="font-size:1.4rem;">🏗️</span><div><div style="font-weight:800;font-size:.9rem;">Highways</div><div style="font-size:.7rem;color:var(--muted);">Resurfacing / Lining</div></div></div>
-      <div class="trade-card" data-trade="drainage"><span style="font-size:1.4rem;">🌊</span><div><div style="font-weight:800;font-size:.9rem;">Drainage</div><div style="font-size:.7rem;color:var(--muted);">Sewers / Culverts</div></div></div>
-      <div class="trade-card" data-trade="gully"><span style="font-size:1.4rem;">🕳️</span><div><div style="font-weight:800;font-size:.9rem;">Gully &amp; Drainage</div><div style="font-size:.7rem;color:var(--muted);">Emptying / Jetting</div></div></div>
-      <div class="trade-card" data-trade="grass"><span style="font-size:1.4rem;">🌿</span><div><div style="font-weight:800;font-size:.9rem;">Grass / Hedge</div><div style="font-size:.7rem;color:var(--muted);">Cutting / Trimming</div></div></div>
-    </div>
-  </div>
+  <!-- Scrollable form body -->
+  <div style="flex:1;overflow-y:auto;padding-bottom:16px;">
 
-  <!-- Road type — per Safety at Street Works CoP 2013 classification -->
-  <div style="padding:0 16px;margin-bottom:14px;">
-    <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Road Type</div>
-    <div style="display:flex;flex-direction:column;gap:6px;">
-      <div class="road-card" data-road="urban-sc" style="gap:12px;">
-        <span style="font-size:1.3rem;flex-shrink:0;">🏘️</span>
-        <div><div style="font-weight:800;font-size:.88rem;">Urban / Residential Street</div>
-        <div style="font-size:.68rem;color:var(--muted);">Single carriageway · ≤30mph · Red Book</div></div>
-      </div>
-      <div class="road-card" data-road="rural-sc" style="gap:12px;">
-        <span style="font-size:1.3rem;flex-shrink:0;">🛣️</span>
-        <div><div style="font-weight:800;font-size:.88rem;">Rural Single Carriageway</div>
-        <div style="font-size:.68rem;color:var(--muted);">A/B road, no central reservation · 40–60mph · Red Book</div></div>
-      </div>
-      <div class="road-card" data-road="dual-low" style="gap:12px;">
-        <span style="font-size:1.3rem;flex-shrink:0;">🛤️</span>
-        <div><div style="font-weight:800;font-size:.88rem;">Dual Carriageway ≤40mph</div>
-        <div style="font-size:.68rem;color:var(--muted);">Urban dual, ring road, bypass · Red Book applies</div></div>
-      </div>
-      <div class="road-card" data-road="dual-high" style="gap:12px;">
-        <span style="font-size:1.3rem;flex-shrink:0;">🚦</span>
-        <div><div style="font-weight:800;font-size:.88rem;">Dual Carriageway ≥50mph</div>
-        <div style="font-size:.68rem;color:var(--muted);">All-purpose DC at speed · Chapter 8 applies</div></div>
-      </div>
-      <div class="road-card" data-road="motorway" style="gap:12px;opacity:.6;">
-        <span style="font-size:1.3rem;flex-shrink:0;">🏎️</span>
-        <div><div style="font-weight:800;font-size:.88rem;">Motorway</div>
-        <div style="font-size:.68rem;color:var(--muted);">Chapter 8 mandatory · specialist TM required</div></div>
+    <!-- Trade selector -->
+    <div style="padding:16px 16px 0;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Your Trade</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px;" id="trade-grid">
+        <div class="trade-card" data-trade="telecom"><span style="font-size:1.3rem;">📡</span><div><div style="font-weight:800;font-size:.88rem;">Telecoms</div><div style="font-size:.68rem;color:var(--muted);">Fibre / Copper</div></div></div>
+        <div class="trade-card" data-trade="gas"><span style="font-size:1.3rem;">🔥</span><div><div style="font-weight:800;font-size:.88rem;">Gas</div><div style="font-size:.68rem;color:var(--muted);">Mains / Service</div></div></div>
+        <div class="trade-card" data-trade="electric"><span style="font-size:1.3rem;">⚡</span><div><div style="font-weight:800;font-size:.88rem;">Electric</div><div style="font-size:.68rem;color:var(--muted);">HV / LV</div></div></div>
+        <div class="trade-card" data-trade="water"><span style="font-size:1.3rem;">💧</span><div><div style="font-weight:800;font-size:.88rem;">Water</div><div style="font-size:.68rem;color:var(--muted);">Mains / Service</div></div></div>
+        <div class="trade-card" data-trade="highway"><span style="font-size:1.3rem;">🏗️</span><div><div style="font-weight:800;font-size:.88rem;">Highways</div><div style="font-size:.68rem;color:var(--muted);">Resurfacing / Lining</div></div></div>
+        <div class="trade-card" data-trade="drainage"><span style="font-size:1.3rem;">🌊</span><div><div style="font-weight:800;font-size:.88rem;">Drainage</div><div style="font-size:.68rem;color:var(--muted);">Sewers / Culverts</div></div></div>
+        <div class="trade-card" data-trade="gully"><span style="font-size:1.3rem;">🕳️</span><div><div style="font-weight:800;font-size:.88rem;">Gully &amp; Drainage</div><div style="font-size:.68rem;color:var(--muted);">Emptying / Jetting</div></div></div>
+        <div class="trade-card" data-trade="grass"><span style="font-size:1.3rem;">🌿</span><div><div style="font-weight:800;font-size:.88rem;">Grass / Hedge</div><div style="font-size:.68rem;color:var(--muted);">Cutting / Trimming</div></div></div>
       </div>
     </div>
-  </div>
 
-  <!-- Works Duration -->
-  <div style="padding:0 16px;margin-bottom:14px;">
-    <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Works Duration</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
-      <div class="dur-card" data-dur="mobile" style="background:var(--dark2);border:2px solid transparent;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;">
-        <div style="font-size:1.1rem;">🚗</div>
-        <div style="font-family:Barlow Condensed,sans-serif;font-size:.78rem;font-weight:800;margin-top:4px;">Mobile</div>
-        <div style="font-size:.6rem;color:var(--muted);margin-top:1px;">Moving works</div>
+    <!-- Road type -->
+    <div style="padding:14px 16px 0;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Road Type</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="road-card" data-road="urban-sc" style="gap:12px;"><span style="font-size:1.2rem;flex-shrink:0;">🏘️</span><div><div style="font-weight:800;font-size:.86rem;">Urban / Residential Street</div><div style="font-size:.66rem;color:var(--muted);">Single carriageway · ≤30mph · CoP 2013</div></div></div>
+        <div class="road-card" data-road="rural-sc" style="gap:12px;"><span style="font-size:1.2rem;flex-shrink:0;">🛣️</span><div><div style="font-weight:800;font-size:.86rem;">Rural Single Carriageway</div><div style="font-size:.66rem;color:var(--muted);">A/B road · 40–60mph · CoP 2013</div></div></div>
+        <div class="road-card" data-road="dual-low" style="gap:12px;"><span style="font-size:1.2rem;flex-shrink:0;">🛤️</span><div><div style="font-weight:800;font-size:.86rem;">Dual Carriageway ≤40mph</div><div style="font-size:.66rem;color:var(--muted);">Urban dual, ring road · CoP 2013</div></div></div>
+        <div class="road-card" data-road="dual-high" style="gap:12px;"><span style="font-size:1.2rem;flex-shrink:0;">🚦</span><div><div style="font-weight:800;font-size:.86rem;">Dual Carriageway ≥50mph</div><div style="font-size:.66rem;color:var(--muted);">All-purpose DC · Chapter 8 applies</div></div></div>
+        <div class="road-card" data-road="motorway" style="gap:12px;opacity:.55;"><span style="font-size:1.2rem;flex-shrink:0;">🏎️</span><div><div style="font-weight:800;font-size:.86rem;">Motorway</div><div style="font-size:.66rem;color:var(--muted);">Chapter 8 mandatory · specialist TM</div></div></div>
       </div>
-      <div class="dur-card" data-dur="short15" style="background:var(--dark2);border:2px solid transparent;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;">
-        <div style="font-size:1.1rem;">⏱️</div>
-        <div style="font-family:Barlow Condensed,sans-serif;font-size:.78rem;font-weight:800;margin-top:4px;">&lt;15 min</div>
-        <div style="font-size:.6rem;color:var(--muted);margin-top:1px;">Brief stop</div>
+    </div>
+
+    <!-- Works Duration — Fixed always visible, Short Works expandable -->
+    <div style="padding:14px 16px 0;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Works Duration</div>
+
+      <!-- Fixed Works — always shown, default selected -->
+      <div class="dur-card selected" data-dur="fixed" id="dur-fixed"
+        style="background:var(--dark2);border:2px solid var(--waze-cyan);border-radius:12px;padding:12px 16px;cursor:pointer;margin-bottom:6px;display:flex;align-items:center;gap:12px;"
+        onclick="selectDur('fixed')">
+        <span style="font-size:1.4rem;flex-shrink:0;">🚧</span>
+        <div style="flex:1;">
+          <div style="font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:900;color:var(--waze-cyan);">Fixed Works &gt;1 hour</div>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:1px;">Full setup — advance signs, taper, barriers, TM</div>
+        </div>
       </div>
-      <div class="dur-card" data-dur="short60" style="background:var(--dark2);border:2px solid transparent;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;">
-        <div style="font-size:1.1rem;">🕐</div>
-        <div style="font-family:Barlow Condensed,sans-serif;font-size:.78rem;font-weight:800;margin-top:4px;">15 min–1 hr</div>
-        <div style="font-size:.6rem;color:var(--muted);margin-top:1px;">Short stop</div>
-      </div>
-      <div class="dur-card" data-dur="fixed" style="background:var(--dark2);border:2px solid rgba(50,204,254,.3);border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;grid-column:span 3;">
-        <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-          <span style="font-size:1.1rem;">🚧</span>
-          <div style="text-align:left;">
-            <div style="font-family:Barlow Condensed,sans-serif;font-size:.82rem;font-weight:800;color:#32CCFE;">Fixed Works &gt;1 hour</div>
-            <div style="font-size:.6rem;color:var(--muted);">Full setup — advance signs, taper, barriers, TM</div>
+
+      <!-- Short Works — collapsible panel -->
+      <div style="background:var(--dark2);border:2px solid transparent;border-radius:12px;overflow:hidden;transition:border-color .2s;" id="short-works-panel">
+        <!-- Tap header to expand -->
+        <div onclick="toggleShortWorks()" id="short-works-header"
+          style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:1.4rem;flex-shrink:0;">⏱️</span>
+          <div style="flex:1;">
+            <div style="font-family:Barlow Condensed,sans-serif;font-size:.9rem;font-weight:900;color:#fff;">Short Works</div>
+            <div style="font-size:.65rem;color:var(--muted);margin-top:1px;">Mobile · &lt;15 min · 15 min–1 hr · Site record</div>
+          </div>
+          <div id="short-works-chev" style="color:var(--muted);font-size:.85rem;transition:transform .25s;">▾</div>
+        </div>
+
+        <!-- Expanded content -->
+        <div id="short-works-body" style="display:none;border-top:1px solid rgba(255,255,255,.07);padding:12px 16px 14px;">
+
+          <!-- Duration chips -->
+          <div style="font-family:Barlow Condensed,sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.5);letter-spacing:1.2px;margin-bottom:8px;">Duration</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;">
+            <div class="dur-chip" data-dur="mobile" onclick="selectDur('mobile')"
+              style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 6px;cursor:pointer;text-align:center;">
+              <div style="font-size:1rem;">🚗</div>
+              <div style="font-family:Barlow Condensed,sans-serif;font-size:.75rem;font-weight:800;margin-top:3px;">Mobile</div>
+              <div style="font-size:.58rem;color:var(--muted);">Moving</div>
+            </div>
+            <div class="dur-chip" data-dur="short15" onclick="selectDur('short15')"
+              style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 6px;cursor:pointer;text-align:center;">
+              <div style="font-size:1rem;">⏱️</div>
+              <div style="font-family:Barlow Condensed,sans-serif;font-size:.75rem;font-weight:800;margin-top:3px;">&lt;15 min</div>
+              <div style="font-size:.58rem;color:var(--muted);">Brief stop</div>
+            </div>
+            <div class="dur-chip" data-dur="short60" onclick="selectDur('short60')"
+              style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 6px;cursor:pointer;text-align:center;">
+              <div style="font-size:1rem;">🕐</div>
+              <div style="font-family:Barlow Condensed,sans-serif;font-size:.75rem;font-weight:800;margin-top:3px;">15–60 min</div>
+              <div style="font-size:.58rem;color:var(--muted);">Short stop</div>
+            </div>
+          </div>
+
+          <!-- Site Record fields -->
+          <div style="font-family:Barlow Condensed,sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.5);letter-spacing:1.2px;margin-bottom:8px;">Site Record</div>
+
+          <!-- Permit / Job number -->
+          <div style="margin-bottom:8px;">
+            <input id="permit-number" type="text" placeholder="Permit / Job / S50 reference"
+              oninput="S.permit=this.value"
+              onfocus="this.style.borderColor='var(--waze-cyan)'"
+              onblur="this.style.borderColor='rgba(255,255,255,.1)'"
+              style="width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;font-size:.83rem;color:#fff;outline:none;font-family:Barlow,sans-serif;"/>
+          </div>
+
+          <!-- Crew / Operative name -->
+          <div style="margin-bottom:8px;">
+            <input id="crew-name" type="text" placeholder="Operative / crew name"
+              oninput="S.crew=this.value"
+              onfocus="this.style.borderColor='var(--waze-cyan)'"
+              onblur="this.style.borderColor='rgba(255,255,255,.1)'"
+              style="width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;font-size:.83rem;color:#fff;outline:none;font-family:Barlow,sans-serif;"/>
+          </div>
+
+          <!-- GPS location capture -->
+          <div style="margin-bottom:8px;">
+            <button onclick="captureGPSLocation()"
+              style="width:100%;padding:10px 14px;background:rgba(50,204,254,.08);border:1.5px solid rgba(50,204,254,.2);border-radius:10px;color:var(--waze-cyan);font-family:Barlow Condensed,sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+              <span>📍</span><span id="gps-capture-label">Capture GPS Location</span>
+            </button>
+            <div id="gps-capture-result" style="display:none;margin-top:5px;font-size:.68rem;color:rgba(50,204,254,.7);text-align:center;"></div>
+          </div>
+
+          <!-- Photos — up to 3 -->
+          <div>
+            <div style="display:flex;gap:8px;">
+              <!-- Photo 1 -->
+              <label style="flex:1;aspect-ratio:1;background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.15);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;">
+                <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addSitePhoto(this,0)"/>
+                <div id="photo-slot-0" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                  <span style="font-size:1.3rem;">📷</span>
+                  <span style="font-size:.6rem;color:var(--muted);margin-top:4px;">Before</span>
+                </div>
+              </label>
+              <!-- Photo 2 -->
+              <label style="flex:1;aspect-ratio:1;background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.15);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;">
+                <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addSitePhoto(this,1)"/>
+                <div id="photo-slot-1" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                  <span style="font-size:1.3rem;">📷</span>
+                  <span style="font-size:.6rem;color:var(--muted);margin-top:4px;">During</span>
+                </div>
+              </label>
+              <!-- Photo 3 -->
+              <label style="flex:1;aspect-ratio:1;background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.15);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;">
+                <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="addSitePhoto(this,2)"/>
+                <div id="photo-slot-2" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                  <span style="font-size:1.3rem;">📷</span>
+                  <span style="font-size:.6rem;color:var(--muted);margin-top:4px;">After</span>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Speed + Width -->
-  <div id="speed-width-section" style="padding:0 16px;margin-bottom:14px;display:flex;gap:10px;">
-    <div style="flex:1;">
-      <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Speed Limit</div>
-      <button onclick="openSpeedModal()" id="speed-btn" style="width:100%;padding:14px;background:var(--dark2);border:2px solid rgba(255,255,255,.1);border-radius:12px;color:var(--muted);font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;cursor:pointer;">Tap to select</button>
-    </div>
-    <div style="flex:1;">
-      <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Works Impact</div>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        <div class="width-card" data-width="half" style="padding:8px 12px;"><span style="font-size:.9rem;">↔</span><div style="font-size:.8rem;font-weight:700;">Half road</div></div>
-        <div class="width-card" data-width="full" style="padding:8px 12px;"><span style="font-size:.9rem;">⬡</span><div style="font-size:.8rem;font-weight:700;">Full closure</div></div>
-        <div class="width-card" data-width="footway" style="padding:8px 12px;"><span style="font-size:.9rem;">🚶</span><div style="font-size:.8rem;font-weight:700;">Footway only</div></div>
+    <!-- Speed + Width (fixed works only) -->
+    <div id="speed-width-section" style="padding:14px 16px 0;display:flex;gap:10px;">
+      <div style="flex:1;">
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Speed Limit</div>
+        <button onclick="openSpeedModal()" id="speed-btn" style="width:100%;padding:14px;background:var(--dark2);border:2px solid rgba(255,255,255,.1);border-radius:12px;color:var(--muted);font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;cursor:pointer;">Tap to select</button>
+      </div>
+      <div style="flex:1;">
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Works Impact</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div class="width-card" data-width="half" style="padding:8px 12px;"><span style="font-size:.9rem;">↔</span><div style="font-size:.8rem;font-weight:700;">Half road</div></div>
+          <div class="width-card" data-width="full" style="padding:8px 12px;"><span style="font-size:.9rem;">⬡</span><div style="font-size:.8rem;font-weight:700;">Full closure</div></div>
+          <div class="width-card" data-width="footway" style="padding:8px 12px;"><span style="font-size:.9rem;">🚶</span><div style="font-size:.8rem;font-weight:700;">Footway only</div></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Scope warning -->
-  <div id="road-scope-warn" style="display:none;margin:0 16px 8px;background:rgba(255,107,0,.15);border:1px solid rgba(255,107,0,.4);border-radius:12px;padding:10px 14px;font-size:.75rem;color:#FF8C00;align-items:center;gap:8px;"></div>
+    <!-- Scope warning -->
+    <div id="road-scope-warn" style="display:none;margin:12px 16px 0;background:rgba(255,107,0,.15);border:1px solid rgba(255,107,0,.4);border-radius:12px;padding:10px 14px;font-size:.75rem;color:#FF8C00;align-items:center;gap:8px;"></div>
 
-  <!-- Generate button -->
-  <div style="padding:0 16px 16px;">
-    <button id="gen-btn" onclick="startGuide()" disabled
-      style="width:100%;padding:16px;background:var(--waze-cyan);color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:900;cursor:pointer;opacity:.35;transition:opacity .3s;">
-      Generate Setup Plan ▶
-    </button>
-  </div>
+    <!-- Generate button -->
+    <div style="padding:14px 16px 4px;">
+      <button id="gen-btn" onclick="startGuide()" disabled
+        style="width:100%;padding:16px;background:var(--waze-cyan);color:#0d1f35;border:none;border-radius:100px;font-family:Barlow Condensed,sans-serif;font-size:1.1rem;font-weight:900;cursor:pointer;opacity:.35;transition:opacity .3s;">
+        Generate Setup Plan ▶
+      </button>
+    </div>
+
+  </div><!-- /scrollable body -->
 </div>
 
 <!-- ── GUIDE SCREEN ── -->
@@ -184,6 +256,10 @@ a{color:var(--waze-cyan);}
   <div class="guide-header">
     <button class="back-btn" onclick="showScreen('home')">Back</button>
     <div class="guide-title" id="guide-title">Setup Guide</div>
+  </div>
+  <div id="guide-permit" style="display:none;background:rgba(50,204,254,.08);border-bottom:1px solid rgba(50,204,254,.12);padding:6px 16px;font-size:.72rem;color:rgba(50,204,254,.8);font-weight:700;flex-shrink:0;"></div>
+  <div id="guide-photo" style="display:none;flex-shrink:0;">
+    <img id="guide-photo-img" src="" style="width:100%;max-height:120px;object-fit:cover;"/>
   </div>
   <div class="steps-container" id="steps-container"></div>
 </div>
@@ -502,7 +578,7 @@ function rbSignEndNSL(cx,cy,s){
 // ══════════════════════════════════════════════════════
 
 // ── STATE ──
-const S = { trade:null, road:null, speed:null, width:null, dur:'fixed' };
+const S = { trade:null, road:null, speed:null, width:null, dur:'fixed', permit:'', crew:'', gps:null, photos:[null,null,null] };
 var WO = { seq:[], current:0, placed:[], watchId:null, manualMode:false,
            targetReached:false, smoothWalked:0, startLat:null, startLng:null,
            currentLat:null, currentLng:null, currentAcc:999,
@@ -544,6 +620,80 @@ function showToast(msg, dur){
   clearTimeout(t._timer);
   t._timer=setTimeout(function(){t.style.display='none';}, dur||2200);
 }
+
+// ── SHORT WORKS PANEL ──
+function toggleShortWorks(){
+  var body=document.getElementById('short-works-body');
+  var chev=document.getElementById('short-works-chev');
+  var panel=document.getElementById('short-works-panel');
+  var header=document.getElementById('short-works-header');
+  var open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  if(chev) chev.style.transform=open?'':'rotate(180deg)';
+  if(panel) panel.style.borderColor=open?'transparent':'var(--waze-cyan)';
+  if(!open) selectDur('mobile'); // default to mobile when opening
+}
+
+function selectDur(dur){
+  S.dur=dur;
+  // Update fixed card highlight
+  var fixedCard=document.getElementById('dur-fixed');
+  if(fixedCard){
+    var isFixed=dur==='fixed';
+    fixedCard.style.borderColor=isFixed?'var(--waze-cyan)':'rgba(255,255,255,.1)';
+    var title=fixedCard.querySelector('div>div');
+    if(title) title.style.color=isFixed?'var(--waze-cyan)':'#fff';
+  }
+  // Update short works chips
+  document.querySelectorAll('.dur-chip').forEach(function(c){
+    var active=c.dataset.dur===dur;
+    c.style.borderColor=active?'var(--waze-cyan)':'rgba(255,255,255,.1)';
+    c.style.background=active?'rgba(50,204,254,.12)':'rgba(255,255,255,.05)';
+  });
+  // Show/hide speed+width for short works
+  var sw=document.getElementById('speed-width-section');
+  if(sw) sw.style.display=(dur==='fixed'||dur==='short60')?'flex':'none';
+  checkReady();
+}
+
+function captureGPSLocation(){
+  var label=document.getElementById('gps-capture-label');
+  var result=document.getElementById('gps-capture-result');
+  if(!navigator.geolocation){if(result){result.style.display='block';result.textContent='GPS not available';}return;}
+  if(label) label.textContent='Locating...';
+  navigator.geolocation.getCurrentPosition(function(pos){
+    S.gps={lat:pos.coords.latitude,lng:pos.coords.longitude,acc:Math.round(pos.coords.accuracy)};
+    if(label) label.textContent='📍 Location captured';
+    if(result){result.style.display='block';result.textContent='±'+S.gps.acc+'m · '+S.gps.lat.toFixed(5)+', '+S.gps.lng.toFixed(5);}
+  },function(){
+    if(label) label.textContent='Capture GPS Location';
+    if(result){result.style.display='block';result.textContent='GPS unavailable — try again';}
+  },{timeout:8000,maximumAge:0,enableHighAccuracy:true});
+}
+
+function addSitePhoto(input,slot){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    S.photos[slot]=e.target.result;
+    var slotEl=document.getElementById('photo-slot-'+slot);
+    if(slotEl){
+      slotEl.innerHTML='<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"/>'
+        +'<div onclick="clearSitePhoto('+slot+');event.stopPropagation();" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.65);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#fff;cursor:pointer;z-index:2;">✕</div>';
+    }
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function clearSitePhoto(slot){
+  S.photos[slot]=null;
+  var slotEl=document.getElementById('photo-slot-'+slot);
+  var labels=['Before','During','After'];
+  if(slotEl){
+    slotEl.innerHTML='<span style="font-size:1.3rem;">📷</span><span style="font-size:.6rem;color:var(--muted);margin-top:4px;">'+labels[slot]+'</span>';
+  }
+}
+
 
 function showScreen(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -597,31 +747,9 @@ function checkReady(){
 
 // ── HOME: trade/road/width card selection ──
 document.addEventListener('DOMContentLoaded', function(){
-  document.querySelectorAll('.dur-card').forEach(c=>c.addEventListener('click',()=>{
-    document.querySelectorAll('.dur-card').forEach(x=>x.classList.remove('selected'));
-    c.classList.add('selected'); S.dur=c.dataset.dur;
-    // Show/hide speed+width selectors for mobile/short works
-    var needsFullSetup=(S.dur==='fixed'||S.dur==='short60');
-    var speedWidth=document.getElementById('speed-width-section');
-    if(speedWidth) speedWidth.style.display=needsFullSetup?'flex':'none';
-    checkReady();
-  }));
-  // Select "fixed" by default
-  var defaultDur=document.querySelector('.dur-card[data-dur="fixed"]');
-  if(defaultDur) defaultDur.classList.add('selected');
+  // dur selection handled by selectDur()
   document.querySelectorAll('.trade-card').forEach(c=>c.addEventListener('click',()=>{
-    document.querySelectorAll('.dur-card').forEach(c=>c.addEventListener('click',()=>{
-    document.querySelectorAll('.dur-card').forEach(x=>x.classList.remove('selected'));
-    c.classList.add('selected'); S.dur=c.dataset.dur;
-    // Show/hide speed+width selectors for mobile/short works
-    var needsFullSetup=(S.dur==='fixed'||S.dur==='short60');
-    var speedWidth=document.getElementById('speed-width-section');
-    if(speedWidth) speedWidth.style.display=needsFullSetup?'flex':'none';
-    checkReady();
-  }));
-  // Select "fixed" by default
-  var defaultDur=document.querySelector('.dur-card[data-dur="fixed"]');
-  if(defaultDur) defaultDur.classList.add('selected');
+    // dur selection handled by selectDur()
   document.querySelectorAll('.trade-card').forEach(x=>x.classList.remove('selected'));
     c.classList.add('selected'); S.trade=c.dataset.trade; checkReady();
   }));
@@ -639,12 +767,31 @@ document.addEventListener('DOMContentLoaded', function(){
 function startGuide(){
   if(!S.trade){showToast('Select your trade first');return;}
   if(!S.road){showToast('Select a road type first');return;}
-  if(!S.speed){openSpeedModal();return;}
-  if(!S.width){showToast('Select road width first');return;}
+  var shortWorks=(S.dur==='mobile'||S.dur==='short15');
+  if(!shortWorks&&!S.speed){openSpeedModal();return;}
+  if(!shortWorks&&!S.width){showToast('Select road width first');return;}
   var tr=TRADES[S.trade];
   var d=DIST[S.speed]||DIST[30];
   var roadLabel={'urban-sc':'Urban Street','rural-sc':'Rural SC','dual-low':'Dual DC ≤40mph','dual-high':'Dual DC ≥50mph','motorway':'Motorway'}[S.road]||S.road;
   var durLabel={'mobile':'Mobile','short15':'<15 min','short60':'15 min–1 hr','fixed':'Fixed >1hr'}[S.dur]||'';
+  // Show site record in guide header
+  var permitEl=document.getElementById('guide-permit');
+  if(permitEl){
+    var parts=[];
+    if(S.permit) parts.push('📋 '+S.permit);
+    if(S.crew) parts.push('👤 '+S.crew);
+    if(S.gps) parts.push('📍 ±'+S.gps.acc+'m');
+    permitEl.style.display=parts.length?'block':'none';
+    permitEl.textContent=parts.join('  ·  ');
+  }
+  // Show first photo in guide if captured
+  var guidePhoto=document.getElementById('guide-photo');
+  if(guidePhoto){
+    var firstPhoto=S.photos.find(function(p){return !!p;});
+    guidePhoto.style.display=firstPhoto?'block':'none';
+    var gpi=document.getElementById('guide-photo-img');
+    if(gpi&&firstPhoto)gpi.src=firstPhoto;
+  }
   document.getElementById('guide-title').textContent=tr.name+' · '+(S.speed?S.speed+'mph · ':'')+roadLabel+(durLabel?' · '+durLabel:'');
   var c=document.getElementById('steps-container');
   c.innerHTML='';
