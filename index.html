@@ -52,6 +52,8 @@ html,body{height:100%;overflow:hidden;background:var(--waze-dark);color:#fff;fon
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;align-items:flex-end;justify-content:center;}
 .modal.open{display:flex;}
 .modal-box{background:var(--dark2);border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:480px;}
+.dur-card{transition:all .15s;}
+.dur-card.selected{border-color:var(--waze-cyan)!important;background:#1a3450!important;}
 .toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:rgba(50,204,254,.15);border:1px solid var(--waze-cyan);color:var(--waze-cyan);border-radius:100px;padding:8px 20px;font-size:.82rem;font-weight:700;z-index:100;display:none;white-space:nowrap;}
 input,textarea{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px 14px;font-family:Barlow,sans-serif;font-size:.88rem;outline:none;width:100%;}
 input:focus,textarea:focus{border-color:var(--waze-cyan);}
@@ -81,10 +83,12 @@ a{color:var(--waze-cyan);}
       <div class="trade-card" data-trade="water"><span style="font-size:1.4rem;">💧</span><div><div style="font-weight:800;font-size:.9rem;">Water</div><div style="font-size:.7rem;color:var(--muted);">Mains / Service</div></div></div>
       <div class="trade-card" data-trade="highway"><span style="font-size:1.4rem;">🏗️</span><div><div style="font-weight:800;font-size:.9rem;">Highways</div><div style="font-size:.7rem;color:var(--muted);">Resurfacing / Lining</div></div></div>
       <div class="trade-card" data-trade="drainage"><span style="font-size:1.4rem;">🌊</span><div><div style="font-weight:800;font-size:.9rem;">Drainage</div><div style="font-size:.7rem;color:var(--muted);">Sewers / Culverts</div></div></div>
+      <div class="trade-card" data-trade="gully"><span style="font-size:1.4rem;">🕳️</span><div><div style="font-weight:800;font-size:.9rem;">Gully &amp; Drainage</div><div style="font-size:.7rem;color:var(--muted);">Emptying / Jetting</div></div></div>
+      <div class="trade-card" data-trade="grass"><span style="font-size:1.4rem;">🌿</span><div><div style="font-weight:800;font-size:.9rem;">Grass / Hedge</div><div style="font-size:.7rem;color:var(--muted);">Cutting / Trimming</div></div></div>
     </div>
   </div>
 
-  <!-- Road type — per Red Book / HAUC classification -->
+  <!-- Road type — per Safety at Street Works CoP 2013 classification -->
   <div style="padding:0 16px;margin-bottom:14px;">
     <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Road Type</div>
     <div style="display:flex;flex-direction:column;gap:6px;">
@@ -116,8 +120,39 @@ a{color:var(--waze-cyan);}
     </div>
   </div>
 
+  <!-- Works Duration -->
+  <div style="padding:0 16px;margin-bottom:14px;">
+    <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Works Duration</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+      <div class="dur-card" data-dur="mobile" style="background:var(--dark2);border:2px solid transparent;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;">
+        <div style="font-size:1.1rem;">🚗</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.78rem;font-weight:800;margin-top:4px;">Mobile</div>
+        <div style="font-size:.6rem;color:var(--muted);margin-top:1px;">Moving works</div>
+      </div>
+      <div class="dur-card" data-dur="short15" style="background:var(--dark2);border:2px solid transparent;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;">
+        <div style="font-size:1.1rem;">⏱️</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.78rem;font-weight:800;margin-top:4px;">&lt;15 min</div>
+        <div style="font-size:.6rem;color:var(--muted);margin-top:1px;">Brief stop</div>
+      </div>
+      <div class="dur-card" data-dur="short60" style="background:var(--dark2);border:2px solid transparent;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;">
+        <div style="font-size:1.1rem;">🕐</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-size:.78rem;font-weight:800;margin-top:4px;">15 min–1 hr</div>
+        <div style="font-size:.6rem;color:var(--muted);margin-top:1px;">Short stop</div>
+      </div>
+      <div class="dur-card" data-dur="fixed" style="background:var(--dark2);border:2px solid rgba(50,204,254,.3);border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;grid-column:span 3;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+          <span style="font-size:1.1rem;">🚧</span>
+          <div style="text-align:left;">
+            <div style="font-family:Barlow Condensed,sans-serif;font-size:.82rem;font-weight:800;color:#32CCFE;">Fixed Works &gt;1 hour</div>
+            <div style="font-size:.6rem;color:var(--muted);">Full setup — advance signs, taper, barriers, TM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Speed + Width -->
-  <div style="padding:0 16px;margin-bottom:14px;display:flex;gap:10px;">
+  <div id="speed-width-section" style="padding:0 16px;margin-bottom:14px;display:flex;gap:10px;">
     <div style="flex:1;">
       <div style="font-family:Barlow Condensed,sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Speed Limit</div>
       <button onclick="openSpeedModal()" id="speed-btn" style="width:100%;padding:14px;background:var(--dark2);border:2px solid rgba(255,255,255,.1);border-radius:12px;color:var(--muted);font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;cursor:pointer;">Tap to select</button>
@@ -467,7 +502,7 @@ function rbSignEndNSL(cx,cy,s){
 // ══════════════════════════════════════════════════════
 
 // ── STATE ──
-const S = { trade:null, road:null, speed:null, width:null };
+const S = { trade:null, road:null, speed:null, width:null, dur:'fixed' };
 var WO = { seq:[], current:0, placed:[], watchId:null, manualMode:false,
            targetReached:false, smoothWalked:0, startLat:null, startLng:null,
            currentLat:null, currentLng:null, currentAcc:999,
@@ -476,7 +511,7 @@ var GPS = { fixType:0, accuracy:999, hdop:99, satsUsed:0,
             btDevice:null, btConnected:false, nmeaBuffer:'' };
 var diagramRotation = 0;
 
-// ── HAUC DISTANCES (Red Book setting-out-site table) ──
+// ── DISTANCES — Safety at Street Works CoP 2013, Table: Setting Out Site ──
 var DIST = {
   20:{advance:20,  taper:20,  coneGap:1.2, coneSize:450, L:0.5, S:0.5},
   30:{advance:40,  taper:40,  coneGap:1.2, coneSize:600, L:0.5, S:0.5},
@@ -545,7 +580,8 @@ function selectSpeed(v){
 }
 
 function checkReady(){
-  var ok=S.trade&&S.road&&S.speed&&S.width;
+  var shortWorks=(S.dur==='mobile'||S.dur==='short15');
+  var ok=S.trade&&S.road&&(shortWorks||(S.speed&&S.width));
   var btn=document.getElementById('gen-btn');
   if(btn){btn.disabled=!ok;btn.style.opacity=ok?'1':'.35';}
   // Warn if out of scope road selected
@@ -561,8 +597,32 @@ function checkReady(){
 
 // ── HOME: trade/road/width card selection ──
 document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.dur-card').forEach(c=>c.addEventListener('click',()=>{
+    document.querySelectorAll('.dur-card').forEach(x=>x.classList.remove('selected'));
+    c.classList.add('selected'); S.dur=c.dataset.dur;
+    // Show/hide speed+width selectors for mobile/short works
+    var needsFullSetup=(S.dur==='fixed'||S.dur==='short60');
+    var speedWidth=document.getElementById('speed-width-section');
+    if(speedWidth) speedWidth.style.display=needsFullSetup?'flex':'none';
+    checkReady();
+  }));
+  // Select "fixed" by default
+  var defaultDur=document.querySelector('.dur-card[data-dur="fixed"]');
+  if(defaultDur) defaultDur.classList.add('selected');
   document.querySelectorAll('.trade-card').forEach(c=>c.addEventListener('click',()=>{
-    document.querySelectorAll('.trade-card').forEach(x=>x.classList.remove('selected'));
+    document.querySelectorAll('.dur-card').forEach(c=>c.addEventListener('click',()=>{
+    document.querySelectorAll('.dur-card').forEach(x=>x.classList.remove('selected'));
+    c.classList.add('selected'); S.dur=c.dataset.dur;
+    // Show/hide speed+width selectors for mobile/short works
+    var needsFullSetup=(S.dur==='fixed'||S.dur==='short60');
+    var speedWidth=document.getElementById('speed-width-section');
+    if(speedWidth) speedWidth.style.display=needsFullSetup?'flex':'none';
+    checkReady();
+  }));
+  // Select "fixed" by default
+  var defaultDur=document.querySelector('.dur-card[data-dur="fixed"]');
+  if(defaultDur) defaultDur.classList.add('selected');
+  document.querySelectorAll('.trade-card').forEach(x=>x.classList.remove('selected'));
     c.classList.add('selected'); S.trade=c.dataset.trade; checkReady();
   }));
   document.querySelectorAll('.road-card').forEach(c=>c.addEventListener('click',()=>{
@@ -584,7 +644,8 @@ function startGuide(){
   var tr=TRADES[S.trade];
   var d=DIST[S.speed]||DIST[30];
   var roadLabel={'urban-sc':'Urban Street','rural-sc':'Rural SC','dual-low':'Dual DC ≤40mph','dual-high':'Dual DC ≥50mph','motorway':'Motorway'}[S.road]||S.road;
-  document.getElementById('guide-title').textContent=tr.name+' · '+S.speed+'mph · '+roadLabel;
+  var durLabel={'mobile':'Mobile','short15':'<15 min','short60':'15 min–1 hr','fixed':'Fixed >1hr'}[S.dur]||'';
+  document.getElementById('guide-title').textContent=tr.name+' · '+(S.speed?S.speed+'mph · ':'')+roadLabel+(durLabel?' · '+durLabel:'');
   var c=document.getElementById('steps-container');
   c.innerHTML='';
   var steps=buildGuideSteps(d, S.speed, S.width, tr.name);
@@ -619,17 +680,17 @@ function buildGuideSteps(d, spd, width, tradeName){
   var steps=[];
   steps.push({icon:'📋',title:'Pre-Works Check',
     body:'Confirm permit/section 50 licence in place. Check site drawings and utility records. Brief all operatives. Ensure all equipment and signs are available and in good condition.',
-    reg:'NRSWA 1991 s.50 · Red Book Part 1'});
+    reg:'NRSWA 1991 s.50 · Safety at Street Works CoP 2013 Part 1'});
   steps.push({icon:'🦺',title:'PPE & Hi-Vis',
     body:'All operatives must wear high-visibility clothing (EN ISO 20471 Class 2 minimum on 30mph+ roads, Class 3 on 50mph+). Hard hat, safety boots and gloves as required by risk assessment.',
-    reg:'Red Book Part 3 · HSE PPE Regs 2022'});
+    reg:'Safety at Street Works CoP 2013 Part 3 · HSE PPE Regs 2022'});
   steps.push({icon:'🚗',title:'Park Vehicle Safely',
     body:'Park on nearside, off road if possible. Amber beacon on. Hazard lights on. High-vis markings facing oncoming traffic. Exit from passenger side. Place Keep Right sign at corner of vehicle with one cone immediately.',
-    reg:'Red Book — HAUC sequence step 1'});
+    reg:'Safety at Street Works CoP 2013 — Sequence for setting out signs p.21'});
   steps.push({icon:'⚠️',title:'Place Advance Warning Sign',
     body:'Walk upstream '+d.advance+'m from taper start (distance D). Place Road Works Ahead sign (7001) on nearside. At 50mph+ place second sign mid-way and add supplementary distance plate in yards. Face traffic at all times — no mobile phone use.',
     dist:'D = '+d.advance+'m from taper',
-    reg:'Chapter 8 Table 8-3 · Red Book p.21'});
+    reg:'Safety at Street Works CoP 2013 p.21 · Chapter 8 Table 8-3'});
   if(spd>=40){
     steps.push({icon:'🔵',title:'Speed Restriction Sign',
       body:'Place speed restriction roundel (Diag 670) showing '+Math.max(20,spd-20)+'mph if temporary speed limit is in place. Requires Temporary Traffic Regulation Order.',
@@ -637,32 +698,32 @@ function buildGuideSteps(d, spd, width, tradeName){
   }
   steps.push({icon:'🔶',title:'Road Narrows Sign',
     body:'Place Road Narrows sign (Diag 516) between advance sign and taper start.',
-    reg:'TSRGD 2016 Diag 516 · Red Book p.65'});
+    reg:'Safety at Street Works CoP 2013 p.65 · TSRGD 2016 Diag 516'});
   if(width==='single'){
     steps.push({icon:'↔️',title:'Single File Sign',
       body:'Place Single File Traffic sign between Road Narrows and traffic management point.',
-      reg:'Red Book p.65'});
+      reg:'Safety at Street Works CoP 2013 p.65'});
     steps.push({icon:'🛑',title:'Traffic Management',
       body:spd>=40?'Set up portable traffic signals (PTS). Both heads must be in place and tested before releasing traffic. "When Red Light Shows Wait Here" sign 15m from each head.':'Set up Stop/Go boards. One operative each end in radio contact. Never release traffic from both ends simultaneously.',
-      reg:'Chapter 8 s.6.3 · Red Book p.65'});
+      reg:'Safety at Street Works CoP 2013 p.65 · Chapter 8 s.6.3'});
   }
   steps.push({icon:'🔶',title:'Lead-In Taper Cones',
     body:'Place cones at 45° from kerb edge outward. Taper length T='+d.taper+'m. Max cone spacing 1.2m in taper. Min cone height '+d.coneSize+'mm. Start from kerb working towards works. Always face oncoming traffic.',
     dist:'T = '+d.taper+'m taper',
-    reg:'HAUC Table — Red Book p.19'});
+    reg:'Safety at Street Works CoP 2013 — Setting Out Site table'});
   steps.push({icon:'🚧',title:'Guarding & Barriers',
     body:'Place barriers across closed lane. Barrier sign facing oncoming traffic. Longways clearance L='+d.L+'m from taper end to first barrier. Sideways clearance S='+d.S+'m minimum between cones and works area. Amber beacons at each end.',
     dist:'L='+d.L+'m clearance · S='+d.S+'m sideways',
     reg:'Chapter 8 s.7 · CDM 2015'});
   steps.push({icon:'📋',title:'Information Board',
     body:'Display information board showing: company name, contact number, permit number, expected duration. Must be clearly visible to approaching traffic.',
-    reg:'NRSWA 1991 · Red Book p.26'});
+    reg:'Safety at Street Works CoP 2013 p.26 · NRSWA 1991'});
   steps.push({icon:'🏁',title:'End Sign',
     body:'Place End of Road Works sign (7002) on nearside at exit. At 50mph+ use End + National Speed Limit Applies sign. Removal order: End sign 2nd-to-last, Road Works Ahead LAST.',
-    reg:'Red Book p.21 — TSRGD 7002'});
+    reg:'Safety at Street Works CoP 2013 p.21 · TSRGD 2016 Diag 7002'});
   steps.push({icon:'✅',title:'Final Walk-Through',
     body:'Walk the full layout before works begin. Check all signs visible, correct height, facing right direction. Check cones not displaced. Confirm barriers secure. Sign the site record.',
-    reg:'Red Book Part 2 — Checking and maintaining sites'});
+    reg:'Safety at Street Works CoP 2013 Part 2 — Checking and maintaining sites'});
   return steps;
 }
 
@@ -907,7 +968,7 @@ function renderRedBook(){
   if(!S.speed){cont.innerHTML='<div style="padding:20px;color:var(--muted);">Select speed on Home first</div>';return;}
   var d=DIST[S.speed]||DIST[30],spd=S.speed;
   cont.innerHTML='<div style="padding:16px;padding-bottom:80px;">'
-    +'<div style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;color:var(--waze-cyan);margin-bottom:12px;">HAUC Red Book — Setting Out Distances</div>'
+    +'<div style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;color:var(--waze-cyan);margin-bottom:12px;">Setting Out Distances</div>'
     +'<table style="width:100%;border-collapse:collapse;font-size:.78rem;">'
     +'<tr style="background:rgba(50,204,254,.1);"><th style="padding:8px;text-align:left;color:var(--waze-cyan);">Dimension</th><th style="padding:8px;text-align:right;color:var(--waze-cyan);">Value</th><th style="padding:8px;text-align:left;color:rgba(255,255,255,.4);">Description</th></tr>'
     +'<tr style="border-bottom:1px solid rgba(255,255,255,.06);"><td style="padding:8px;font-weight:700;color:#FFD600;">D</td><td style="padding:8px;text-align:right;color:#fff;font-weight:700;">'+d.advance+'m</td><td style="padding:8px;color:rgba(255,255,255,.5);">First sign to taper start</td></tr>'
@@ -917,28 +978,136 @@ function renderRedBook(){
     +'<tr style="border-bottom:1px solid rgba(255,255,255,.06);"><td style="padding:8px;font-weight:700;color:#FF8C00;">C</td><td style="padding:8px;text-align:right;color:#fff;font-weight:700;">'+(spd<=30?2:5)+'m</td><td style="padding:8px;color:rgba(255,255,255,.5);">Clearance to works vehicle</td></tr>'
     +'<tr style="background:rgba(255,255,255,.02);"><td style="padding:8px;color:rgba(255,255,255,.5);">Cones</td><td style="padding:8px;text-align:right;color:#fff;font-weight:700;">'+d.coneSize+'mm</td><td style="padding:8px;color:rgba(255,255,255,.5);">Min height · 1.2m taper spacing · 9m max long</td></tr>'
     +'</table>'
-    +'<div style="margin-top:12px;padding:10px;background:rgba(50,204,254,.05);border-radius:10px;font-size:.65rem;color:rgba(50,204,254,.6);">Source: HAUC Red Book setting-out-site table · app.hauc-uk.org.uk</div>'
+    +'<div style="margin-top:12px;padding:10px;background:rgba(50,204,254,.05);border-radius:10px;font-size:.65rem;color:rgba(50,204,254,.6);">Safety at Street Works and Road Works: A Code of Practice (2013) — Crown Copyright, Open Government Licence v3.0</div>'
     +'</div>';
 }
 
 // ── PLACEMENT SEQUENCES ──
+// ══════════════════════════════════════════════════════
+// SHORT-DURATION WORKS SEQUENCES
+// Safety at Street Works CoP 2013 p.83–92
+// ══════════════════════════════════════════════════════
+
+function getPlacementSeqMobile(d,spd){
+  // Mobile works — vehicle moving continuously
+  // CoP 2013 p.83–84: no static signs/cones needed if risk assessment allows
+  // Specific examples: grass/verge cutting, hedge trimming, gully emptying, jetting
+  var isGrass=(S.trade==='grass');
+  var isGully=(S.trade==='gully');
+  var tradeNote=isGrass?'Grass/hedge cutting — vehicle moves continuously along verge. Operatives work on footway/verge only, not carriageway.':
+                isGully?'Gully emptying/jetting — brief stationary stops but vehicle provides protection. Operatives on footway or verge adjacent to carriageway.':
+                'Vehicle moves continuously. No excavation involved.';
+  return [
+    {id:'vehicle',icon:'🚗',name:'1. Check Vehicle & Signs',
+      detail:'Road Works Ahead sign mounted on rear of vehicle facing following traffic. Amber beacon on. Hazard lights on. All operatives in Class 2 hi-vis minimum (Class 3 at ≥40mph).',
+      dist:0,dir:'works',phase:'Before starting',
+      reg:'Safety at Street Works CoP 2013 p.83–84 — Mobile works'},
+    {id:'risk',icon:'📋',name:'2. Confirm Risk Assessment',
+      detail:tradeNote+' Risk assessment must confirm operatives are not working in the carriageway and traffic can pass safely without static signing.',
+      dist:0,dir:'works',phase:'Before starting',
+      reg:'Safety at Street Works CoP 2013 p.86 — Risk assessment'},
+    ...(isGully?[{id:'gully_stop',icon:'🕳️',name:'Short Stop — Gully Position',
+      detail:'For each gully: vehicle stops briefly alongside. Operative exits passenger side only. Amber beacon on. If stop exceeds 15 minutes at any single location, upgrade to the short-stop layout (advance sign + cones).',
+      dist:0,dir:'works',phase:'At each gully',
+      reg:'Safety at Street Works CoP 2013 p.84–85 — Short duration stops <15 min'}]:[]),
+    ...(isGrass?[{id:'grass_cut',icon:'🌿',name:'Vegetation Cutting',
+      detail:'Vehicle and cutting equipment move continuously. Do not allow cuttings to obscure signs, road markings or block drains. Operative must not step into carriageway. If cutting requires operative in carriageway, upgrade to full short-stop layout.',
+      dist:0,dir:'works',phase:'Works in progress',
+      reg:'Safety at Street Works CoP 2013 p.83 — Mobile works on verge'}]:[]),
+    {id:'info_board',icon:'📋',name:'Company Information on Vehicle',
+      detail:'For mobile works not involving excavation, company name and contact number may be displayed on the vehicle. No static information board required.',
+      dist:0,dir:'works',phase:'Ongoing',
+      reg:'Safety at Street Works CoP 2013 p.84'},
+  ];
+}
+
+function getPlacementSeqShort15(d,spd){
+  // Short stop < 15 minutes
+  // CoP 2013 p.83–85: no static cones/advance signs needed IF risk assessment allows
+  var isDual=(S.road==='dual-low');
+  return [
+    {id:'vehicle',icon:'🚗',name:'1. Park Vehicle Safely',
+      detail:'Park vehicle to protect operatives. Amber beacon on. Hazard lights on. Exit passenger side. Vehicle acts as protection for the brief stop.',
+      dist:0,dir:'works',phase:'On arrival',
+      reg:'Safety at Street Works CoP 2013 p.84 — Short duration stops <15 min'},
+    {id:'risk',icon:'📋',name:'Check Risk Assessment Allows No Cones',
+      detail:'A site-specific risk assessment must confirm traffic can pass safely without static signing. Typical examples per CoP 2013 p.84: gully emptying, meter reading, valve turning, leak detection. If any doubt exists, upgrade to the >15 min layout immediately.',
+      dist:0,dir:'works',phase:'Before exiting vehicle',
+      reg:'Safety at Street Works CoP 2013 p.86 — Risk assessment'},
+    {id:'hv',icon:'🦺',name:'High-Visibility Clothing',
+      detail:'Class 2 minimum on roads ≤30mph. Class 3 mandatory on roads ≥40mph. Do not exit vehicle until clothing is correctly fastened.',
+      dist:0,dir:'works',phase:'Before exiting vehicle',
+      reg:'Safety at Street Works CoP 2013 Part 3 — Hi-vis clothing'},
+    ...(isDual?[{id:'ipv',icon:'🚛',name:'Impact Protection Vehicle Recommended',
+      detail:'On dual carriageways it is recommended that works are carried out with an impact protection vehicle (IPV) to safeguard operatives, even for stops under 15 minutes.',
+      dist:0,dir:'works',phase:'Dual carriageway precaution',
+      reg:'Safety at Street Works CoP 2013 p.85 — DC short duration'}]:[]),
+    {id:'info_board',icon:'📋',name:'Works Information',
+      detail:'Company name and contact number must be identifiable. For stops <15 min this may be displayed on the vehicle if no static board is used.',
+      dist:0,dir:'works',phase:'On site',
+      reg:'Safety at Street Works CoP 2013 p.23'},
+  ];
+}
+
+function getPlacementSeqShort60(d,spd){
+  // Short stop 15 min – ~1 hour
+  // CoP 2013 p.85–90: advance sign + cones + safety zone, NO traffic barrier
+  var isDual=(S.road==='dual-low');
+  return [
+    {id:'vehicle',icon:'🚗',name:'1. Park Vehicle Safely',
+      detail:'Park vehicle on nearside. Amber beacon on. Hazard lights on. Do not unload until vehicle is safely parked.',
+      dist:0,dir:'works',phase:'On arrival',
+      reg:'Safety at Street Works CoP 2013 — Arriving on site p.15'},
+    {id:'adv1',icon:'⚠️',name:'Advance Warning Sign',
+      detail:'Walk upstream '+d.advance+'m (distance D). Place Road Works Ahead sign on nearside verge or footway. This is the first sign approaching traffic will see.',
+      dist:d.advance,dir:'upstream',phase:'Walk upstream',
+      reg:'Safety at Street Works CoP 2013 p.85 · TSRGD 2016 Diag 7001'},
+    {id:'narrows',icon:'🔶',name:'Road Narrows Sign',
+      detail:'Place Road Narrows sign (Diag 516) between the advance sign and the start of the lead-in taper.',
+      dist:Math.round(d.advance*0.5),dir:'downstream',phase:'Walk back',
+      reg:'Safety at Street Works CoP 2013 p.17 · TSRGD 2016 Diag 516'},
+    {id:'taper1',icon:'🔶',name:'Lead-In Taper — Cones at 45°',
+      detail:'Place cones at 45° angle from kerb edge. For short-duration stops a 45° taper is used (not the full T length). No traffic barrier — that is only for fixed works >1hr.',
+      dist:Math.round(d.taper*0.5),dir:'downstream',phase:'Lay taper',
+      reg:'Safety at Street Works CoP 2013 p.22 — 45° taper for short duration'},
+    ...(isDual?[{id:'ipv',icon:'🚛',name:'Impact Protection Vehicle Recommended',
+      detail:'On dual carriageways it is recommended that works are carried out with an impact protection vehicle (IPV) to safeguard operatives.',
+      dist:0,dir:'works',phase:'Dual carriageway precaution',
+      reg:'Safety at Street Works CoP 2013 p.88 — DC short duration'}]:[]),
+    {id:'barriers',icon:'🚧',name:'Safety Zone — No Traffic Barrier',
+      detail:'Mark out safety zone with cones. Note: for short-duration works NO red/white traffic barrier is placed across the lane — that is only required for fixed works lasting more than 1 hour.',
+      dist:0,dir:'works',phase:'At works',
+      reg:'Safety at Street Works CoP 2013 p.20 — Barrier = fixed works only'},
+    {id:'info_board',icon:'📋',name:'Information Board',
+      detail:'Display company name, contact number and permit number. Required for all works.',
+      dist:0,dir:'works',phase:'At works',
+      reg:'Safety at Street Works CoP 2013 p.23'},
+    {id:'downstream',icon:'🔶',name:'Exit Taper Cones',
+      detail:'Place exit taper cones back to normal lane. For short-duration works on congested 30mph roads, taper may be reduced but not below 45°.',
+      dist:20,dir:'downstream',phase:'Exit taper',
+      reg:'Safety at Street Works CoP 2013 p.19 — Exit taper'},
+    {id:'endworks',icon:'🏁',name:'End Sign (roads >30mph)',
+      detail:spd>30?'Place End of Works sign at exit. Not required for minor roads ≤30mph.':'End sign not required on this road ≤30mph.',
+      dist:5,dir:'downstream',phase:'Complete',
+      reg:'Safety at Street Works CoP 2013 p.24 — End sign'},
+  ];
+}
+
 function getPlacementSeq(){
   var d=DIST[S.speed]||DIST[30], spd=S.speed||30;
-  var road=S.road||'urban-sc', width=S.width||'half';
-  // Road type routing per Red Book / HAUC
+  var road=S.road||'urban-sc', width=S.width||'half', dur=S.dur||'fixed';
   if(road==='motorway') return [{id:'warn',icon:'⚠️',name:'Motorway — Out of Scope',
-    detail:'Motorway works require Chapter 8 Traffic Signs Manual, specialist TM operatives and are NOT covered by the Red Book. Consult your supervisor and highway authority.',
+    detail:'Motorway works require Chapter 8 TSM, specialist TM operatives and are NOT covered by the Safety at Street Works CoP 2013. Consult your supervisor.',
     dist:0,dir:'works',phase:'Warning',reg:'Chapter 8 TSM — mandatory for motorways',color:'var(--red)'}];
   if(road==='dual-high') return [{id:'warn',icon:'⚠️',name:'Dual Carriageway ≥50mph — Chapter 8',
-    detail:'Dual carriageways at 50mph+ are outside the Red Book scope. Chapter 8 of the Traffic Signs Manual applies. This requires specialist TM planning and highway authority approval.',
-    dist:0,dir:'works',phase:'Warning',reg:'Chapter 8 TSM — HAUC Red Book does not cover DC ≥50mph',color:'var(--red)'}];
-  // Full closure
-  if(width==='full') return getPlacementSeqClosure(d,spd);
-  // Footway only — minimal signing
+    detail:'Dual carriageways at 50mph+ are outside the Safety at Street Works CoP 2013 scope. Chapter 8 applies. Requires specialist TM planning and highway authority approval.',
+    dist:0,dir:'works',phase:'Warning',reg:'Safety at Street Works CoP 2013 — scope excludes DC ≥50mph',color:'var(--red)'}];
+  if(dur==='mobile')  return getPlacementSeqMobile(d,spd);
+  if(dur==='short15') return getPlacementSeqShort15(d,spd);
+  if(dur==='short60') return getPlacementSeqShort60(d,spd);
+  if(width==='full')    return getPlacementSeqClosure(d,spd);
   if(width==='footway') return getPlacementSeqFootway(d,spd);
-  // Single carriageway (urban or rural) — half road
   if(road==='urban-sc'||road==='rural-sc') return getPlacementSeqLights(d,spd);
-  // Dual carriageway ≤40mph — lane closure taper
   return getPlacementSeqTaper(d,spd);
 }
 
@@ -946,7 +1115,7 @@ function getPlacementSeqTaper(d,spd){
   var seq=[];
   seq.push({id:'vehicle',icon:'🚗',name:'1. Park Vehicle Safely',
     detail:'Park safely, amber beacon on, exit passenger side. Place Keep Right sign at corner immediately.',
-    dist:0,dir:'works',phase:'At works',reg:'Red Book HAUC step 1',color:'var(--blue)'});
+    dist:0,dir:'works',phase:'At works',reg:'Safety at Street Works CoP 2013 — Sequence for setting out signs p.21',color:'var(--blue)'});
   seq.push({id:'adv1',icon:'⚠️',name:'Advance Warning Sign',
     detail:'Walk upstream '+d.advance+'m. Place Road Works Ahead sign on nearside. '+(spd>=50?'Add supplementary distance plate in yards.':''),
     dist:d.advance,dir:'upstream',phase:'Walk upstream',reg:'Chapter 8 Table 8-3',color:'var(--yellow)'});
@@ -963,7 +1132,7 @@ function getPlacementSeqTaper(d,spd){
     dist:5,dir:'downstream',phase:'Walk back',reg:'TSRGD Diag 670',color:'var(--red)'});
   seq.push({id:'taper1',icon:'🔶',name:'Lead-In Taper Cones',
     detail:'Place cones at 45° from kerb outward. '+d.taper+'m taper. Max 1.2m spacing. Always face oncoming traffic.',
-    dist:d.taper,dir:'downstream',phase:'Lay taper',reg:'HAUC Red Book p.19',color:'var(--orange)'});
+    dist:d.taper,dir:'downstream',phase:'Lay taper',reg:'Safety at Street Works CoP 2013 p.19',color:'var(--orange)'});
   seq.push({id:'keepright',icon:'🔵',name:'Keep Right Sign at Taper',
     detail:'Place Keep Right (Diag 610) at start of taper. Same size as Road Works Ahead sign.',
     dist:0,dir:'works',phase:'At taper start',reg:'TSRGD Diag 610',color:'var(--blue)'});
@@ -975,10 +1144,10 @@ function getPlacementSeqTaper(d,spd){
     dist:d.taper,dir:'downstream',phase:'Exit taper',reg:'TSRGD Diag 610',color:'var(--blue)'});
   seq.push({id:'downstream',icon:'🔶',name:'Downstream Cones',
     detail:'Cone off exit taper back to normal carriageway.',
-    dist:d.taper*.5,dir:'downstream',phase:'Exit taper',reg:'Red Book',color:'var(--orange)'});
+    dist:d.taper*.5,dir:'downstream',phase:'Exit taper',reg:'Safety at Street Works CoP 2013',color:'var(--orange)'});
   seq.push({id:'endworks',icon:'🏁',name:'End of Road Works Sign',
     detail:'Place End sign on nearside. '+(spd>=50?'Use End + NSL sign at 50mph+. ':'')+'Remove 2nd-to-last when taking down.',
-    dist:20,dir:'downstream',phase:'Complete',reg:'Red Book p.21',color:'var(--yellow)'});
+    dist:20,dir:'downstream',phase:'Complete',reg:'Safety at Street Works CoP 2013 p.21',color:'var(--yellow)'});
   return seq;
 }
 
@@ -987,7 +1156,7 @@ function getPlacementSeqLights(d,spd){
   var useLights=(spd>=40);
   seq.push({id:'vehicle',icon:'🚗',name:'1. Park Vehicle Safely',
     detail:'Park safely, amber beacon on, exit passenger side.',
-    dist:0,dir:'works',phase:'At works',reg:'Red Book HAUC step 1',color:'var(--blue)'});
+    dist:0,dir:'works',phase:'At works',reg:'Safety at Street Works CoP 2013 — Sequence for setting out signs p.21',color:'var(--blue)'});
   seq.push({id:'adv1',icon:'⚠️',name:'Advance Warning (Upstream)',
     detail:'Walk upstream '+d.advance+'m. Place Road Works Ahead sign.',
     dist:d.advance,dir:'upstream',phase:'Walk upstream',reg:'Chapter 8 Table 8-3',color:'var(--yellow)'});
@@ -996,16 +1165,16 @@ function getPlacementSeqLights(d,spd){
     dist:Math.round(d.advance*.3),dir:'downstream',phase:'Walk back',reg:'TSRGD 516',color:'var(--yellow)'});
   seq.push({id:'single_file',icon:'↔️',name:'Single File Sign',
     detail:'Place Single File sign between Road Narrows and TM.',
-    dist:Math.round(d.advance*.1),dir:'downstream',phase:'Walk back',reg:'Red Book p.65',color:'var(--yellow)'});
+    dist:Math.round(d.advance*.1),dir:'downstream',phase:'Walk back',reg:'Safety at Street Works CoP 2013 p.65',color:'var(--yellow)'});
   seq.push({id:'wait_here_up',icon:'🛑',name:'Wait Here Sign (Upstream)',
     detail:'Place WHEN RED LIGHT SHOWS WAIT HERE 15m before signal head.',
-    dist:15,dir:'upstream',phase:'Set upstream TM',reg:'Red Book p.65',color:'var(--red)'});
+    dist:15,dir:'upstream',phase:'Set upstream TM',reg:'Safety at Street Works CoP 2013 p.65',color:'var(--red)'});
   seq.push({id:'tm_up',icon:useLights?'🚦':'🛑',name:'Upstream '+(useLights?'Signal':'Stop/Go'),
     detail:'Place upstream '+(useLights?'portable signals':'Stop/Go board')+'. Hold traffic until downstream in place.',
     dist:5,dir:'downstream',phase:'Set TM',reg:'Chapter 8 s.6.3',color:'var(--orange)'});
   seq.push({id:'taper1',icon:'🔶',name:'Lead-In Taper Cones',
     detail:'Place taper cones '+d.taper+'m. Face oncoming traffic.',
-    dist:d.taper,dir:'downstream',phase:'Lay taper',reg:'HAUC Red Book',color:'var(--orange)'});
+    dist:d.taper,dir:'downstream',phase:'Lay taper',reg:'Safety at Street Works CoP 2013',color:'var(--orange)'});
   seq.push({id:'barriers',icon:'🚧',name:'Barriers & Guarding',
     detail:'Place barriers, beacons and guarding around works.',
     dist:0,dir:'works',phase:'At works',reg:'Chapter 8 s.7',color:'var(--red)'});
@@ -1017,7 +1186,7 @@ function getPlacementSeqLights(d,spd){
     dist:d.taper+10,dir:'upstream',phase:'Set downstream TM',reg:'Chapter 8 s.6.3',color:'var(--orange)'});
   seq.push({id:'endworks',icon:'🏁',name:'End of Road Works Signs',
     detail:'Place End sign at each approach. Remove 2nd-to-last on takedown.',
-    dist:0,dir:'works',phase:'Complete',reg:'Red Book p.21',color:'var(--yellow)'});
+    dist:0,dir:'works',phase:'Complete',reg:'Safety at Street Works CoP 2013 p.21',color:'var(--yellow)'});
   return seq;
 }
 
@@ -1025,7 +1194,7 @@ function getPlacementSeqClosure(d,spd){
   var seq=[];
   seq.push({id:'vehicle',icon:'🚗',name:'1. Park Vehicle Safely',
     detail:'Park safely, amber beacon on, exit passenger side.',
-    dist:0,dir:'works',phase:'At works',reg:'Red Book HAUC step 1',color:'var(--blue)'});
+    dist:0,dir:'works',phase:'At works',reg:'Safety at Street Works CoP 2013 — Sequence for setting out signs p.21',color:'var(--blue)'});
   seq.push({id:'adv1',icon:'⚠️',name:'Advance Warning Sign',
     detail:'Walk upstream '+d.advance+'m. Place Road Works Ahead sign.',
     dist:d.advance,dir:'upstream',phase:'Walk upstream',reg:'Chapter 8',color:'var(--yellow)'});
@@ -1046,7 +1215,7 @@ function getPlacementSeqClosure(d,spd){
     dist:Math.round(d.advance*.5),dir:'downstream',phase:'Downstream advance',reg:'Chapter 8',color:'var(--yellow)'});
   seq.push({id:'endworks',icon:'🏁',name:'End Signs Both Approaches',
     detail:'Place End sign at each closure. Remove 2nd-to-last on takedown.',
-    dist:0,dir:'works',phase:'Complete',reg:'Red Book p.21',color:'var(--yellow)'});
+    dist:0,dir:'works',phase:'Complete',reg:'Safety at Street Works CoP 2013 p.21',color:'var(--yellow)'});
   return seq;
 }
 
@@ -1346,13 +1515,13 @@ function getPlacementSeqFootway(d,spd){
   return [
     {id:'vehicle',icon:'🚗',name:'Park Vehicle Safely',
       detail:'Park safely, amber beacon on, exit passenger side.',
-      dist:0,dir:'works',phase:'At works',reg:'Red Book HAUC step 1',color:'var(--blue)'},
+      dist:0,dir:'works',phase:'At works',reg:'Safety at Street Works CoP 2013 — Sequence for setting out signs p.21',color:'var(--blue)'},
     {id:'barriers',icon:'🚧',name:'Pedestrian Barriers',
       detail:'Place pedestrian barriers around works. Minimum 1.5m clear passageway for pedestrians. If footway closed, provide signed diversion route via carriageway with guarding.',
-      dist:0,dir:'works',phase:'At works',reg:'Red Book — Footway and footpath works p.27',color:'var(--orange)'},
+      dist:0,dir:'works',phase:'At works',reg:'Safety at Street Works CoP 2013 p.27 — Footway and footpath works',color:'var(--orange)'},
     {id:'ramp',icon:'🏗️',name:'Footway Ramp if Needed',
       detail:'If works cross the footway, provide ramp onto carriageway. Min 900mm wide, max 1:12 gradient. Tactile paving at each end.',
-      dist:0,dir:'works',phase:'At works',reg:'Red Book p.28 — Footway ramps',color:'var(--orange)'},
+      dist:0,dir:'works',phase:'At works',reg:'Safety at Street Works CoP 2013 p.28 — Footway ramps',color:'var(--orange)'},
     {id:'info_board',icon:'📋',name:'Information Board',
       detail:'Display information board showing company, contact number and expected duration.',
       dist:0,dir:'works',phase:'Complete',reg:'NRSWA 1991',color:'var(--blue)'},
@@ -1378,8 +1547,8 @@ function renderSignsReference(){
     {fn:function(){return rbSignRoadWorks(40,40,64);},w:72,h:72,diag:'7001',name:'Road Works Ahead',desc:'Primary advance warning. Place at distance D from taper start.'},
     {fn:function(){return rbSignEnd(40,42,60);},w:56,h:72,diag:'7002',name:'End of Road Works',desc:'Place at exit. Remove 2nd-to-last on takedown.'},
     {fn:function(){return rbSignEndNSL(40,40,66);},w:82,h:66,diag:'7002+NSL',name:'End + Nat. Speed Limit',desc:'Use at 50mph+ instead of plain End sign.'},
-    {fn:function(){return rbSignNarrows(40,40,64,'left');},w:80,h:72,diag:'516',name:'Road Narrows',desc:'Between advance sign and taper. Red Book p.65.'},
-    {fn:function(){return rbSignSingleFile(40,40,64);},w:80,h:72,diag:'SF',name:'Single File Traffic',desc:'Between Road Narrows and TM. Red Book p.65.'},
+    {fn:function(){return rbSignNarrows(40,40,64,'left');},w:80,h:72,diag:'516',name:'Road Narrows',desc:'Between advance sign and taper. Safety at Street Works CoP 2013 p.65.'},
+    {fn:function(){return rbSignSingleFile(40,40,64);},w:80,h:72,diag:'SF',name:'Single File Traffic',desc:'Between Road Narrows and TM. Safety at Street Works CoP 2013 p.65.'},
     {fn:function(){return rbSignKeepRight(40,40,70,70);},w:72,h:72,diag:'610 KR',name:'Keep Right',desc:'At taper start and end. Same size as advance sign.'},
     {fn:function(){return rbSignKeepLeft(40,40,70,70);},w:72,h:72,diag:'610 KL',name:'Keep Left',desc:'At exit taper. Returns traffic to normal lane.'},
     {fn:function(){return rbSignStop(40,40,32);},w:72,h:72,diag:'7023',name:'Stop Board',desc:'Traffic control ≤30mph. Show STOP to hold traffic.'},
@@ -1400,7 +1569,7 @@ function renderSignsReference(){
       +'<div style="font-size:.6rem;font-weight:700;color:var(--waze-cyan);margin-top:2px;">Diag. '+s.diag+'</div></div></div>'
       +'<div style="font-size:.65rem;color:rgba(255,255,255,.4);line-height:1.4;">'+s.desc+'</div></div>';
   });
-  html+='</div><div style="margin-top:12px;padding:10px;background:rgba(50,204,254,.05);border-radius:10px;font-size:.62rem;color:rgba(50,204,254,.5);">Crown Copyright — TSRGD 2016 &amp; Red Book — Open Government Licence v2.0</div>';
+  html+='</div><div style="margin-top:12px;padding:10px;background:rgba(50,204,254,.05);border-radius:10px;font-size:.62rem;color:rgba(50,204,254,.5);">Crown Copyright — TSRGD 2016 &amp; Safety at Street Works CoP 2013 — Open Government Licence v3.0</div>';
   el.innerHTML=html;
 }
 
@@ -1413,7 +1582,7 @@ function renderPreRef(){
     {icon:'📄',title:'Traffic Management Approval',body:'Traffic management plan must be approved by the highway authority before works begin. Some TM schemes require a Traffic Regulation Order (TRO). Allow sufficient lead time for approval.',reg:'TMA 2004 · NRSWA 1991'},
     {icon:'🦺',title:'Risk Assessment & Method Statement',body:'Site-specific risk assessment required. Consider: traffic speeds, pedestrian routes, vulnerable road users, lone working, overhead/buried utilities, site access and egress.',reg:'CDM 2015 · Management of H&S at Work Regs 1999'},
     {icon:'📞',title:'Notifying Stakeholders',body:'Notify highway authority. Inform emergency services if road closures are required. Contact utilities if working near their assets. Give adequate notice to affected businesses and residents.',reg:'NRSWA 1991 · New Roads & Street Works Act'},
-    {icon:'🚧',title:'Equipment Check',body:'Check all signs are clean, retroreflective, correct size and undamaged. Cones must meet BS EN 13422. Lamps must be lit and amber. Verify all equipment is available before leaving depot.',reg:'Red Book Part 3'},
+    {icon:'🚧',title:'Equipment Check',body:'Check all signs are clean, retroreflective, correct size and undamaged. Cones must meet BS EN 13422. Lamps must be lit and amber. Verify all equipment is available before leaving depot.',reg:'Safety at Street Works CoP 2013 Part 3'},
   ];
   el.innerHTML='<div style="padding:14px;padding-bottom:80px;display:flex;flex-direction:column;gap:8px;">'+items.map(function(item){
     return '<div style="background:var(--dark2);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,.06);">'
@@ -1432,8 +1601,8 @@ function renderRegsRef(){
     {icon:'📖',title:'New Roads & Street Works Act 1991',short:'NRSWA',body:'Primary legislation governing street works in the UK. Covers permits, coordination, reinstatement and safety requirements.'},
     {icon:'📖',title:'Traffic Management Act 2004',short:'TMA 2004',body:'Introduced permit schemes and lane rental. Gives highway authorities powers to coordinate and manage street works more effectively.'},
     {icon:'📖',title:'Traffic Signs Regulations & General Directions 2016',short:'TSRGD 2016',body:'Prescribes all traffic sign designs, dimensions and colours. All temporary signs must conform to TSRGD 2016.'},
-    {icon:'📖',title:'Safety at Street Works and Road Works CoP',short:'Red Book',body:'The Red Book is the code of practice issued under NRSWA. It provides definitive guidance on signing, lighting and guarding.'},
-    {icon:'📖',title:'Chapter 8 — Traffic Signs Manual',short:'Chapter 8',body:'Provides guidance on the use of signs and marking for roadworks and temporary situations, complementing the Red Book.'},
+    {icon:'📖',title:'Safety at Street Works and Road Works CoP',short:'Safety at Street Works CoP 2013',body:'The Code of Practice (informally, the Red Book) is the code of practice issued under NRSWA. It provides definitive guidance on signing, lighting and guarding.'},
+    {icon:'📖',title:'Chapter 8 — Traffic Signs Manual',short:'Chapter 8',body:'Provides guidance on the use of signs and marking for roadworks and temporary situations, complementing the Safety at Street Works CoP 2013.'},
     {icon:'📖',title:'Construction (Design & Management) Regulations 2015',short:'CDM 2015',body:'Covers health and safety in construction work including street works. Requires risk assessment, method statements and competent supervision.'},
   ];
   el.innerHTML='<div style="padding:14px;padding-bottom:80px;display:flex;flex-direction:column;gap:8px;">'+regs.map(function(r){
@@ -1461,11 +1630,11 @@ function renderDistRef(){
       +'</tr>';
   }).join('');
   el.innerHTML='<div style="padding:14px;padding-bottom:80px;">'
-    +'<div style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;color:var(--waze-cyan);margin-bottom:12px;">HAUC Red Book Distances</div>'
+    +'<div style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:900;color:var(--waze-cyan);margin-bottom:12px;">Setting Out Distances</div>'
     +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:.78rem;min-width:360px;">'
     +'<tr style="background:rgba(50,204,254,.1);"><th style="padding:8px 12px;text-align:left;color:var(--waze-cyan);">Speed</th><th style="padding:8px;color:var(--waze-cyan);">D</th><th style="padding:8px;color:var(--waze-cyan);">T</th><th style="padding:8px;color:var(--waze-cyan);">L</th><th style="padding:8px;color:var(--waze-cyan);">S</th><th style="padding:8px;color:var(--waze-cyan);">Cone</th></tr>'
     +rows+'</table></div>'
-    +'<div style="margin-top:12px;padding:10px;background:rgba(50,204,254,.05);border-radius:10px;font-size:.65rem;color:rgba(50,204,254,.5);">Source: HAUC Red Book setting-out-site table · app.hauc-uk.org.uk/setting-out-site-table</div>'
+    +'<div style="margin-top:12px;padding:10px;background:rgba(50,204,254,.05);border-radius:10px;font-size:.65rem;color:rgba(50,204,254,.5);">Safety at Street Works and Road Works: A Code of Practice (2013) — Crown Copyright, Open Government Licence v3.0/setting-out-site-table</div>'
     +'</div>';
 }
 
