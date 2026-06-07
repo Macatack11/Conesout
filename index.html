@@ -1127,6 +1127,148 @@ function getPlacementSeqTaper(d,spd){
 
   return seq;
 }
+// ── SINGLE LANE WORKING — Stop/Go boards (≤30mph) or portable signals (≥40mph) ──
+function getPlacementSeqLights(d,spd){
+  var seq=[];
+  var useLights=(spd>=40);
+  var tmIcon=useLights?"&#128678;":"&#128721;";
+  var tmLabel=useLights?"Portable Traffic Signals":"Stop/Go Board";
+
+  // Red Book p.65 full sign sequence: 7001 → Narrows → Single File → Wait Here → TM
+  seq.push({id:"adv1",icon:"&#9888;&#65039;",
+    name:"Advance Warning Sign (Upstream)",
+    detail:"Walk upstream "+d.advance+"m. Place Road Works Ahead sign facing traffic. At 50mph+ add supplementary distance plate in yards.",
+    dist:d.advance,dir:"upstream",phase:"Walk upstream",
+    reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+  if(spd>=40){
+    seq.push({id:"adv2",icon:"&#9888;&#65039;",
+      name:"Second Advance Sign",
+      detail:"Walk back "+Math.round(d.advance*0.45)+"m. Place second Road Works Ahead sign.",
+      dist:Math.round(d.advance*0.45),dir:"downstream",phase:"Walk back",
+      reg:"Chapter 8 s.4.2",color:"var(--yellow)"});
+  }
+
+  seq.push({id:"narrows",icon:"NARROWS",
+    name:"Road Narrows Sign",
+    detail:"Walk back "+Math.round(d.advance*0.12)+"m. Place Road Narrows sign (Diag 516) on nearside — Red Book p.65: between advance sign and TM.",
+    dist:Math.round(d.advance*0.12),dir:"downstream",phase:"Walk back",
+    reg:"TSRGD Diagram 516 — Red Book p.65",color:"var(--yellow)"});
+
+  seq.push({id:"single_file",icon:"SF",
+    name:"Single File Traffic Sign",
+    detail:"Walk back "+Math.round(d.advance*0.08)+"m. Place Single File sign between Road Narrows and signals.",
+    dist:Math.round(d.advance*0.08),dir:"downstream",phase:"Walk back",
+    reg:"Red Book p.65",color:"var(--yellow)"});
+
+  seq.push({id:"tm_up",icon:tmIcon,
+    name:"Upstream "+tmLabel,
+    detail:"Place "+tmLabel+" on nearside. "+(useLights?"Hold on RED until downstream signal in place.":"Hold on STOP until downstream board in place."),
+    dist:Math.round(d.advance*0.1),dir:"downstream",phase:"Place upstream TM",
+    reg:"Chapter 8 s.6.3",color:"var(--orange)"});
+
+  seq.push({id:"wait_here_up",icon:"WH",
+    name:"Wait Here Sign",
+    detail:"Place 'WHEN RED LIGHT SHOWS WAIT HERE' 15m before upstream signal. Mandatory with all portable signals.",
+    dist:5,dir:"upstream",phase:"Set upstream signals",
+    reg:"Red Book p.65 Note 4",color:"var(--red)"});
+
+  // Walk to downstream approach
+  seq.push({id:"adv_dn",icon:"&#9888;&#65039;",
+    name:"Advance Sign (Downstream)",
+    detail:"Walk downstream past works "+d.advance+"m. Place Road Works Ahead sign facing traffic from this direction.",
+    dist:d.taper+20+d.advance,dir:"downstream",phase:"Walk downstream approach",
+    reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+  seq.push({id:"narrows_dn",icon:"NARROWS",
+    name:"Road Narrows (Downstream)",
+    detail:"Walk back "+Math.round(d.advance*0.2)+"m. Place Road Narrows sign.",
+    dist:Math.round(d.advance*0.2),dir:"upstream",phase:"Walk back to works",
+    reg:"TSRGD Diagram 516",color:"var(--yellow)"});
+
+  seq.push({id:"single_file_dn",icon:"SF",
+    name:"Single File (Downstream)",
+    detail:"Walk back. Place Single File sign between narrows and downstream TM.",
+    dist:Math.round(d.advance*0.08),dir:"upstream",phase:"Walk back to works",
+    reg:"Red Book p.65",color:"var(--yellow)"});
+
+  seq.push({id:"tm_dn",icon:tmIcon,
+    name:"Downstream "+tmLabel,
+    detail:"Place downstream "+tmLabel+". Now release traffic alternately with upstream operative.",
+    dist:d.taper+10,dir:"upstream",phase:"Place downstream TM",
+    reg:"Chapter 8 s.6.3",color:"var(--orange)"});
+
+  seq.push({id:"vehicle",icon:"&#128666;",
+    name:"1. Park Vehicle Safely",
+    detail:"Park vehicle safely at works. Amber beacon and hazard lights on. High-vis markings facing oncoming traffic. Exit from passenger side.",
+    dist:0,dir:"works",phase:"At works — HAUC step 1",
+    reg:"Red Book — HAUC: app.hauc-uk.org.uk/sequence-for-setting-out-signs",color:"var(--blue)"});
+
+  seq.push({id:"endworks",icon:"END",
+    name:"End of Road Works Sign",
+    detail:"Place End sign on nearside at exit taper on each approach. Remove 2nd-to-last when taking down.",
+    dist:0,dir:"works",phase:"Complete",
+    reg:"Red Book p.21",color:"var(--yellow)"});
+
+  return seq;
+}
+
+// ── NARROW ROAD / FULL CLOSURE ──
+function getPlacementSeqClosure(d,spd){
+  var seq=[];
+
+  seq.push({id:"adv1",icon:"&#9888;&#65039;",
+    name:"Advance Warning Sign",
+    detail:"Walk upstream "+d.advance+"m. Place Road Works Ahead sign facing traffic.",
+    dist:d.advance,dir:"upstream",phase:"Walk upstream",
+    reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+  seq.push({id:"diversion_sign",icon:"DIV",
+    name:"Diversion Signs",
+    detail:"Walk back placing diversion signs along the alternative route. Blue rectangle signs at each turn.",
+    dist:Math.round(d.advance*0.4),dir:"downstream",phase:"Place diversion route",
+    reg:"TSRGD 2016 — Chapter 8",color:"var(--blue)"});
+
+  seq.push({id:"road_closed_up",icon:"&#128721;",
+    name:"Road Closed Barrier (Upstream)",
+    detail:"Walk back to closure point. Place Road Closed sign (Diag 619) and barriers across full carriageway width.",
+    dist:Math.round(d.advance*0.3),dir:"downstream",phase:"Place upstream closure",
+    reg:"TSRGD Diagram 619",color:"var(--red)"});
+
+  seq.push({id:"vehicle",icon:"&#128666;",
+    name:"1. Park Vehicle Safely",
+    detail:"Park vehicle safely at works. Amber beacon on. High-vis facing oncoming traffic. Exit passenger side.",
+    dist:0,dir:"works",phase:"At works — HAUC step 1",
+    reg:"Red Book — HAUC: app.hauc-uk.org.uk/sequence-for-setting-out-signs",color:"var(--blue)"});
+
+  seq.push({id:"barriers",icon:"&#128679;",
+    name:"Work Zone Guarding",
+    detail:"Place barriers around full work area. Min 0.5m clearance from excavation. Amber beacon each end.",
+    dist:0,dir:"works",phase:"Set up guarding",
+    reg:"Chapter 8 s.7 — CDM 2015",color:"var(--red)"});
+
+  seq.push({id:"road_closed_dn",icon:"&#128721;",
+    name:"Road Closed Barrier (Downstream)",
+    detail:"Walk downstream "+d.advance+"m to second closure point. Place Road Closed sign and barriers across carriageway.",
+    dist:d.advance+20,dir:"downstream",phase:"Walk downstream",
+    reg:"TSRGD Diagram 619",color:"var(--red)"});
+
+  seq.push({id:"adv_dn",icon:"&#9888;&#65039;",
+    name:"Advance Sign (Downstream)",
+    detail:"Continue "+Math.round(d.advance*0.5)+"m downstream. Place Road Works Ahead facing traffic from this direction.",
+    dist:Math.round(d.advance*0.5),dir:"downstream",phase:"Downstream advance",
+    reg:"Chapter 8 Table 8-3",color:"var(--yellow)"});
+
+  seq.push({id:"endworks",icon:"END",
+    name:"End of Road Works Sign",
+    detail:"Place End sign at each closure point. Remove 2nd-to-last when taking down.",
+    dist:0,dir:"works",phase:"Complete",
+    reg:"Red Book p.21",color:"var(--yellow)"});
+
+  return seq;
+}
+
+
 
 // ── LIGHTS / STOP-GO DIAGRAM ──
 function renderDiagramLights(cont,d,spd,tradeName,rot,landscape,flip){
@@ -3021,8 +3163,8 @@ function woItemIcon(item){
   }
   // Barrier / guarding
   if(id.indexOf("barrier")!==-1||id.indexOf("guarding")!==-1){
-    return '<svg width="40" height="20" viewBox="0 0 40 20">'
-      +rbBarrier(2,10,38,"#CC0000")
+    return '<svg width="44" height="28" viewBox="0 0 44 28">'
+      +rbBarrier_img(22,14,22)
       +'</svg>';
   }
   // Amber beacon
@@ -4441,8 +4583,8 @@ function woItemIcon(item){
   }
   // Barrier / guarding
   if(id.indexOf("barrier")!==-1||id.indexOf("guarding")!==-1){
-    return '<svg width="40" height="20" viewBox="0 0 40 20">'
-      +rbBarrier(2,10,38,"#CC0000")
+    return '<svg width="44" height="28" viewBox="0 0 44 28">'
+      +rbBarrier_img(22,14,22)
       +'</svg>';
   }
   // Amber beacon
@@ -5156,67 +5298,6 @@ function hexToRgb2(hex){
 // Uses OpenStreetMap + Overpass to find utilities,
 // + LSBUD / Linesearch API awareness
 // ══════════════════════════════════════════════════
-async function runHazardScan(){
-  var resultsDiv=document.getElementById('hazard-results');
-  var bodyDiv=document.getElementById('hazard-body');
-  if(!resultsDiv||!bodyDiv)return;
-  
-  bodyDiv.innerHTML='<div style="color:#32CCFE;text-align:center;padding:8px 0;">&#128269; Scanning your location...</div>';
-  resultsDiv.style.maxHeight='300px';
-
-  if(!navigator.geolocation){bodyDiv.innerHTML='GPS not available';return;}
-
-  navigator.geolocation.getCurrentPosition(async function(pos){
-    var lat=pos.coords.latitude,lng=pos.coords.longitude,acc=pos.coords.accuracy;
-    
-    // Query OpenStreetMap Overpass for nearby utilities within 50m
-    var query='[out:json][timeout:10];('
-      +'way["man_made"="pipeline"](around:50,'+lat+','+lng+');'
-      +'way["power"](around:50,'+lat+','+lng+');'
-      +'node["man_made"="utility_pole"](around:30,'+lat+','+lng+');'
-      +'way["landuse"="industrial"](around:30,'+lat+','+lng+');'
-      +'node["emergency"="fire_hydrant"](around:50,'+lat+','+lng+');'
-      +'way["waterway"](around:30,'+lat+','+lng+');'
-      +');out body;';
-    
-    var hazards=[];
-    try{
-      var r=await fetch('https://overpass-api.de/api/interpreter?data='+encodeURIComponent(query));
-      var data=await r.json();
-      (data.elements||[]).forEach(function(el){
-        var t=el.tags||{};
-        if(t.man_made==='pipeline') hazards.push({icon:'🔥',label:'Pipeline nearby',sub:'Gas/oil pipeline mapped within 50m',col:'#FF8C00',action:'Call Cadent Gas: 0800 111999'});
-        if(t.power==='line'||t.power==='cable') hazards.push({icon:'⚡',label:'Electric cable',sub:'Power line/cable mapped nearby',col:'#FFD600',action:'Call DNO: 105'});
-        if(t.emergency==='fire_hydrant') hazards.push({icon:'💧',label:'Water main nearby',sub:'Fire hydrant indicates water main within 50m',col:'#32CCFE',action:'Check with local water authority'});
-        if(t.waterway) hazards.push({icon:'💧',label:'Watercourse',sub:'Watercourse: '+t.waterway+' mapped nearby',col:'#32CCFE',action:'Check water authority'});
-        if(t.man_made==='utility_pole') hazards.push({icon:'📡',label:'Utility pole',sub:'Overhead telecoms/electric pole within 30m',col:'#9C27B0',action:'Check BT Openreach or local DNO'});
-      });
-    }catch(e){/* Overpass unavailable */}
-
-    // Always add standard warnings
-    var warnings=[
-      {icon:'⚠️',label:'Always contact LSBUD',sub:'Before any excavation — search all utility records at linesearchbeforeudig.co.uk',col:'#FFD600',action:'Visit lsbud.co.uk'},
-      {icon:'🗺️',label:'Location captured',sub:'±'+Math.round(acc)+'m accuracy · '+lat.toFixed(5)+', '+lng.toFixed(5),col:'#32CCFE',action:''},
-    ];
-
-    var all=hazards.concat(warnings);
-    bodyDiv.innerHTML=all.map(function(h){
-      return '<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;">'
-        +'<span style="font-size:1.1rem;flex-shrink:0;">'+h.icon+'</span>'
-        +'<div><div style="color:'+h.col+';font-weight:700;font-size:.75rem;">'+h.label+'</div>'
-        +'<div style="color:rgba(255,255,255,.5);font-size:.68rem;">'+h.sub+'</div>'
-        +(h.action?'<div style="color:rgba(255,255,255,.35);font-size:.65rem;margin-top:1px;">→ '+h.action+'</div>':'')
-        +'</div></div>';
-    }).join('');
-
-    // Find relevant contacts for detected hazards
-    if(hazards.length>0){
-      bodyDiv.innerHTML+='<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);color:rgba(255,214,0,.7);font-size:.7rem;font-weight:700;">Relevant emergency contacts shown in Contacts tab ↑</div>';
-    }
-  },function(){
-    bodyDiv.innerHTML='<div style="color:#FF5252;">GPS unavailable — cannot scan location</div>';
-  },{timeout:8000,maximumAge:0});
-}
 
 // Initialise contacts list when screen shown
 var _contactsInit=false;
