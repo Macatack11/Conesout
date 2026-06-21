@@ -1291,9 +1291,11 @@ function renderDiagram(){
       +'<div style="font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;color:var(--waze-cyan);">Select trade and speed on Home first</div>'
       +'</div>'; return;
   }
-  var d=DIST[S.speed]||DIST[30], spd=S.speed, SS=28, SR=20, KS=26;
+  var d=DIST[S.speed]||DIST[30], spd=S.speed;
+  var SZ=34, SS=SZ, SR=SZ/2, KS=SZ;
   var landscape=(diagramRotation===90||diagramRotation===270);
   var flip=(diagramRotation===180||diagramRotation===270);
+  var reversed = (landscape !== flip);
   var adv=d.advance, tap=d.taper, wz=30, dn=20;
   var total=adv+tap+wz+dn;
   function conn(x1,y1,x2,y2,c){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+c+'" stroke-width="1" stroke-dasharray="3,3" opacity=".4"/>';}
@@ -1313,10 +1315,8 @@ function renderDiagram(){
     svg+='<rect x="'+rX+'" y="0" width="4" height="'+H+'" fill="rgba(255,255,255,.7)"/>';
     svg+='<rect x="'+(re-4)+'" y="0" width="4" height="'+H+'" fill="rgba(255,255,255,.7)"/>';
     svg+='<line x1="'+cx2+'" y1="0" x2="'+cx2+'" y2="'+H+'" stroke="#FFD600" stroke-width="2" stroke-dasharray="16,10"/>';
-    // Cones
     var nc=Math.max(4,Math.floor(tap/d.coneGap));
     for(var ci=0;ci<=nc;ci++){var t=ci/nc;svg+=rbCone(re-t*lW,yTS+t*(yTE-yTS),7);}
-    // Work zone
     var wzT=Math.min(yTE,yWZE),wzB=Math.max(yTE,yWZE);
     svg+='<rect x="'+cx2+'" y="'+wzT+'" width="'+lW+'" height="'+(wzB-wzT)+'" fill="rgba(255,107,0,.12)"/>';
     svg+='<rect x="'+cx2+'" y="'+wzT+'" width="'+lW+'" height="'+(wzB-wzT)+'" fill="none" stroke="var(--waze-cyan)" stroke-width="1.5" stroke-dasharray="6,4"/>';
@@ -1326,14 +1326,13 @@ function renderDiagram(){
     svg+=rbBeacon(cx2+10,wzT+8);svg+=rbBeacon(cx2+10,wzB-8);
     for(var di=0;di<3;di++){var t2=(di+1)/4;svg+=rbCone(re-lW*(1-t2*.65),yWZE+t2*(yDE-yWZE),7);}
     svg+=rbVehicle(cx2+lW/2,(wzT+wzB)/2,false);
-    // Signs
     var sC1=re+26,sC2=re+50;
     svg+=rbSignRoadWorks(sC1,yA,SS)+conn(sC1-SS*.55,yA,re,yA,'rgba(255,214,0,.35)');
     if(yA2){svg+=rbSignRoadWorks(sC1,yA2,SS*.8)+conn(sC1-SS*.44,yA2,re,yA2,'rgba(255,214,0,.25)');}
-    if(yN){svg+=rbSignNarrows(sC2,yN,SS,'left')+conn(sC2-SS*.55,yN,re,yN,'rgba(255,214,0,.3)');}
+    if(yN){svg+=rbSignNarrows(sC2,yN,SS,'both')+conn(sC2-SS*.55,yN,re,yN,'rgba(255,214,0,.3)');}
     if(ySpd){svg+=rbSignSpeed(sC2,ySpd,SR,spd-20)+conn(sC2-SR,ySpd,re,ySpd,'rgba(204,0,0,.35)');}
-    svg+=rbSignKeepRight(sC1,yTS,KS,KS)+conn(sC1-KS/2,yTS,re,yTS,'rgba(0,61,165,.45)');
-    svg+=rbSignKeepLeft(sC1,yWZE,KS,KS)+conn(sC1-KS/2,yWZE,re,yWZE,'rgba(0,61,165,.45)');
+    svg+=(reversed?rbSignKeepLeft(sC1,yTS,KS,KS):rbSignKeepRight(sC1,yTS,KS,KS))+conn(sC1-KS/2,yTS,re,yTS,'rgba(0,61,165,.45)');
+    svg+=(reversed?rbSignKeepRight(sC1,yWZE,KS,KS):rbSignKeepLeft(sC1,yWZE,KS,KS))+conn(sC1-KS/2,yWZE,re,yWZE,'rgba(0,61,165,.45)');
     svg+=(spd>=50?rbSignEndNSL(sC1,yDE,SS):rbSignEnd(sC1,yDE,SS))+conn(sC1-SS*.4,yDE,re,yDE,'rgba(255,214,0,.3)');
     svg+=rbDimArrow(rX-14,yA,yTS,'D','#FFD600');
     svg+=rbDimArrow(rX-28,yTS,yTE,'T','#32CCFE');
@@ -1363,10 +1362,10 @@ function renderDiagram(){
     var sR1=bE+22,sR2=bE+46;
     svg+=rbSignRoadWorks(xA,sR1,SS);
     if(spd>=40){var xA2=xP(adv*.55);svg+=rbSignRoadWorks(xA2,sR1,SS*.8);}
-    if(spd>=40){var xN=xP(adv*.65);svg+=rbSignNarrows(xN,sR2,SS,'left');}
+    if(spd>=40){var xN=xP(adv*.65);svg+=rbSignNarrows(xN,sR2,SS,'both');}
     if(spd>=40){var xSp=xP(adv*.75);svg+=rbSignSpeed(xSp,sR2,SR,spd-20);}
-    svg+=rbSignKeepRight(xTS,bE+18,KS,KS);
-    svg+=rbSignKeepLeft(xWZE,bE+18,KS,KS);
+    svg+=(reversed?rbSignKeepLeft(xTS,bE+18,KS,KS):rbSignKeepRight(xTS,bE+18,KS,KS));
+    svg+=(reversed?rbSignKeepRight(xWZE,bE+18,KS,KS):rbSignKeepLeft(xWZE,bE+18,KS,KS));
     svg+=(spd>=50?rbSignEndNSL(xDE,sR1,SS):rbSignEnd(xDE,sR1,SS));
     svg+=rbHorizArrow(rY-12,xA,xTS,'D','#FFD600');
     svg+=rbHorizArrow(rY-26,xTS,xTE,'T','#32CCFE');
@@ -1379,7 +1378,6 @@ function renderDiagram(){
     +'</div>';
   cont.innerHTML=info+'<div style="overflow:auto;">'+svg+'</div>';
 }
-
 function renderRedBook(){
   var cont=document.getElementById('tab-redbook-content');
   if(!cont)return;
