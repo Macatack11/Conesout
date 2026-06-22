@@ -207,21 +207,43 @@ a{color:var(--waze-cyan);}
       </div>
     </div>
 
-    <!-- Speed + Width (fixed works only) -->
-    <div id="speed-width-section" style="padding:14px 16px 0;display:flex;gap:10px;">
-      <div style="flex:1;">
-        <div style="font-family:Barlow Condensed,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Speed Limit</div>
-        <button onclick="openSpeedModal()" id="speed-btn" style="width:100%;padding:14px;background:var(--dark2);border:2px solid rgba(255,255,255,.1);border-radius:12px;color:var(--muted);font-family:Barlow Condensed,sans-serif;font-size:1rem;font-weight:800;cursor:pointer;">Tap to select</button>
-      </div>
-      <div style="flex:1;">
-        <div style="font-family:Barlow Condensed,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Works Impact</div>
-        <div style="display:flex;flex-direction:column;gap:6px;">
-          <div class="width-card" data-width="half" style="padding:8px 12px;"><span style="font-size:.9rem;">↔</span><div style="font-size:.8rem;font-weight:700;">Half road</div></div>
-          <div class="width-card" data-width="full" style="padding:8px 12px;"><span style="font-size:.9rem;">⬡</span><div style="font-size:.8rem;font-weight:700;">Full closure</div></div>
-          <div class="width-card" data-width="footway" style="padding:8px 12px;"><span style="font-size:.9rem;">🚶</span><div style="font-size:.8rem;font-weight:700;">Footway only</div></div>
-        </div>
-      </div>
+   
+ <!-- Speed + Width (fixed works only) -->
+<div id="speed-width-section" style="padding:14px 16px 0;">
+  <div style="font-family:Barlow Condensed,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Speed Limit</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;" id="speed-chips">
+    <div class="spd-chip" data-spd="20" onclick="selectSpeed(20)" style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;color:#fff;">20</div>
+      <div style="font-size:.6rem;color:var(--muted);">mph</div>
     </div>
+    <div class="spd-chip" data-spd="30" onclick="selectSpeed(30)" style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;color:#fff;">30</div>
+      <div style="font-size:.6rem;color:var(--muted);">mph</div>
+    </div>
+    <div class="spd-chip" data-spd="40" onclick="selectSpeed(40)" style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;color:#fff;">40</div>
+      <div style="font-size:.6rem;color:var(--muted);">mph</div>
+    </div>
+    <div class="spd-chip" data-spd="50" onclick="selectSpeed(50)" style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;color:#fff;">50</div>
+      <div style="font-size:.6rem;color:var(--muted);">mph</div>
+    </div>
+    <div class="spd-chip" data-spd="60" onclick="selectSpeed(60)" style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;color:#fff;">60</div>
+      <div style="font-size:.6rem;color:var(--muted);">mph</div>
+    </div>
+    <div class="spd-chip" data-spd="70" onclick="selectSpeed(70)" style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;">
+      <div style="font-family:Barlow Condensed,sans-serif;font-size:1.2rem;font-weight:900;color:#fff;">70</div>
+      <div style="font-size:.6rem;color:var(--muted);">mph</div>
+    </div>
+  </div>
+  <div style="font-family:Barlow Condensed,sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:rgba(50,204,254,.6);letter-spacing:1.5px;margin-bottom:8px;">Works Impact</div>
+  <div style="display:flex;flex-direction:column;gap:6px;">
+    <div class="width-card" data-width="half" style="padding:8px 12px;"><span style="font-size:.9rem;">↔</span><div style="font-size:.8rem;font-weight:700;">Half road</div></div>
+    <div class="width-card" data-width="full" style="padding:8px 12px;"><span style="font-size:.9rem;">⬡</span><div style="font-size:.8rem;font-weight:700;">Full closure</div></div>
+    <div class="width-card" data-width="footway" style="padding:8px 12px;"><span style="font-size:.9rem;">🚶</span><div style="font-size:.8rem;font-weight:700;">Footway only</div></div>
+  </div>
+</div>
 
     <!-- Scope warning -->
     <div id="road-scope-warn" style="display:none;margin:12px 16px 0;background:rgba(255,107,0,.15);border:1px solid rgba(255,107,0,.4);border-radius:12px;padding:10px 14px;font-size:.75rem;color:#FF8C00;align-items:center;gap:8px;"></div>
