@@ -1295,7 +1295,6 @@ function renderDiagram(){
   var SZ=34, SS=SZ, SR=SZ/2, KS=SZ;
   var landscape=(diagramRotation===90||diagramRotation===270);
   var flip=(diagramRotation===180||diagramRotation===270);
-  var reversed = (landscape !== flip);
   var adv=d.advance, tap=d.taper, wz=30, dn=20;
   var total=adv+tap+wz+dn;
   function conn(x1,y1,x2,y2,c){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+c+'" stroke-width="1" stroke-dasharray="3,3" opacity=".4"/>';}
@@ -1331,8 +1330,8 @@ function renderDiagram(){
     if(yA2){svg+=rbSignRoadWorks(sC1,yA2,SS*.8)+conn(sC1-SS*.44,yA2,re,yA2,'rgba(255,214,0,.25)');}
     if(yN){svg+=rbSignNarrows(sC2,yN,SS,'both')+conn(sC2-SS*.55,yN,re,yN,'rgba(255,214,0,.3)');}
     if(ySpd){svg+=rbSignSpeed(sC2,ySpd,SR,spd-20)+conn(sC2-SR,ySpd,re,ySpd,'rgba(204,0,0,.35)');}
-    svg+=(reversed?rbSignKeepLeft(sC1,yTS,KS,KS):rbSignKeepRight(sC1,yTS,KS,KS))+conn(sC1-KS/2,yTS,re,yTS,'rgba(0,61,165,.45)');
-    svg+=(reversed?rbSignKeepRight(sC1,yWZE,KS,KS):rbSignKeepLeft(sC1,yWZE,KS,KS))+conn(sC1-KS/2,yWZE,re,yWZE,'rgba(0,61,165,.45)');
+    svg+=rbSignKeepLeft(sC1,yTS,KS,KS)+conn(sC1-KS/2,yTS,re,yTS,'rgba(0,61,165,.45)');
+    svg+=rbSignKeepLeft(sC1,yWZE,KS,KS)+conn(sC1-KS/2,yWZE,re,yWZE,'rgba(0,61,165,.45)');
     svg+=(spd>=50?rbSignEndNSL(sC1,yDE,SS):rbSignEnd(sC1,yDE,SS))+conn(sC1-SS*.4,yDE,re,yDE,'rgba(255,214,0,.3)');
     svg+=rbDimArrow(rX-14,yA,yTS,'D','#FFD600');
     svg+=rbDimArrow(rX-28,yTS,yTE,'T','#32CCFE');
@@ -1364,8 +1363,8 @@ function renderDiagram(){
     if(spd>=40){var xA2=xP(adv*.55);svg+=rbSignRoadWorks(xA2,sR1,SS*.8);}
     if(spd>=40){var xN=xP(adv*.65);svg+=rbSignNarrows(xN,sR2,SS,'both');}
     if(spd>=40){var xSp=xP(adv*.75);svg+=rbSignSpeed(xSp,sR2,SR,spd-20);}
-    svg+=(reversed?rbSignKeepLeft(xTS,bE+18,KS,KS):rbSignKeepRight(xTS,bE+18,KS,KS));
-    svg+=(reversed?rbSignKeepRight(xWZE,bE+18,KS,KS):rbSignKeepLeft(xWZE,bE+18,KS,KS));
+    svg+=rbSignKeepLeft(xTS,bE+18,KS,KS);
+    svg+=rbSignKeepLeft(xWZE,bE+18,KS,KS);
     svg+=(spd>=50?rbSignEndNSL(xDE,sR1,SS):rbSignEnd(xDE,sR1,SS));
     svg+=rbHorizArrow(rY-12,xA,xTS,'D','#FFD600');
     svg+=rbHorizArrow(rY-26,xTS,xTE,'T','#32CCFE');
