@@ -984,10 +984,14 @@ function closeSpeedModal(){ document.getElementById('speed-modal').classList.rem
 
 function selectSpeed(v){
   S.speed=v;
-  var btn=document.getElementById('speed-btn');
-  if(btn){btn.textContent=v+' mph';btn.style.borderColor='var(--waze-cyan)';btn.style.color='var(--waze-cyan)';}
-  closeSpeedModal();
+  document.querySelectorAll('.spd-chip').forEach(function(c){
+    var sel=parseInt(c.dataset.spd)===v;
+    c.style.background=sel?'var(--waze-cyan)':'rgba(255,255,255,.05)';
+    c.style.borderColor=sel?'var(--waze-cyan)':'rgba(255,255,255,.1)';
+    c.querySelector('div').style.color=sel?'#0d1f35':'#fff';
+  });
   checkReady();
+
 }
 
 function checkReady(){
