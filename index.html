@@ -1110,11 +1110,10 @@ function buildFullClosure(d,spd){
     {icon:'🚗',title:'Park Vehicle Safely',body:'Park on nearside off road if possible. Amber beacon on. Hazard lights on. Exit from passenger side.',reg:'Safety at Street Works CoP 2013 p.21'},
     {icon:'🔀',title:'Plan Diversion Route',body:'Agree diversion route with highway authority before closure. Diversion must be signed end-to-end with yellow diversion signs Diag 2702. Notify emergency services, bus operators and local authority.',reg:'Safety at Street Works CoP 2013 Chapter 8 Part 1 D5'},
     {icon:'⚠️',title:'Advance Warning Signs Both Ends',body:'Place Road Ahead Closed sign Diag 7010.1 at '+d.advance+'m from closure point at BOTH ends. At 50mph place a second sign mid-way with distance plate.',dist:'D = '+d.advance+'m each end',reg:'Safety at Street Works CoP 2013 p.21 TSRGD 2016 Diag 7010.1'},
-    {icon:'(B)',title:'Speed Restriction Sign',body:'Place speed restriction roundel showing
+    {icon:'🔵',title:'Speed Restriction Sign',body:'Place speed restriction roundel showing
 function buildGuideSteps(d, spd, width, tradeName){
   var steps=[];
-if(width==='footway') return buildFootway();
-  if(width==='full') return buildFullClosure(d,spd);
+
   // ── PRE-WORKS ──
   steps.push(
     {icon:'📋',title:'Pre-Works Check',
