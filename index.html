@@ -1090,7 +1090,27 @@ function toggleStep(i){
   document.getElementById('stepbody-'+i).classList.toggle('open');
   document.getElementById('chev-'+i).classList.toggle('open');
 }
-
+function buildFootway(){
+  var pre=[
+    {icon:'📋',title:'Pre-Works Check',body:'Confirm permit/S50 licence in place. Check site drawings and utility records. Brief all operatives on key safety issues.',reg:'NRSWA 1991 s.50 · Safety at Street Works CoP 2013 p.12'},
+    {icon:'🦺',title:'PPE and Hi-Vis',body:'All operatives must wear high-visibility clothing EN ISO 20471 Class 2 minimum. Hard hat, safety boots and gloves as required.',reg:'Safety at Street Works CoP 2013 Part 3'},
+    {icon:'⚠️',title:'Advance Warning Sign',body:'Place Road Works Ahead sign 7001 on nearside, minimum 25m from works on urban roads.',reg:'Safety at Street Works CoP 2013 p.21'},
+    {icon:'🚧',title:'Footway Barriers',body:'Place Chapter 8 compliant barriers along full length of footway works. Continuous with no gaps. Minimum 1.0m clearance for pedestrians at all times.',reg:'Safety at Street Works CoP 2013 p.28-29'},
+    {icon:'🚶',title:'Pedestrian Diversion',body:'If footway must be closed entirely provide safe signed crossing point to opposite footway. Ensure dropped kerbs or ramps are provided at crossing points.',reg:'Safety at Street Works CoP 2013 p.29'},
+    {icon:'💡',title:'Lighting',body:'All barriers must have amber warning lights during hours of darkness.',reg:'Safety at Street Works CoP 2013 p.98'},
+    {icon:'📋',title:'Information Board',body:'Display information board showing company name, contact number, permit number, expected duration.',reg:'Safety at Street Works CoP 2013 p.26'},
+    {icon:'✅',title:'Final Walk-Through',body:'Walk the full layout before works begin. Check all barriers continuous, signs visible, pedestrian route clear and safe. Sign the site record.',reg:'Safety at Street Works CoP 2013 Part 2'}
+  ];
+  return pre;
+}
+function buildFullClosure(d,spd){
+  var pre=[
+    {icon:'📋',title:'Pre-Works Check',body:'Confirm permit/S50 licence in place. Check site drawings and utility records. Brief all operatives on key safety issues.',reg:'NRSWA 1991 s.50 · Safety at Street Works CoP 2013 p.12'},
+    {icon:'🦺',title:'PPE and Hi-Vis',body:'All operatives must wear high-visibility clothing EN ISO 20471 Class 2 minimum on 30mph roads, Class 3 on 50mph. Hard hat, safety boots and gloves as required.',reg:'Safety at Street Works CoP 2013 Part 3'},
+    {icon:'🚗',title:'Park Vehicle Safely',body:'Park on nearside off road if possible. Amber beacon on. Hazard lights on. Exit from passenger side.',reg:'Safety at Street Works CoP 2013 p.21'},
+    {icon:'🔀',title:'Plan Diversion Route',body:'Agree diversion route with highway authority before closure. Diversion must be signed end-to-end with yellow diversion signs Diag 2702. Notify emergency services, bus operators and local authority.',reg:'Safety at Street Works CoP 2013 Chapter 8 Part 1 D5'},
+    {icon:'⚠️',title:'Advance Warning Signs Both Ends',body:'Place Road Ahead Closed sign Diag 7010.1 at '+d.advance+'m from closure point at BOTH ends. At 50mph place a second sign mid-way with distance plate.',dist:'D = '+d.advance+'m each end',reg:'Safety at Street Works CoP 2013 p.21 TSRGD 2016 Diag 7010.1'},
+    {icon:'🔵',title:'Speed Restriction Sign',body:'Place speed restriction roundel showing
 function buildGuideSteps(d, spd, width, tradeName){
   var steps=[];
 
