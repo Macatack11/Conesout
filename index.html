@@ -1113,7 +1113,8 @@ function buildFullClosure(d,spd){
     {icon:'🔵',title:'Speed Restriction Sign',body:'Place speed restriction roundel showing
 function buildGuideSteps(d, spd, width, tradeName){
   var steps=[];
-
+if(width==='footway') return buildFootway();
+  if(width==='full') return buildFullClosure(d,spd);
   // ── PRE-WORKS ──
   steps.push(
     {icon:'📋',title:'Pre-Works Check',
