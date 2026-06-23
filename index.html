@@ -1093,70 +1093,142 @@ function toggleStep(i){
 
 function buildGuideSteps(d, spd, width, tradeName){
   var steps=[];
-  steps.push({icon:'📋',title:'Pre-Works Check',
-    body:'Confirm permit/S50 licence in place. Check site drawings and utility records. Brief all operatives on key safety issues and local site risk assessment.',
-    reg:'NRSWA 1991 s.50 · Safety at Street Works CoP 2013 p.12'},
-  {icon:'🔍',title:'Assess the Road',
-    body:'Look at: awkward junctions; road/footway widths; visibility (bends, crests, trees, parked vehicles); overhead cables; nearby traffic signals or permanent signs that works may obstruct (consult highway authority if so); other works nearby.',
-    reg:'Safety at Street Works CoP 2013 p.13 — Look at the road'},
-  {icon:'🚗',title:'Assess the Traffic',
-    body:'Consider: is the intended TM appropriate for the traffic flow? Speed limit — does traffic appear to travel faster? Heavy or large vehicles? Cycle lanes? Bus routes or bus stops affected? Rush-hour flow changes?',
-    reg:'Safety at Street Works CoP 2013 p.13 — Look at the traffic'},
-  {icon:'🏘️',title:'Assess the Local Area',
-    body:'Deliveries to shops? Schools, hospitals, surgeries nearby? Emergency service access? Disabled parking bays? School-run parking? Pub/club licensing hours? Match days or events? Consider how conditions will change with weather, lighting levels and time of day.',
-    reg:'Safety at Street Works CoP 2013 p.13–14 — Look at the local area'},
-  {icon:'🚶',title:'Pedestrians & Vulnerable Users',
-    body:'High pedestrian traffic? Users of pushchairs, wheelchairs, mobility scooters? Visually impaired people? Children (schools, parks)? Pedestrian crossings affected? Minimum footway width 1.5m preferred; absolute minimum 1.0m — if 1.0m cannot be maintained, consult supervisor. Never reduce below 1.0m.',
-    reg:'Safety at Street Works CoP 2013 p.28 — Footway works'});
-  steps.push({icon:'🦺',title:'PPE & Hi-Vis',
-    body:'All operatives must wear high-visibility clothing (EN ISO 20471 Class 2 minimum on 30mph+ roads, Class 3 on 50mph+). Hard hat, safety boots and gloves as required by risk assessment.',
-    reg:'Safety at Street Works CoP 2013 Part 3 · HSE PPE Regs 2022'});
-  steps.push({icon:'🚗',title:'Park Vehicle Safely',
-    body:'Park on nearside, off road if possible. Amber beacon on. Hazard lights on. High-vis markings facing oncoming traffic. Exit from passenger side. Place Keep Right sign at corner of vehicle with one cone immediately.',
-    reg:'Safety at Street Works CoP 2013 — Sequence for setting out signs p.21'});
-  steps.push({icon:'⚠️',title:'Place Advance Warning Sign',
-    body:'Walk upstream '+d.advance+'m from taper start (distance D). Place Road Works Ahead sign (7001) on nearside. At 50mph+ place second sign mid-way and add supplementary distance plate in yards. Face traffic at all times — no mobile phone use.',
-    dist:'D = '+d.advance+'m from taper',
-    reg:'Safety at Street Works CoP 2013 p.21 · Chapter 8 Table 8-3'});
+
+  // ── PRE-WORKS ──
+  steps.push(
+    {icon:'📋',title:'Pre-Works Check',
+      body:'Confirm permit/S50 licence in place. Check site drawings and utility records. Brief all operatives on key safety issues and local site risk assessment.',
+      reg:'NRSWA 1991 s.50 · Safety at Street Works CoP 2013 p.12'},
+    {icon:'🔍',title:'Assess the Road',
+      body:'Look at: awkward junctions; road/footway widths; visibility (bends, crests, trees, parked vehicles); overhead cables; nearby traffic signals or permanent signs that works may obstruct.',
+      reg:'Safety at Street Works CoP 2013 p.13'},
+    {icon:'🚗',title:'Assess the Traffic',
+      body:'Consider: is the intended TM appropriate for the traffic flow? Speed limit — does traffic appear to travel faster? Heavy vehicles? Cycle lanes? Bus routes affected?',
+      reg:'Safety at Street Works CoP 2013 p.13'},
+    {icon:'🏘️',title:'Assess the Local Area',
+      body:'Deliveries to shops? Schools, hospitals nearby? Emergency service access? Disabled parking? Events? Consider how conditions change with weather, lighting and time of day.',
+      reg:'Safety at Street Works CoP 2013 p.13–14'},
+    {icon:'🚶',title:'Pedestrians & Vulnerable Users',
+      body:'Minimum footway width 1.5m preferred; absolute minimum 1.0m. If 1.0m cannot be maintained, consult supervisor. Never reduce below 1.0m. Consider pushchairs, wheelchairs, visually impaired users.',
+      reg:'Safety at Street Works CoP 2013 p.28'},
+    {icon:'🦺',title:'PPE & Hi-Vis',
+      body:'All operatives must wear high-visibility clothing (EN ISO 20471 Class 2 minimum on 30mph+ roads, Class 3 on 50mph+). Hard hat, safety boots and gloves as required by risk assessment.',
+      reg:'Safety at Street Works CoP 2013 Part 3 · HSE PPE Regs 2022'},
+    {icon:'🚗',title:'Park Vehicle Safely',
+      body:'Park on nearside, off road if possible. Amber beacon on. Hazard lights on. High-vis markings facing oncoming traffic. Exit from passenger side. Place Keep Right sign at corner of vehicle with one cone immediately.',
+      reg:'Safety at Street Works CoP 2013 p.21'}
+  );
+
+  if(width==='footway'){
+    // ── FOOTWAY ONLY ──
+    steps.push(
+      {icon:'⚠️',title:'Place Advance Warning Sign',
+        body:'Place Road Works Ahead sign (7001) on nearside, minimum 25m from works on urban roads. Ensure sign is visible and not obstructed.',
+        reg:'Safety at Street Works CoP 2013 p.21'},
+      {icon:'🚧',title:'Footway Barriers',
+        body:'Place Chapter 8 compliant barriers along full length of footway works. Barriers must be continuous with no gaps. Minimum 1.0m clearance for pedestrians at all times. Use tactile/contrasting colours for visually impaired users.',
+        reg:'Safety at Street Works CoP 2013 p.28–29'},
+      {icon:'🚶',title:'Pedestrian Diversion',
+        body:'If footway must be closed entirely, provide safe signed crossing point to opposite footway. Place pedestrian diversion signs. Ensure dropped kerbs or ramps are provided at crossing points.',
+        reg:'Safety at Street Works CoP 2013 p.29'},
+      {icon:'💡',title:'Lighting & Visibility',
+        body:'All barriers must have amber warning lights during hours of darkness. Ensure works area is adequately lit. Check lighting-up time: 30 min after sunset to 30 min before sunrise.',
+        reg:'Safety at Street Works CoP 2013 p.98'},
+      {icon:'📋',title:'Information Board',
+        body:'Display information board showing: company name, contact number, permit number, expected duration.',
+        reg:'Safety at Street Works CoP 2013 p.26'},
+      {icon:'✅',title:'Final Walk-Through',
+        body:'Walk the full layout before works begin. Check all barriers continuous, signs visible, pedestrian route clear and safe. Sign the site record.',
+        reg:'Safety at Street Works CoP 2013 Part 2'}
+    );
+    return steps;
+  }
+
+  if(width==='full'){
+    // ── FULL ROAD CLOSURE ──
+    steps.push(
+      {icon:'🔀',title:'Plan Diversion Route',
+        body:'Agree diversion route with highway authority before closure. Diversion must be signed end-to-end with yellow diversion signs (Diag 2702). Notify emergency services, bus operators and local authority.',
+        reg:'Safety at Street Works CoP 2013 · Chapter 8 Part 1 D5'},
+      {icon:'⚠️',title:'Advance Warning Signs — Both Ends',
+        body:'Place Road Ahead Closed sign (Diag 7010.1) at '+d.advance+'m from closure point at BOTH ends of the closure. At 50mph+ place a second sign mid-way with distance plate. Diversion route signs must direct traffic before the closure point.',
+        dist:'D = '+d.advance+'m each end',
+        reg:'Safety at Street Works CoP 2013 p.21 · TSRGD 2016 Diag 7010.1'},
+      {icon:'🔵',title:'Speed Restriction Sign',
+        body:'Place speed restriction roundel showing '+Math.max(20,spd-20)+'mph in advance of closure on both approaches. Requires Temporary Traffic Regulation Order (TTRO).',
+        reg:'TSRGD 2016 Diag 670 · TTRO required'},
+      {icon:'🔶',title:'Lead-In Taper Cones — Both Ends',
+        body:'Place cones at 45° across full carriageway width at both ends. Taper length T='+d.taper+'m. Max cone spacing 1.2m in taper. Min cone height '+d.coneSize+'mm. Work from kerb to kerb, always facing oncoming traffic.',
+        dist:'T = '+d.taper+'m taper each end',
+        reg:'Safety at Street Works CoP 2013 — Setting Out Site table'},
+      {icon:'🛑',title:'Road Closed Barrier — Both Ends',
+        body:'Place Chapter 8 compliant barriers across full carriageway width at both closure points. Barriers must be continuous kerb-to-kerb with no gaps. Attach Road Closed signs (Diag 7010.1) to barriers. Amber beacons at each end of barrier line.',
+        reg:'Safety at Street Works CoP 2013 p.30 · TSRGD 2016 Diag 7010.1'},
+      {icon:'🔒',title:'Safety Buffer Zone',
+        body:'Maintain a minimum buffer zone of L='+d.L+'m between the closure barrier and the works area. This protects operatives from any vehicles that breach the closure. Keep buffer clear of plant and equipment.',
+        dist:'L = '+d.L+'m buffer zone',
+        reg:'Safety at Street Works CoP 2013 p.30'},
+      {icon:'💡',title:'Warning Lights',
+        body:'Amber warning lights mandatory at ≥40mph. At 50/60mph lights must be steady (no flashing). Max height 1.2m at ≥50mph, 1.5m at ≤40mph. Place at both ends of closure.',
+        reg:'Safety at Street Works CoP 2013 p.98'},
+      {icon:'🌙',title:'Night-time & Unattended Sites',
+        body:'If site left unattended: remove or immobilise all plant; remove equipment where possible; store securely. If open excavation within 2m of carriageway: enhanced barrier required. Check lighting-up times.',
+        reg:'Safety at Street Works CoP 2013 p.31'},
+      {icon:'📋',title:'Information Board',
+        body:'Display information board at both ends showing: company name, contact number, permit number, expected duration. Must be clearly visible to approaching traffic.',
+        reg:'Safety at Street Works CoP 2013 p.26'},
+      {icon:'✅',title:'Final Walk-Through',
+        body:'Walk the full layout at both ends before works begin. Check all signs visible, barriers kerb-to-kerb, beacons working, diversion route signed end-to-end. Sign the site record.',
+        reg:'Safety at Street Works CoP 2013 Part 2'}
+    );
+    return steps;
+  }
+
+  // ── HALF ROAD (default) ──
+  steps.push(
+    {icon:'⚠️',title:'Place Advance Warning Sign',
+      body:'Walk upstream '+d.advance+'m from taper start (distance D). Place Road Works Ahead sign (7001) on nearside. At 50mph+ place second sign mid-way and add supplementary distance plate in yards. Face traffic at all times.',
+      dist:'D = '+d.advance+'m from taper',
+      reg:'Safety at Street Works CoP 2013 p.21 · Chapter 8 Table 8-3'}
+  );
   if(spd>=40){
-    steps.push({icon:'🔵',title:'Speed Restriction Sign',
-      body:'Place speed restriction roundel (Diag 670) showing '+Math.max(20,spd-20)+'mph if temporary speed limit is in place. Requires Temporary Traffic Regulation Order.',
-      reg:'TSRGD 2016 Diag 670 · TTRO required'});
+    steps.push(
+      {icon:'🔵',title:'Speed Restriction Sign',
+        body:'Place speed restriction roundel (Diag 670) showing '+Math.max(20,spd-20)+'mph if temporary speed limit is in place. Requires Temporary Traffic Regulation Order.',
+        reg:'TSRGD 2016 Diag 670 · TTRO required'}
+    );
   }
-  steps.push({icon:'🔶',title:'Road Narrows Sign',
-    body:'Place Road Narrows sign (Diag 516) between advance sign and taper start.',
-    reg:'Safety at Street Works CoP 2013 p.65 · TSRGD 2016 Diag 516'});
-  if(width==='single'){
-    steps.push({icon:'↔️',title:'Single File Sign',
-      body:'Place Single File Traffic sign between Road Narrows and traffic management point.',
-      reg:'Safety at Street Works CoP 2013 p.65'});
-    steps.push({icon:'🛑',title:'Traffic Management',
-      body:spd>=40?'Set up portable traffic signals (PTS). Both heads must be in place and tested before releasing traffic. "When Red Light Shows Wait Here" sign 15m from each head.':'Set up Stop/Go boards. One operative each end in radio contact. Never release traffic from both ends simultaneously.',
-      reg:'Safety at Street Works CoP 2013 p.65 · Chapter 8 s.6.3'});
-  }
-  steps.push({icon:'🔶',title:'Lead-In Taper Cones',
-    body:'Place cones at 45° from kerb edge outward. Taper length T='+d.taper+'m. Max cone spacing 1.2m in taper. Min cone height '+d.coneSize+'mm. Start from kerb working towards works. Always face oncoming traffic.',
-    dist:'T = '+d.taper+'m taper',
-    reg:'Safety at Street Works CoP 2013 — Setting Out Site table'});
-  steps.push({icon:'🚧',title:'Guarding & Barriers',
-    body:'Place barriers across closed lane. Longways clearance L='+d.L+'m from taper end to first barrier. Sideways clearance S='+d.S+'m minimum. Amber beacons at each end. Barriers must be joined to form a continuous system. Follow manufacturer instructions — if unable to erect correctly, contact supervisor before starting.',
-    dist:'L='+d.L+'m clearance · S='+d.S+'m sideways',
-    reg:'Safety at Street Works CoP 2013 p.30 · CDM 2015'},
-  {icon:'💡',title:'Warning Lights',
-    body:'Warning lights mandatory at ≥40mph. Max height: 1.5m at ≤40mph; 1.2m at ≥50mph. Flashing option permitted at ≤40mph on street-lit roads. At 50/60mph lights must be steady (no flashing).',
-    reg:'Safety at Street Works CoP 2013 p.98 — Warning lights table'},
-  {icon:'🌙',title:'Night-time & Unattended Sites',
-    body:'If site is left unattended: remove or immobilise all plant and machinery; remove as much equipment as possible; store securely so it cannot fall or be tampered with. If open excavation within 2m of a footway: provide temporary covers or enhanced barrier. Lighting-up time = 30 min after sunset to 30 min before sunrise.',
-    reg:'Safety at Street Works CoP 2013 p.31 — Unattended works'});
-  steps.push({icon:'📋',title:'Information Board',
-    body:'Display information board showing: company name, contact number, permit number, expected duration. Must be clearly visible to approaching traffic.',
-    reg:'Safety at Street Works CoP 2013 p.26 · NRSWA 1991'});
-  steps.push({icon:'🏁',title:'End Sign',
-    body:'Place End of Road Works sign (7002) on nearside at exit. At 50mph+ use End + National Speed Limit Applies sign. Removal order: End sign 2nd-to-last, Road Works Ahead LAST.',
-    reg:'Safety at Street Works CoP 2013 p.21 · TSRGD 2016 Diag 7002'});
-  steps.push({icon:'✅',title:'Final Walk-Through',
-    body:'Walk the full layout before works begin. Check all signs visible, correct height, facing right direction. Check cones not displaced. Confirm barriers secure. Sign the site record.',
-    reg:'Safety at Street Works CoP 2013 Part 2 — Checking and maintaining sites'});
+  steps.push(
+    {icon:'🔶',title:'Road Narrows Sign',
+      body:'Place Road Narrows sign (Diag 516) between advance sign and taper start on nearside.',
+      reg:'Safety at Street Works CoP 2013 p.65 · TSRGD 2016 Diag 516'},
+    {icon:'🔶',title:'Lead-In Taper Cones',
+      body:'Place cones at 45° from kerb edge outward. Taper length T='+d.taper+'m. Max cone spacing 1.2m in taper. Min cone height '+d.coneSize+'mm. Start from kerb working towards works. Always face oncoming traffic.',
+      dist:'T = '+d.taper+'m taper',
+      reg:'Safety at Street Works CoP 2013 — Setting Out Site table'},
+    {icon:'🔵',title:'Keep Right / Keep Left Sign',
+      body:'Place Diagram 610 Keep Right or Keep Left sign at the taper start on the nearside. Arrow must point away from the works — toward the open lane. Sign must be clearly visible to approaching drivers.',
+      reg:'Safety at Street Works CoP 2013 · TSRGD 2016 Diag 610'},
+    {icon:'🚧',title:'Guarding & Barriers',
+      body:'Place barriers along closed lane. Longitudinal clearance L='+d.L+'m from taper end to first barrier. Sideways clearance S='+d.S+'m minimum. Amber beacons at each end. Barriers must be joined — continuous system.',
+      dist:'L='+d.L+'m clearance · S='+d.S+'m sideways',
+      reg:'Safety at Street Works CoP 2013 p.30 · CDM 2015'},
+    {icon:'💡',title:'Warning Lights',
+      body:'Warning lights mandatory at ≥40mph. Max height: 1.5m at ≤40mph; 1.2m at ≥50mph. Flashing permitted at ≤40mph on street-lit roads. At 50/60mph lights must be steady.',
+      reg:'Safety at Street Works CoP 2013 p.98'},
+    {icon:'🌙',title:'Night-time & Unattended Sites',
+      body:'If site left unattended: remove or immobilise all plant; remove equipment where possible; store securely. If open excavation within 2m of footway: temporary covers or enhanced barrier required.',
+      reg:'Safety at Street Works CoP 2013 p.31'},
+    {icon:'📋',title:'Information Board',
+      body:'Display information board showing: company name, contact number, permit number, expected duration. Must be clearly visible to approaching traffic.',
+      reg:'Safety at Street Works CoP 2013 p.26'},
+    {icon:'🏁',title:'End Sign',
+      body:'Place End of Road Works sign (7002) on nearside at exit. At 50mph+ use End + National Speed Limit Applies sign. Removal order: End sign 2nd-to-last, Road Works Ahead LAST.',
+      reg:'Safety at Street Works CoP 2013 p.21 · TSRGD 2016 Diag 7002'},
+    {icon:'✅',title:'Final Walk-Through',
+      body:'Walk the full layout before works begin. Check all signs visible, correct height, facing right direction. Cones not displaced. Barriers secure. Sign the site record.',
+      reg:'Safety at Street Works CoP 2013 Part 2'}
+  );
   return steps;
 }
 
