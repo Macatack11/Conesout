@@ -998,9 +998,9 @@ function checkReady(){
 
 // ── HOME: trade/road/width card selection ──
 document.addEventListener('DOMContentLoaded', function(){
-  // dur selection handled by selectDur()
+ 
   document.querySelectorAll('.trade-card').forEach(c=>c.addEventListener('click',()=>{
-    // dur selection handled by selectDur()
+   
   document.querySelectorAll('.trade-card').forEach(x=>x.classList.remove('selected'));
     c.classList.add('selected'); S.trade=c.dataset.trade; checkReady();
   }));
