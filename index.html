@@ -998,12 +998,11 @@ function checkReady(){
 
 // ── HOME: trade/road/width card selection ──
 document.addEventListener('DOMContentLoaded', function(){
-   document.querySelectorAll('.trade-card').forEach(c=>c.addEventListener('click',()=>{
-   document.querySelectorAll('.trade-card').forEach(x=>x.classList.remove('selected'));
+   document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.trade-card').forEach(c=>c.addEventListener('click',()=>{
+    document.querySelectorAll('.trade-card').forEach(x=>x.classList.remove('selected'));
     c.classList.add('selected'); S.trade=c.dataset.trade; checkReady();
   }));
-  document.querySelectorAll('.road-card').forEach(c=>c.addEventListener('click',()=>{
-    document.querySelectorAll('.road-card').forEach(x=>x.classList.remove('selected'));
     c.classList.add('selected'); S.road=c.dataset.road; checkReady();
   }));
   document.querySelectorAll('.width-card').forEach(c=>c.addEventListener('click',()=>{
