@@ -537,7 +537,7 @@ h1,h2,h3,h4,.heading{
 
       <button type="button" class="btn btn-primary" id="rec-generate-pdf-btn">Generate PDF Summary</button>
       <div class="spacer-sm"></div>
-      <div class="muted center" style="font-size:12px;">PDF opens in a new tab &mdash; use your device's share/email option to send it to the office.</div>
+      <div class="muted center" style="font-size:12px;">PDF saves to your device named with the job reference and crew lead &mdash; share or email it to the office from your downloads.</div>
     </div>
 
   </div>
@@ -1654,6 +1654,13 @@ function generateSitePdf(){
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.text("Crew Lead: " + (STATE.record.crewLead || "-"), left, y); y += 6;
+  try{ doc.setProperties({ title: filenameTitle() }); }catch(e){}
+  function filenameTitle(){
+    var t = "ConesOut Site Record";
+    if(STATE.record.permit) t += " - " + STATE.record.permit;
+    if(STATE.record.crewLead) t += " - " + STATE.record.crewLead;
+    return t;
+  }
   doc.text("Permit / Job Reference: " + (STATE.record.permit || "-"), left, y); y += 6;
   doc.text("Logged in as: " + (STATE.user ? STATE.user.username : "-"), left, y); y += 8;
 
@@ -1718,7 +1725,17 @@ function generateSitePdf(){
     });
   }
 
-  var filename = "conesout-site-record-" + Date.now() + ".pdf";
+  function fnSafe(s){
+    return String(s || "").trim().replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+  }
+  var d = new Date();
+  var datePart = d.getFullYear() + "-" +
+    ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+  var nameParts = ["ConesOut"];
+  if(fnSafe(STATE.record.permit)) nameParts.push(fnSafe(STATE.record.permit));
+  if(fnSafe(STATE.record.crewLead)) nameParts.push(fnSafe(STATE.record.crewLead));
+  nameParts.push(datePart);
+  var filename = nameParts.join("-") + ".pdf";
   // doc.save() downloads via a Blob, which works on mobile with photo pages;
   // dataurlnewwindow fails silently on large PDFs and popup-blocking browsers.
   try{
