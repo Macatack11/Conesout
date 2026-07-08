@@ -453,14 +453,8 @@ h1,h2,h3,h4,.heading{
     <div id="guide-checklist"></div>
 
     <div class="card">
-      <div class="section-title">Visual Layout Diagram</div>
-      <div class="diagram-toggle">
-        <button type="button" class="chip selected" data-orient="0">Portrait (0&deg;)</button>
-        <button type="button" class="chip" data-orient="90">Landscape (90&deg;)</button>
-      </div>
-      <div class="diagram-wrap" id="diagram-wrap"></div>
-      <div class="legend" id="diagram-legend"></div>
-      <button type="button" class="btn btn-primary" id="openLayoutBtn" style="width:100%;margin-top:12px;">Open Full Signage Layout</button>
+      <div class="section-title">Signage Layout</div>
+      <button type="button" class="btn btn-primary" id="openLayoutBtn" style="width:100%;">Open Full Signage Layout</button>
     </div>
 
   </div>
@@ -932,7 +926,6 @@ function initHomeScreen(){
       STATE.guide = buildGuideSteps(STATE.home);
       renderGuideSummary();
       renderGuideChecklist(STATE.guide);
-      renderDiagramPanel();
       buildWalkoutSigns();
       show(qs("#guide-content"));
       hide(qs("#guide-empty"));
@@ -1242,6 +1235,7 @@ function renderDiagram(state, orientation){
 
 function renderDiagramPanel(){
   var wrap = qs("#diagram-wrap");
+  if(!wrap){ return; } // diagram card removed - superseded by layout.html
   try{
     wrap.innerHTML = renderDiagram(STATE.home, STATE.diagramOrient);
   }catch(err){
@@ -1267,6 +1261,7 @@ function renderDiagramPanel(){
     }
   }
   var legend = qs("#diagram-legend");
+  if(!legend){ return; }
   legend.innerHTML =
     '<span><i style="background:#ff5d5d"></i>Warning / closure sign</span>' +
     '<span><i style="background:#32CCFE"></i>Works zone / vehicle</span>' +
