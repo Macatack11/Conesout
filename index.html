@@ -912,6 +912,30 @@ var IMPACT_LABELS = { half:"Half Road", full:"Full Closure", footpath:"Footpath 
 /* ============================================================
    HOME SCREEN — selection handling
 ============================================================ */
+/* Persist home selections so switching apps or reloading does not lose them */
+function saveHomeSelections(){
+  try{ localStorage.setItem("conesout_home", JSON.stringify(STATE.home)); }catch(e){}
+}
+function restoreHomeSelections(){
+  var saved = null;
+  try{ saved = JSON.parse(localStorage.getItem("conesout_home") || "null"); }catch(e){}
+  if(!saved) return;
+  ["roadType","speed","duration","impact"].forEach(function(k){
+    if(saved[k] !== undefined && saved[k] !== null && saved[k] !== ""){ STATE.home[k] = saved[k]; }
+  });
+  var map = { "group-roadtype":"roadType", "group-speed":"speed", "group-duration":"duration", "group-impact":"impact" };
+  Object.keys(map).forEach(function(gid){
+    var val = STATE.home[map[gid]];
+    if(val === undefined || val === null || val === "") return;
+    var group = qs("#" + gid);
+    if(!group) return;
+    qsa("button", group).forEach(function(b){
+      b.classList.toggle("selected", b.getAttribute("data-value") === String(val));
+    });
+  });
+  refreshGenerateButton();
+}
+
 function initHomeGroup(groupId, stateKey, activeClass){
   var group = qs("#" + groupId);
   if(!group) return;
@@ -923,6 +947,7 @@ function initHomeGroup(groupId, stateKey, activeClass){
       // "speed" is compared with strict equality (===) elsewhere in getTMCategory(),
       // so it must be stored as a real Number, not the string data-value attribute gives us.
       STATE.home[stateKey] = (stateKey === "speed") ? Number(raw) : raw;
+      saveHomeSelections();
       refreshGenerateButton();
     });
   });
@@ -939,9 +964,13 @@ function initHomeScreen(){
   initHomeGroup("group-speed", "speed", "selected");
   initHomeGroup("group-duration", "duration", "selected");
   initHomeGroup("group-impact", "impact", "selected");
+  restoreHomeSelections();
 
   on(qs("#generate-btn"), "click", function(){
     try{
+      if(STATE.home.roadType === "motorway" || Number(STATE.home.speed) >= 70){
+        alert("Motorway / 70 mph selected.\n\nWorks on these roads are outside this app and the CoP 2013. Contact your manager before any works take place - a Chapter 8 scheme from a competent traffic management provider is required.\n\nA guide will still be shown for reference only.");
+      }
       STATE.guide = buildGuideSteps(STATE.home);
       renderGuideSummary();
       renderGuideChecklist(STATE.guide);
@@ -1058,7 +1087,14 @@ function renderGuideSummary(){
     (h.duration === "short" ? "Under 15 min" : "Over 15 min"),
     IMPACT_LABELS[h.impact]
   ];
-  qs("#guide-summary").textContent = parts.join(" • ");
+  var warn = "";
+  if(h.roadType === "motorway" || Number(h.speed) >= 70){
+    warn = '<div style="margin-top:10px;padding:10px 12px;border:1px solid #ff5a5a;border-radius:8px;color:#ff8a8a;font-weight:600;">STOP - Motorway / 70 mph works are outside the scope of this app and the Safety at Street Works CoP. Do not set out. Contact your manager before any works take place - these roads require schemes designed to Traffic Signs Manual Chapter 8 by a competent traffic management provider.</div>';
+  }
+  qs("#guide-summary").innerHTML = parts.map(function(p){
+    var d = document.createElement("div"); d.textContent = p; return d.innerHTML;
+  }).join(" \u2022 ") + warn +
+  '<div style="margin-top:10px;font-size:12px;opacity:0.8;">Planning aid only - a site-specific risk assessment is required and a competent person must confirm the setup on site. Full terms: Reference tab, Special Cases.</div>';
 }
 
 function renderGuideChecklist(guide){
@@ -1501,8 +1537,29 @@ function initSiteRecord(){
     if(!file || activePhotoSlot === null) return;
     var reader = new FileReader();
     reader.onload = function(evt){
-      STATE.record.photos[activePhotoSlot] = evt.target.result;
-      renderPhotoGrid();
+      // Downscale and re-encode as JPEG so 4 full-size camera photos do not
+      // produce a PDF too large for the phone to save or attach to email.
+      var slot = activePhotoSlot;
+      var img = new Image();
+      img.onload = function(){
+        try{
+          var maxDim = 1200;
+          var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          var canvas = document.createElement("canvas");
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+          STATE.record.photos[slot] = canvas.toDataURL("image/jpeg", 0.72);
+        }catch(err){
+          STATE.record.photos[slot] = evt.target.result;
+        }
+        renderPhotoGrid();
+      };
+      img.onerror = function(){
+        STATE.record.photos[slot] = evt.target.result;
+        renderPhotoGrid();
+      };
+      img.src = evt.target.result;
     };
     reader.readAsDataURL(file);
     e.target.value = "";
@@ -1662,10 +1719,14 @@ function generateSitePdf(){
   }
 
   var filename = "conesout-site-record-" + Date.now() + ".pdf";
+  // doc.save() downloads via a Blob, which works on mobile with photo pages;
+  // dataurlnewwindow fails silently on large PDFs and popup-blocking browsers.
   try{
-    doc.output("dataurlnewwindow");
-  }catch(e){
     doc.save(filename);
+  }catch(e){
+    try{ doc.output("dataurlnewwindow"); }catch(e2){
+      alert("Could not generate the PDF on this device. Try removing a photo and generating again.");
+    }
   }
 }
 
