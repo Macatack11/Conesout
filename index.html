@@ -1007,40 +1007,10 @@ function buildGuideSteps(h){
   if(h.duration === "short"){
     preItems.push({ text:"Reduced signing (beacon only, no advance signs) is only permitted where ALL apply: permanent limit \u226430mph, two-way flow <400 veh/hr, <20 HGVs/hr, and the beacon is visible for 50m on each approach. Otherwise full signing is required even for short stops." });
   }
-  cats.push({ title:"Pre-Works Checks", items:preItems });
-
-  // 2. Advance warning
-  var warnItems = [
-    { text:"Position \"Road Works Ahead\" sign at the advance siting distance for this road category.", dist: tmSitingLabel(cat) },
-    { text:"Confirm clear visibility of the sign from approaching traffic.", dist: cat.clearVis + (typeof cat.clearVis === "number" ? "m" : "") }
-  ];
-  if(h.roadType !== "motorway"){
-    warnItems.push({ text:"Position speed roundel sign if the temporary speed limit is reduced from the permanent limit." });
-  }
-  if(cat.sitingCongestionNote){
-    warnItems.push({ text:"Where congestion on approach is likely, increase the siting distance further.", dist: cat.sitingCongestionNote });
-  }
-  cats.push({ title:"Advance Warning Signing", items:warnItems });
-
-  // 3. Lead-in taper
-  cats.push({ title:"Lead-In Taper", items:[
-    { text:"Position \"Road Narrows\" (both-sides) sign ahead of the taper." },
-    { text:"Run the cone taper at the standard length for this road category.", dist: cat.taper + "m" },
-    { text:"Minimum number of cones through the taper.", dist: String(cat.coneCount) },
-    { text:"Minimum cone height for this road category.", dist: cat.coneSize + "mm" },
-    { text:"Maximum cone spacing within the taper.", dist: cat.taperSpacing + "m" },
-    { text:"Ballast all cones and freestanding signs with sandbags, particularly in wind." },
-    { text:"Setting out starts with the advance \"Road Works Ahead\" sign, then works inward toward the site — sign the site in the sequence you'll walk it." }
-  ]});
+  cats.push({ title:"Pre-Works Checks", single:true, items:preItems });
 
   // 4. Impact-specific
-  if(h.impact === "half"){
-    cats.push({ title:"Half Road Closure", items:[
-      { text:"Position Keep Right / Keep Left sign with the arrow pointing AWAY from the works, into the open lane.", dist: cat.signSize + "mm" },
-      { text:"Install barriers along the works boundary." },
-      { text:"Maintain longitudinal clearance between the taper and the works area.", dist: cat.taper + "m" }
-    ]});
-  } else if(h.impact === "full"){
+  if(h.impact === "full"){
     cats.push({ title:"Full Closure", items:[
       { text:"Position \"Road Closed Ahead\" signs at both ends of the closure.", dist: cat.signSize + "mm" },
       { text:"Run a cone taper at both ends of the closure." },
@@ -1062,19 +1032,11 @@ function buildGuideSteps(h){
   ]});
 
   // 6. Site conditions — considerations to check on site, not pre-declared on Home
-  cats.push({ title:"Site Conditions — Check Before Setting Out", items:[
+  cats.push({ title:"Site Conditions — Check Before Setting Out", single:true, items:[
     { text:"Is the road on a bend or does it have restricted / dangerous sight lines? If so, refer to manager and see Chapter 8 Reference Guide before proceeding — standard distances above may not be sufficient." },
     { text:"Will works continue into darkness? If so: fit amber warning lights to cones/barriers along the taper.", dist: cat.warnLight + "m spacing" },
     { text:"Night-time: check local lighting-up times before finishing setup." },
     { text:"Night-time: if the site will be left unattended overnight, confirm illuminated warning lamps remain in place and functioning." }
-  ]});
-
-  // 7. Final items
-  cats.push({ title:"Information & Closeout", items:[
-    { text:"Position information board showing contractor name, purpose of works and contact number." },
-    { text:"Walk the full length of the site to confirm every sign, cone and barrier is correctly placed." },
-    { text:"Complete the Site Record — crew, permit reference, GPS location and photographs." },
-    { text:"Removal is the reverse of setup: take down the End of Works sign first and work back out, removing the Road Works Ahead sign LAST for maximum protection while the crew is on site." }
   ]});
 
   return { categories: cats, category: cat };
@@ -1106,26 +1068,52 @@ function renderGuideChecklist(guide){
     var h3 = document.createElement("h3");
     h3.textContent = cat.title;
     catEl.appendChild(h3);
-    cat.items.forEach(function(item, ii){
+    if(cat.single){
+      // Bulleted items with one confirmation tick for the whole section
+      var ul = document.createElement("ul");
+      ul.style.cssText = "margin:6px 0 10px 4px;padding-left:16px;font-size:14px;line-height:1.5;";
+      cat.items.forEach(function(item){
+        var li = document.createElement("li");
+        li.textContent = item.text + (item.dist ? " (" + item.dist + ")" : "");
+        li.style.marginBottom = "5px";
+        ul.appendChild(li);
+      });
+      catEl.appendChild(ul);
       var row = document.createElement("label");
       row.className = "guide-item";
-      row.setAttribute("for", "gi-" + ci + "-" + ii);
+      row.setAttribute("for", "gi-" + ci + "-all");
       var cb = document.createElement("input");
       cb.type = "checkbox";
-      cb.id = "gi-" + ci + "-" + ii;
+      cb.id = "gi-" + ci + "-all";
       on(cb, "change", function(){ row.classList.toggle("checked", cb.checked); });
       var span = document.createElement("span");
-      span.textContent = item.text;
+      span.textContent = "All checked and confirmed";
+      span.style.fontWeight = "600";
       row.appendChild(cb);
       row.appendChild(span);
-      if(item.dist){
-        var distEl = document.createElement("span");
-        distEl.className = "gi-dist";
-        distEl.textContent = item.dist;
-        row.appendChild(distEl);
-      }
       catEl.appendChild(row);
-    });
+    } else {
+      cat.items.forEach(function(item, ii){
+        var row = document.createElement("label");
+        row.className = "guide-item";
+        row.setAttribute("for", "gi-" + ci + "-" + ii);
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.id = "gi-" + ci + "-" + ii;
+        on(cb, "change", function(){ row.classList.toggle("checked", cb.checked); });
+        var span = document.createElement("span");
+        span.textContent = item.text;
+        row.appendChild(cb);
+        row.appendChild(span);
+        if(item.dist){
+          var distEl = document.createElement("span");
+          distEl.className = "gi-dist";
+          distEl.textContent = item.dist;
+          row.appendChild(distEl);
+        }
+        catEl.appendChild(row);
+      });
+    }
     container.appendChild(catEl);
   });
 }
