@@ -99,11 +99,12 @@
   </fieldset>
 
   <fieldset>
-    <legend>Road</legend>
+    <legend>Select Road</legend>
     <div class="row">
       <div class="field">
         <label for="roadType">Road type and speed limit</label>
         <select id="roadType">
+          <option value="" selected disabled>Select road type...</option>
           <option value="s30">Single carriageway - 30 mph or less</option>
           <option value="s40">Single carriageway - 40 mph</option>
           <option value="s50">Single carriageway - 50 mph</option>
@@ -115,7 +116,7 @@
         <label>Speed limit in force</label>
         <div class="chips" id="speedChips">
           <span class="chip" data-speed="20">20</span>
-          <span class="chip on" data-speed="30">30</span>
+          <span class="chip" data-speed="30">30</span>
           <span class="chip" data-speed="40">40</span>
           <span class="chip" data-speed="50">50</span>
           <span class="chip" data-speed="60">60</span>
@@ -125,18 +126,19 @@
   </fieldset>
 
   <fieldset>
-    <legend>Works</legend>
+    <legend>Select Works</legend>
     <div class="row">
       <div class="field">
         <label for="worksLen">Works length (m) - excavation plus working space</label>
-        <input type="number" id="worksLen" min="1" max="300" step="1" value="10">
+        <input type="number" id="worksLen" min="1" max="300" step="1" placeholder="e.g. 10">
       </div>
       <div class="field">
         <label for="worksWidth">Width of works incl. sideways safety zone (m)</label>
         <select id="worksWidth">
+          <option value="" selected disabled>Select width...</option>
           <option value="1">1 m</option>
           <option value="2">2 m</option>
-          <option value="3" selected>3 m</option>
+          <option value="3">3 m</option>
           <option value="4">4 m</option>
           <option value="5">5 m</option>
           <option value="6">6 m</option>
@@ -224,7 +226,7 @@
     return speed <= 30 ? 2 : 5;
   }
 
-  var state = { setup: "half", road: "s30", speed: 30, len: 10, width: 3, vehicle: false };
+  var state = { setup: "half", road: "", speed: 0, len: 0, width: 0, vehicle: false };
 
   function readParams() {
     var p = new URLSearchParams(window.location.search);
@@ -240,9 +242,9 @@
   }
 
   function syncControls() {
-    document.getElementById("roadType").value = state.road;
-    document.getElementById("worksLen").value = state.len;
-    document.getElementById("worksWidth").value = String(state.width);
+    document.getElementById("roadType").value = state.road || "";
+    document.getElementById("worksLen").value = state.len || "";
+    document.getElementById("worksWidth").value = state.width ? String(state.width) : "";
     document.getElementById("worksVehicle").value = state.vehicle ? "yes" : "no";
     var sChips = document.querySelectorAll("#setupChips .chip");
     for (var j = 0; j < sChips.length; j++) {
@@ -256,6 +258,7 @@
 
   /* Keep speed chips consistent with road type */
   function clampSpeed() {
+    if (!state.road) { return; }
     if (state.road === "s30" && state.speed > 30) { state.speed = 30; }
     if (state.road === "s40") { state.speed = 40; }
     if (state.road === "s50") { state.speed = 50; }
@@ -852,9 +855,42 @@
     document.getElementById("kit").innerHTML = html;
   }
 
+  function selectionsComplete() {
+    if (!state.road || !state.speed) { return false; }
+    if (state.setup !== "full" && (!state.len || !state.width)) { return false; }
+    if (state.setup === "full" && !state.len) { return false; }
+    return true;
+  }
+
+  function renderPrompt() {
+    var missing = [];
+    if (!state.road) { missing.push("road type"); }
+    if (!state.speed) { missing.push("speed limit"); }
+    if (!state.len) { missing.push("works length"); }
+    if (state.setup !== "full" && !state.width) { missing.push("works width"); }
+    document.getElementById("dims").innerHTML =
+      '<div class="dim warn" style="grid-column:1/-1;"><span>Layout not generated</span>' +
+      '<b>Select ' + missing.join(", ") + ' above</b></div>';
+    var svg = document.getElementById("planSvg");
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+    svg.setAttribute("viewBox", "0 0 1000 120");
+    var t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    t.setAttribute("x", "500"); t.setAttribute("y", "65");
+    t.setAttribute("fill", "#ffd400"); t.setAttribute("font-size", "20");
+    t.setAttribute("text-anchor", "middle"); t.setAttribute("font-family", "sans-serif");
+    t.appendChild(document.createTextNode("Enter the job details above to generate the site layout"));
+    svg.appendChild(t);
+    document.getElementById("steps").innerHTML = "";
+    document.getElementById("kit").innerHTML = "";
+  }
+
   function renderAll() {
     clampSpeed();
     syncControls();
+    if (!selectionsComplete()) {
+      renderPrompt();
+      return;
+    }
     var r = calc();
     renderDims(r);
     renderDiagram(r);
@@ -869,7 +905,8 @@
     renderAll();
   });
   document.getElementById("roadType").addEventListener("change", function () {
-    state.road = this.value;
+    state.road = this.value || "";
+    if (!state.road) { renderAll(); return; }
     if (state.road === "s40") { state.speed = 40; }
     if (state.road === "s50") { state.speed = 50; }
     if (state.road === "s60") { state.speed = 60; }
@@ -882,7 +919,7 @@
     if (v >= 1 && v <= 300) { state.len = v; renderAll(); }
   });
   document.getElementById("worksWidth").addEventListener("change", function () {
-    state.width = parseInt(this.value, 10); renderAll();
+    state.width = parseInt(this.value, 10) || 0; renderAll();
   });
   document.getElementById("worksVehicle").addEventListener("change", function () {
     state.vehicle = this.value === "yes"; renderAll();
