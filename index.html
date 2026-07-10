@@ -9,7 +9,6 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <script>
-   
 /* On-page error reporter — installed before any app code runs, so ANY JS error anywhere
    (including ones that would otherwise fail silently) shows up as a visible banner on the
    page itself. No DevTools needed: just screenshot the app. */
@@ -687,14 +686,18 @@ function clearSession(){
 }
 
 function doLogin(username, passcode){
-  var url = SUPABASE_URL + "/rest/v1/test_users?username=eq." + encodeURIComponent(username) + "&passcode=eq." + encodeURIComponent(passcode) + "&select=username,passcode,role";
+  // Login goes through a database function that only answers yes/no + role.
+  // The app never reads the test_users table directly, so credentials are
+  // not exposed even though the anon key is public.
+  var url = SUPABASE_URL + "/rest/v1/rpc/check_login";
   return fetch(url, {
-    method: "GET",
+    method: "POST",
     headers: {
       "apikey": SUPABASE_ANON_KEY,
       "Authorization": "Bearer " + SUPABASE_ANON_KEY,
       "Content-Type": "application/json"
-    }
+    },
+    body: JSON.stringify({ p_username: username, p_passcode: passcode })
   })
   .then(function(res){
     if(!res.ok) throw new Error("Login request failed");
