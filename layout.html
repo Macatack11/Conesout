@@ -755,7 +755,7 @@
     if (state.setup === "full") {
       steps = [
         "Confirm the temporary traffic regulation order (TTRO) or emergency notice with the highway authority before closing the road. Agree the diversion route.",
-        "Park safely, beacons on, hi-vis fastened before leaving the vehicle.",
+        "Park safely, beacons on, hi-vis fastened before leaving the vehicle. Take the measuring wheel - every distance below is measured, not paced.",
         "Sign the agreed diversion route first, working from the far end back towards the closure.",
         "Place Road ahead closed advance signs at " + r.D + " on BOTH approaches (min visibility " + r.table.vis + " m), with diversion signs at the last junction before the closure.",
         "Place a barrier with Road closed sign across the full carriageway at each end of the works, backed with cones.",
@@ -767,7 +767,7 @@
       ];
     } else if (state.setup === "foot") {
       steps = [
-        "Park safely, beacons on, hi-vis fastened before leaving the vehicle.",
+        "Park safely, beacons on, hi-vis fastened before leaving the vehicle. Take the measuring wheel - every distance below is measured, not paced.",
         "Fence the works with a CONTINUOUS run of linked barriers on every side - pedestrians must never be able to walk into the works, including from the road side.",
         "Keep a minimum 1.2 m usable footway width past the works where possible (1.5 m preferred). If you cannot, close the footway and build a walkway in the carriageway.",
         "A walkway in the carriageway needs full carriageway signing IN BOTH DIRECTIONS: Road works ahead at " + r.D + " and Road narrows on each approach, then a lead-in taper T = " + r.T + " m with minimum " + r.taperCones + " cones and Keep right signs at the start and end of the taper.",
@@ -782,7 +782,7 @@
       ];
     } else {
       steps = [
-        "Park safely, beacons on, hi-vis fastened before leaving the vehicle.",
+        "Park safely, beacons on, hi-vis fastened before leaving the vehicle. Take the measuring wheel - every distance below is measured, not paced.",
         "Place the Road works ahead sign " + r.D + " before the taper start (min visibility " + r.table.vis + " m). Duplicate on the offside if the risk assessment requires it.",
         "Place the Road narrows sign between the advance sign and the taper.",
         "Facing traffic, set the lead-in taper from the kerb: " + r.T + " m long, minimum " + r.taperCones + " cones. Keep right sign at the start and end of the taper.",
@@ -805,6 +805,7 @@
     var lines;
     if (state.setup === "full") {
       lines = [
+        "Measuring wheel - to set out all distances accurately (do not pace or estimate)",
         "Road ahead closed advance signs (" + r.table.signMM + " mm): 2 minimum, one per approach",
         "Road closed signs on barriers: 2",
         "Barriers to span the full carriageway at each end",
@@ -817,6 +818,7 @@
       }
     } else if (state.setup === "foot") {
       lines = [
+        "Measuring wheel - to set out all distances accurately (do not pace or estimate)",
         "Linked pedestrian barriers - enough for a continuous run around all sides of the works",
         "Pedestrians arrow signs (red): 2, one at each ramp",
         "Kerb ramps: 2 minimum, one per end of the walkway",
@@ -835,6 +837,7 @@
       }
     } else {
       lines = [
+        "Measuring wheel - to set out all distances accurately (do not pace or estimate)",
         "Road works ahead signs (" + r.table.signMM + " mm): 2",
         "Road narrows signs: 2",
         "Keep right / keep left signs (" + r.table.signMM + " mm): 2 minimum",
