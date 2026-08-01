@@ -1362,15 +1362,18 @@ function buildWalkoutSigns(){
   var siting = tmSitingDistance(cat);
   var list = [];
   list.push({ name:"Use Measuring Wheel", segment: 0 });
-  list.push({ name:"Road Works Ahead", segment: siting });
-  list.push({ name:"Road Narrows", segment: 15 });
+  list.push({ name:"Road Works Ahead — Approach Side", segment: siting });
+  list.push({ name:"Road Narrows — Approach Side", segment: 15 });
+  list.push({ name:"Road Works Ahead — Opposite Direction", segment: siting });
+  list.push({ name:"Road Narrows — Opposite Direction", segment: 15 });
   list.push({ name:"Taper Cones — Start", segment: Math.max(cat.taper - 25, 10) });
 
   if(h.impact === "half"){
     list.push({ name:"Keep Right / Keep Left Sign — Taper Start", segment: 25 });
     list.push({ name:"Keep Right / Keep Left Sign — Taper End", segment: cat.taper });
   } else if(h.impact === "full"){
-    list.push({ name:"Road Closed Sign", segment: 25 });
+    list.push({ name:"Road Closed Sign — Near End", segment: 25 });
+    list.push({ name:"Road Closed Sign — Far End", segment: 25 });
   } else if(h.impact === "footpath"){
     list.push({ name:"Keep Right / Keep Left Sign — Taper Start", segment: 25 });
     list.push({ name:"Keep Right / Keep Left Sign — Taper End", segment: cat.taper });
