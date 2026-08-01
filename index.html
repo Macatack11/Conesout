@@ -1367,10 +1367,13 @@ function buildWalkoutSigns(){
   list.push({ name:"Taper Cones — Start", segment: Math.max(cat.taper - 25, 10) });
 
   if(h.impact === "half"){
-    list.push({ name:"Keep Right / Keep Left Sign", segment: 25 });
+    list.push({ name:"Keep Right / Keep Left Sign — Taper Start", segment: 25 });
+    list.push({ name:"Keep Right / Keep Left Sign — Taper End", segment: cat.taper });
   } else if(h.impact === "full"){
     list.push({ name:"Road Closed Sign", segment: 25 });
   } else if(h.impact === "footpath"){
+    list.push({ name:"Keep Right / Keep Left Sign — Taper Start", segment: 25 });
+    list.push({ name:"Keep Right / Keep Left Sign — Taper End", segment: cat.taper });
     list.push({ name:"Barrier Start", segment: 20 });
   }
 
