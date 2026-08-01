@@ -121,9 +121,11 @@
           <span class="chip" data-speed="50">50</span>
           <span class="chip" data-speed="60">60</span>
         </div>
+        <div id="speedReadout" style="display:none;font-size:15px;font-weight:700;padding:10px 0;"></div>
       </div>
     </div>
   </fieldset>
+
 
   <fieldset>
     <legend>Select Works</legend>
@@ -256,6 +258,28 @@
     var chips = document.querySelectorAll("#speedChips .chip");
     for (var i = 0; i < chips.length; i++) {
       chips[i].classList.toggle("on", parseInt(chips[i].getAttribute("data-speed"), 10) === state.speed);
+    }
+    /* Only show a real speed choice where road type does not already fix it.
+       s40/s50/s60 leave no genuine choice, so show a plain readout instead -
+       one less pointless tick box, and no way to pick a value that contradicts
+       the road type selected. */
+    var chipsWrap = document.getElementById("speedChips");
+    var readout = document.getElementById("speedReadout");
+    var visibleSpeeds = { s30: [20, 30], d40: [20, 30, 40] };
+    if (state.road && visibleSpeeds[state.road]) {
+      chipsWrap.style.display = "flex";
+      readout.style.display = "none";
+      for (var k = 0; k < chips.length; k++) {
+        var v = parseInt(chips[k].getAttribute("data-speed"), 10);
+        chips[k].style.display = visibleSpeeds[state.road].indexOf(v) !== -1 ? "" : "none";
+      }
+    } else if (state.road) {
+      chipsWrap.style.display = "none";
+      readout.style.display = "block";
+      readout.textContent = state.speed + " mph (fixed by road type selected above)";
+    } else {
+      chipsWrap.style.display = "flex";
+      readout.style.display = "none";
     }
   }
 
