@@ -306,15 +306,6 @@ h1,h2,h3,h4,.heading{
 .guide-item input[type=checkbox]{margin-top:2px;width:19px;height:19px;flex-shrink:0;accent-color:var(--cyan);}
 .guide-item.checked{opacity:0.5;text-decoration:line-through;}
 .guide-item .gi-dist{color:var(--cyan);font-weight:600;white-space:nowrap;font-family:'Barlow Condensed',sans-serif;}
-
-/* ---------- Diagram ---------- */
-.diagram-toggle{display:flex;gap:8px;margin-bottom:10px;}
-.diagram-wrap{
-  background:var(--navy2);border:1px solid var(--border);border-radius:var(--radius);
-  padding:10px;overflow:hidden;
-}
-.diagram-wrap svg{width:100%;height:auto;display:block;}
-.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:12px;color:var(--muted);}
 .legend span{display:inline-flex;align-items:center;gap:5px;}
 .legend i{width:10px;height:10px;border-radius:2px;display:inline-block;}
 
@@ -441,7 +432,7 @@ h1,h2,h3,h4,.heading{
 <div class="screen" id="screen-guide">
 
   <div id="guide-empty" class="card center muted">
-    No guide generated yet.<br>Go to <b style="color:var(--cyan)">Home</b> and complete the setup selections, then tap Generate Guide.
+    No guide generated yet.<br>Go to <b style="color:var(--cyan)">New Job</b> and complete the setup selections, then tap Generate Guide.
   </div>
 
   <div id="guide-content" class="hidden">
@@ -451,11 +442,24 @@ h1,h2,h3,h4,.heading{
       <div id="guide-summary" class="muted" style="font-size:13.5px;"></div>
     </div>
 
-    <div id="guide-checklist"></div>
+    <div class="card">
+      <div class="section-title">Setting-Out Distances</div>
+      <div id="guide-distances"></div>
+    </div>
 
     <div class="card">
-      <div class="section-title">Signage Layout</div>
-      <button type="button" class="btn btn-primary" id="openLayoutBtn" style="width:100%;">Open Full Signage Layout</button>
+      <div class="section-title">Setting-Out Sequence</div>
+      <div id="guide-sequence"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Kit List</div>
+      <div id="guide-kit"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Visual Layout</div>
+      <button type="button" class="btn btn-primary" id="openLayoutBtn" style="width:100%;">Open Signage Layout Diagram</button>
     </div>
 
   </div>
@@ -464,14 +468,20 @@ h1,h2,h3,h4,.heading{
 <div class="screen" id="screen-setup">
 
   <div id="setup-empty" class="card center muted">
-    Generate a guide on the <b style="color:var(--cyan)">Home</b> screen first to unlock Walk-Out mode and the Site Record.
+    Generate a guide on the <b style="color:var(--cyan)">New Job</b> screen first to unlock Walk-Out mode and the Site Record.
   </div>
 
   <div id="setup-content" class="hidden">
 
     <div class="ref-nav" id="setup-subnav">
       <button type="button" class="selected" data-panel="walkout">Walk-Out</button>
+      <button type="button" data-panel="checklist">Checklist</button>
       <button type="button" data-panel="record">Site Record</button>
+    </div>
+
+    <!-- Checklist panel - on-site confirmation, moved here from the printable Guide -->
+    <div class="ref-panel" id="panel-checklist">
+      <div id="guide-checklist"></div>
     </div>
 
     <!-- Walk-Out panel -->
@@ -638,9 +648,9 @@ h1,h2,h3,h4,.heading{
 
 <!-- ================= BOTTOM NAV ================= -->
 <div id="bottom-nav">
-  <button type="button" class="nav-btn active" data-target="screen-home"><span class="ic">&#8962;</span>Home</button>
+  <button type="button" class="nav-btn active" data-target="screen-home"><span class="ic">&#8962;</span>New Job</button>
   <button type="button" class="nav-btn" data-target="screen-guide"><span class="ic">&#128203;</span>Guide</button>
-  <button type="button" class="nav-btn" data-target="screen-setup"><span class="ic">&#128205;</span>Setup</button>
+  <button type="button" class="nav-btn" data-target="screen-setup"><span class="ic">&#128205;</span>Site Record</button>
   <button type="button" class="nav-btn" data-target="screen-reference"><span class="ic">&#128218;</span>Reference</button>
 </div>
 
@@ -852,7 +862,7 @@ var TM_TABLE = {
   single40: {
     label: "Single carriageway, 40mph",
     sitingMin: 45, sitingMax: 110, clearVis: 60, signSize: 750,
-    endMin: 30, endMax: 45,
+    endMin: 10, endMax: 30,
     taper: 80, coneCount: 28, coneSize: 450, taperSpacing: 3, longSpacing: 9, warnLight: 9
   },
   single50plus: {
@@ -985,6 +995,9 @@ function initHomeScreen(){
       }
       STATE.guide = buildGuideSteps(STATE.home);
       renderGuideSummary();
+      renderGuideDistances();
+      renderGuideSequence();
+      renderGuideKit();
       renderGuideChecklist(STATE.guide);
       buildWalkoutSigns();
       show(qs("#guide-content"));
@@ -1069,6 +1082,110 @@ function renderGuideSummary(){
     var d = document.createElement("div"); d.textContent = p; return d.innerHTML;
   }).join(" \u2022 ") + warn +
   '<div style="margin-top:10px;font-size:12px;opacity:0.8;">Planning aid only - a site-specific risk assessment is required and a competent person must confirm the setup on site. Full terms: Reference tab, Special Cases.</div>';
+}
+
+/* Plain-fact distances panel - same TM_TABLE data used for walk-out siting,
+   now shown as a printable fact card rather than a GPS-driven step. */
+function factCard(label, value){
+  var d1 = document.createElement("div"); d1.textContent = label;
+  var d2 = document.createElement("div"); d2.textContent = value;
+  return '<div style="background:var(--navy2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;border-left:4px solid var(--cyan);">' +
+    '<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">' + d1.innerHTML + '</div>' +
+    '<div style="font-size:17px;font-weight:700;margin-top:2px;">' + d2.innerHTML + '</div></div>';
+}
+
+function renderGuideDistances(){
+  var h = STATE.home;
+  if(h.roadType === "motorway" || Number(h.speed) >= 70){
+    qs("#guide-distances").innerHTML = '<div style="color:var(--muted);font-size:13.5px;">Out of scope for this app - see the warning above.</div>';
+    return;
+  }
+  var cat = getTMCategory(h);
+  var cards = [];
+  var dText = (cat.sitingMin !== undefined) ? (cat.sitingMin + " to " + cat.sitingMax + " m") : tmSitingLabel(cat);
+  cards.push(factCard("Advance sign (D)", dText));
+  if(cat.taper !== undefined){ cards.push(factCard("Taper length (T)", cat.taper + " m")); }
+  var eText = (cat.endMin !== undefined) ? (cat.endMin + " to " + cat.endMax + " m") : (tmEndDistance(cat) + " m");
+  cards.push(factCard("End sign (E)", eText));
+  cards.push(factCard("Minimum visibility", (cat.clearVis || "-") + (typeof cat.clearVis === "number" ? " m" : "")));
+  cards.push(factCard("Sign size", cat.signSize + " mm"));
+  if(cat.coneSize){ cards.push(factCard("Cone height", cat.coneSize + " mm")); }
+  if(cat.coneCount){ cards.push(factCard("Cones (lead-in taper)", cat.coneCount)); }
+  if(cat.warnLight){ cards.push(factCard("Warning lights", "Required at night / poor visibility")); }
+  qs("#guide-distances").innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' + cards.join("") + '</div>';
+}
+
+/* Plain numbered setting-out sequence - text version of what buildWalkoutSigns
+   drives as a GPS walk-out, written here as a printable list instead. */
+function renderGuideSequence(){
+  var h = STATE.home;
+  if(h.roadType === "motorway" || Number(h.speed) >= 70){
+    qs("#guide-sequence").innerHTML = "";
+    return;
+  }
+  var cat = getTMCategory(h);
+  var dText = (cat.sitingMin !== undefined) ? (cat.sitingMin + " to " + cat.sitingMax + " m") : tmSitingLabel(cat);
+  var eText = (cat.endMin !== undefined) ? (cat.endMin + " to " + cat.endMax + " m") : (tmEndDistance(cat) + " m");
+  var steps = [
+    "Park safely, beacons on, hi-vis fastened before leaving the vehicle. Take the measuring wheel - every distance below is measured, not paced.",
+    "Place Road Works Ahead " + dText + " before the works, on the approach side.",
+    "Place Road Narrows on the approach side, between the advance sign and the taper.",
+    "Repeat Road Works Ahead and Road Narrows for the opposite direction of travel."
+  ];
+  if(cat.taper !== undefined){
+    steps.push("Set the lead-in taper: " + cat.taper + " m, cones at the spacing in the kit list below. Keep Right / Keep Left signs at the taper start and end.");
+  }
+  if(h.impact === "half"){
+    steps.push("Place the traffic barrier across the closed lane after the taper.");
+  } else if(h.impact === "full"){
+    steps.push("Place Road Closed signs and barriers at both ends of the closure. Confirm the diversion route is signed.");
+  } else if(h.impact === "footpath"){
+    steps.push("Fence the works with a continuous barrier on every side. Guard the pedestrian walkway with a continuous barrier on its traffic-facing edge - not cones.");
+  }
+  steps.push("Display the information board (company name and emergency contact).");
+  steps.push("Place the End of Works sign " + eText + " beyond the works, both directions.");
+  steps.push("Remove in reverse order when the job is complete.");
+  var ol = document.createElement("ol");
+  ol.style.cssText = "margin:0;padding-left:20px;font-size:14px;line-height:1.6;";
+  steps.forEach(function(s){
+    var li = document.createElement("li"); li.textContent = s; li.style.marginBottom = "8px"; ol.appendChild(li);
+  });
+  qs("#guide-sequence").innerHTML = "";
+  qs("#guide-sequence").appendChild(ol);
+}
+
+/* Plain kit list, text only - same items the walk-out and layout page assume are in the van. */
+function renderGuideKit(){
+  var h = STATE.home;
+  if(h.roadType === "motorway" || Number(h.speed) >= 70){
+    qs("#guide-kit").innerHTML = "";
+    return;
+  }
+  var cat = getTMCategory(h);
+  var items = ["Measuring wheel", "Road Works Ahead signs: 2", "Road Narrows signs: 2"];
+  if(cat.coneCount){ items.push("Cones (" + cat.coneSize + " mm): " + cat.coneCount + " minimum for the lead-in taper"); }
+  if(h.impact === "half"){
+    items.push("Keep Right / Keep Left signs: 2");
+    items.push("Traffic barrier with barrier board: 1");
+  } else if(h.impact === "full"){
+    items.push("Road Closed signs and barriers: 2 sets, one per end");
+    items.push("Diversion route signs as agreed with the highway authority");
+  } else if(h.impact === "footpath"){
+    items.push("Keep Right / Keep Left signs: 2");
+    items.push("Continuous pedestrian barriers - enough for all sides of the works and the walkway edge");
+    items.push("Wheelchair ramps: 2");
+  }
+  if(cat.warnLight){ items.push("Warning lights - required at night or in poor visibility"); }
+  items.push("Information board: 1");
+  items.push("End of Works signs: 2");
+  var ul = document.createElement("ul");
+  ul.style.cssText = "margin:0;padding-left:20px;font-size:14px;line-height:1.6;";
+  items.forEach(function(t){
+    var li = document.createElement("li"); li.textContent = t; li.style.marginBottom = "6px"; ul.appendChild(li);
+  });
+  qs("#guide-kit").innerHTML = "";
+  qs("#guide-kit").appendChild(ul);
 }
 
 function renderGuideChecklist(guide){
@@ -1977,7 +2094,7 @@ document.addEventListener("DOMContentLoaded", function(){
   // element directly on the page. Toggle by tapping the ConesOut logo 3 times fast.
   // This exists so layout bugs can be diagnosed from one screenshot, no DevTools needed.
   function showLayoutDiagnostics(){
-    var ids = ["app-shell","top-bar","screen-container","home-action-bar","bottom-nav","generate-btn","screen-home","screen-guide","diagram-wrap","guide-checklist","guide-content","guide-empty"];
+    var ids = ["app-shell","top-bar","screen-container","home-action-bar","bottom-nav","generate-btn","screen-home","screen-guide","guide-distances","guide-sequence","guide-kit","guide-checklist","guide-content","guide-empty","panel-checklist"];
     var lines = ["viewport: " + window.innerWidth + "x" + window.innerHeight, ""];
     ids.forEach(function(id){
       var el = document.getElementById(id);
@@ -1987,13 +2104,7 @@ document.addEventListener("DOMContentLoaded", function(){
       var extra = " innerHTML.length=" + (el.innerHTML ? el.innerHTML.length : 0);
       lines.push(id + ": top=" + Math.round(r.top) + " bottom=" + Math.round(r.bottom) + " h=" + Math.round(r.height) + " display=" + cs.display + " visible=" + (r.height > 0 && r.width > 0) + extra);
     });
-    var svgEl = document.querySelector("#diagram-wrap svg");
     lines.push("");
-    lines.push("diagram-wrap > svg found: " + !!svgEl);
-    if(svgEl){
-      var svgR = svgEl.getBoundingClientRect();
-      lines.push("svg: w=" + Math.round(svgR.width) + " h=" + Math.round(svgR.height) + " viewBox=" + svgEl.getAttribute("viewBox"));
-    }
     lines.push("STATE.guide set: " + !!(window.STATE && window.STATE.guide));
     lines.push("STATE.diagramOrient: " + (window.STATE ? window.STATE.diagramOrient : "?"));
     var panel = document.getElementById("__layout_diag__");
