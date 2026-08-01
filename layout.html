@@ -192,7 +192,7 @@
            conesByWidth: [4, 4, 6, 7, 9, 10, 12],
            lightsByWidth: [0, 0, 0, 0, 0, 0, 0] },
     s40: { label: "Single carriageway, 40 mph", vis: 60, dMin: 45, dMax: 110,
-           taperPerMetre: 20, S: 0.5, eMin: 30, eMax: 45, signMM: 750, coneMM: 450,
+           taperPerMetre: 20, S: 0.5, eMin: 10, eMax: 30, signMM: 750, coneMM: 450,
            lightsRequired: true,
            conesByWidth: [4, 6, 8, 10, 13, 15, 17],
            lightsByWidth: [3, 5, 7, 9, 12, 14, 16] },
@@ -215,10 +215,13 @@
 
   /* Longways clearance L by speed limit in force */
   function longwaysL(speed) {
+    /* Table 3.1, Traffic Signs Manual Chapter 8 Part 1 (2009):
+       minimum longitudinal clearance by permanent speed limit. */
     if (speed <= 30) { return 0.5; }
     if (speed === 40) { return 15; }
     if (speed === 50) { return 30; }
-    return 60;
+    if (speed === 60) { return 60; }
+    return 100; /* 70 mph */
   }
 
   /* Clearance C between works vehicle and works */
