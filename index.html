@@ -556,7 +556,8 @@ h1,h2,h3,h4,.heading{
 
   <div class="ref-panel active" id="ref-signs">
     <div class="sign-ref"><b>Road Works Ahead</b>Red triangle warning sign. First sign encountered, placed at the advance warning distance for the road's speed limit.</div>
-    <div class="sign-ref"><b>Speed Roundel</b>Circular sign showing the temporary reduced speed limit, used where the permanent limit is being reduced for the works.</div>
+    <div class="sign-ref"><b>Speed Roundel</b>Shows the road's EXISTING speed limit as reference only, matching the setup dimensions you selected. This app does not calculate or suggest a reduced works speed - a temporary mandatory limit can only be set by a Traffic Regulation Order from the highway authority. If a reduced limit has been authorised for this job, place that sign as instructed by your manager/order, not the roundel shown here.</div>
+    <div class="sign-ref"><b>Approach speed on the ground</b>Check the actual approach speed on site (not just the posted limit) as part of your risk assessment - the setout dimensions assume traffic is moving at, or close to, the existing limit.</div>
     <div class="sign-ref"><b>Road Narrows (Both Sides)</b>Triangle sign showing the carriageway narrowing from both sides &mdash; used for the standard lane closure layout.</div>
     <div class="sign-ref"><b>Keep Right / Keep Left</b>Circular blue sign. Arrow must always point AWAY from the works, directing traffic into the open running lane.</div>
     <div class="sign-ref"><b>End of Works</b>Placed after the works area to confirm to drivers that the restriction has ended.</div>
@@ -1362,7 +1363,7 @@ function buildWalkoutSigns(){
   var list = [];
   list.push({ name:"Road Works Ahead", segment: siting });
   if(h.roadType !== "motorway"){
-    list.push({ name:"Speed Roundel", segment: 15 });
+    list.push({ name:"Speed Roundel (existing limit)", segment: 15 });
   }
   list.push({ name:"Road Narrows", segment: 15 });
   list.push({ name:"Taper Cones — Start", segment: Math.max(cat.taper - 25, 10) });
