@@ -629,10 +629,10 @@
       "font-family": "sans-serif" }, "Traffic flow"));
 
     /* dimensions along the approach: E (exit), then works, L, T, D */
-    dimLine(svg, 622, 780, 328, "T = " + r.T + " m");
-    dimLine(svg, 780, 940, 328, "D = " + r.D);
+    dimLine(svg, 622, 780, 298, "T = " + r.T + " m");
+    dimLine(svg, 780, 940, 298, "D = " + r.D);
     if (r.endSignNeeded) {
-      dimLine(svg, 60, 190, 328, "E = " + r.E);
+      dimLine(svg, 60, 190, 298, "E = " + r.E);
     }
     svg.appendChild(svgEl("text", { x: 596, y: walkTop - 26, fill: "#ffd400", "font-size": "12",
       "text-anchor": "end", "font-family": "sans-serif", "font-weight": "700" }, "L = " + r.L + " m"));
